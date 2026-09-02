@@ -5,12 +5,15 @@ struct DashboardView: View {
     @ObservedObject var store: Store
     @Binding var selectedTab: Tab
     @AppStorage("themeMode") private var themeRaw = ThemeMode.system.rawValue
+    @Environment(\.horizontalSizeClass) private var h
+    @Environment(\.verticalSizeClass) private var v
 
     @State private var search = ""
     @State private var activeCategory = "all"
     @State private var sortOrder: SortOrder = .newest
     @State private var editingEntry: Entry?
     @State private var showForm = false
+    @State private var contentWidth: CGFloat = 0
 
     enum SortOrder: String, CaseIterable, Identifiable {
         case newest = "Newest first"
@@ -59,9 +62,10 @@ struct DashboardView: View {
                 statsPanel
                 notesSection
             }
-            .padding(.horizontal, SafeDesign.xl)
+            .pageColumn(h, v)
             .padding(.top, SafeDesign.l)
-            .padding(.bottom, 110)
+            .padding(.bottom, SafeLayout.tabBarClearance(h))
+            .readingWidth($contentWidth)
         }
         .sheet(isPresented: $showForm) {
             EntryFormView(
@@ -123,7 +127,25 @@ struct DashboardView: View {
 
     // MARK: - Hero
 
+    @ViewBuilder
     private var hero: some View {
+        if h == .regular {
+            HStack(alignment: .center, spacing: SafeDesign.xxl) {
+                heroCopy
+                HeroArt()
+                    .frame(width: 300, height: 250)
+            }
+        } else {
+            VStack(alignment: .leading, spacing: SafeDesign.m) {
+                heroCopy
+                HeroArt()
+                    .frame(height: v == .compact ? 150 : 205)
+                    .padding(.top, SafeDesign.xs)
+            }
+        }
+    }
+
+    private var heroCopy: some View {
         VStack(alignment: .leading, spacing: SafeDesign.m) {
             BadgePill(text: "your safe place")
 
@@ -134,7 +156,7 @@ struct DashboardView: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             Text("Collect the small wins, habits, people and places that gently carried you forward. Come back whenever you need to remember.")
-                .font(.system(size: 16))
+                .font(SafeDesign.body)
                 .foregroundStyle(SafeDesign.inkSecondary)
                 .lineSpacing(3)
                 .fixedSize(horizontal: false, vertical: true)
@@ -150,8 +172,8 @@ struct DashboardView: View {
                     }
                     .font(SafeDesign.headline)
                     .foregroundStyle(SafeDesign.onPrimary)
-                    .padding(.horizontal, SafeDesign.xl)
-                    .frame(height: 48)
+                    .padding(.horizontal, SafeDesign.l)
+                    .frame(height: 46)
                     .background(Capsule().fill(SafeDesign.primary))
                 }
                 .buttonStyle(.plain)
@@ -164,8 +186,8 @@ struct DashboardView: View {
                     Text("Start a note")
                         .font(SafeDesign.headline)
                         .foregroundStyle(SafeDesign.ink)
-                        .padding(.horizontal, SafeDesign.xl)
-                        .frame(height: 48)
+                        .padding(.horizontal, SafeDesign.l)
+                        .frame(height: 46)
                         .background(Capsule().strokeBorder(SafeDesign.hairline, lineWidth: 1))
                 }
                 .buttonStyle(.plain)
@@ -177,17 +199,15 @@ struct DashboardView: View {
                  : "\(store.entries.count) \(store.entries.count == 1 ? "thing" : "things") saved in your safe place.")
                 .font(SafeDesign.caption)
                 .foregroundStyle(SafeDesign.muted)
-
-            HeroArt()
-                .frame(height: 220)
-                .padding(.top, SafeDesign.xs)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     // MARK: - Stats
 
     private var statsPanel: some View {
-        LazyVGrid(columns: [GridItem(.flexible(), spacing: SafeDesign.m), GridItem(.flexible())], spacing: SafeDesign.m) {
+        let columns = SafeLayout.columns(forWidth: contentWidth)
+        return LazyVGrid(columns: columns, spacing: SafeDesign.m) {
             statCard(number: "\(store.entries.count)", label: store.entries.count == 1 ? "thing saved" : "things saved")
             statCard(number: "\(store.categories.count)", label: "categories")
             statCardWide {
@@ -229,6 +249,7 @@ struct DashboardView: View {
                     }
                 }
             }
+            .gridCellColumns(columns.count)
             statCardWide {
                 VStack(alignment: .leading, spacing: SafeDesign.s) {
                     Text("FEELINGS")
@@ -244,13 +265,14 @@ struct DashboardView: View {
                     }
                 }
             }
+            .gridCellColumns(columns.count)
         }
     }
 
     private func statCard(number: String, label: String) -> some View {
         VStack(alignment: .leading, spacing: SafeDesign.xs) {
             Text(number)
-                .font(.system(size: 32, weight: .bold, design: .rounded))
+                .font(.system(size: 28, weight: .bold, design: .rounded))
                 .foregroundStyle(SafeDesign.ink)
             Text(label.uppercased())
                 .font(.system(size: 11, weight: .medium))
@@ -291,7 +313,7 @@ struct DashboardView: View {
         VStack(alignment: .leading, spacing: SafeDesign.l) {
             HStack {
                 Text("Your notes")
-                    .font(.system(size: 30, weight: .bold, design: .rounded))
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundStyle(SafeDesign.ink)
                 Spacer()
             }
@@ -354,7 +376,7 @@ struct DashboardView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, SafeDesign.xxxl)
             } else {
-                LazyVGrid(columns: [GridItem(.flexible(), spacing: SafeDesign.m), GridItem(.flexible())], spacing: SafeDesign.m) {
+                LazyVGrid(columns: SafeLayout.columns(forWidth: contentWidth), spacing: SafeDesign.m) {
                     ForEach(filteredEntries) { entry in
                         EntryCardView(entry: entry) {
                             editingEntry = entry

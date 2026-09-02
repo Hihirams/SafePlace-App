@@ -2,6 +2,8 @@ import SwiftUI
 
 struct NotesView: View {
     @ObservedObject var store: Store
+    @Environment(\.horizontalSizeClass) private var h
+    @Environment(\.verticalSizeClass) private var v
     @State private var notes: [SharedNote] = []
 
     var body: some View {
@@ -19,9 +21,9 @@ struct NotesView: View {
                     }
                 }
             }
-            .padding(.horizontal, SafeDesign.xl)
+            .pageColumn(h, v)
             .padding(.top, SafeDesign.l)
-            .padding(.bottom, 110)
+            .padding(.bottom, SafeLayout.tabBarClearance(h))
         }
         .onAppear(perform: reload)
         .onChange(of: store.entries.count) { _, _ in reload() }

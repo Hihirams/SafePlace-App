@@ -5,6 +5,8 @@ struct EntryFormView: View {
     let categories: [String]
     let onSave: (Entry) -> Void
     let onClose: () -> Void
+    @Environment(\.horizontalSizeClass) private var h
+    @Environment(\.verticalSizeClass) private var v
 
     @State private var title: String
     @State private var description: String
@@ -106,7 +108,7 @@ struct EntryFormView: View {
                     }
                     .padding(.top, SafeDesign.xs)
                 }
-                .padding(.horizontal, SafeDesign.xl)
+                .pageColumn(h, v)
                 .padding(.top, SafeDesign.xs)
                 .padding(.bottom, SafeDesign.xxxl)
             }
@@ -156,7 +158,7 @@ struct EntryFormView: View {
     }
 
     private var colorSwatches: some View {
-        HStack(spacing: SafeDesign.s) {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: SafeDesign.s), count: h == .regular ? 8 : 4), spacing: SafeDesign.s) {
             ForEach(CardColor.allCases) { c in
                 Button {
                     withAnimation(SafeDesign.spring) { color = c }
@@ -178,7 +180,6 @@ struct EntryFormView: View {
                 }
                 .buttonStyle(.plain)
             }
-            Spacer()
         }
     }
 

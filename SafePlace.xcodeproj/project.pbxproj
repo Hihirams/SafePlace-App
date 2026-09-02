@@ -28,6 +28,9 @@
 		AA0100000000000000000113 /* GlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000001014 /* GlassCard.swift */; };
 		AA0100000000000000000114 /* FormComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000001015 /* FormComponents.swift */; };
 		AA0100000000000000000115 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000001016 /* Assets.xcassets */; };
+		AA0100000000000000000116 /* MindGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000001019 /* MindGraph.swift */; };
+		AA0100000000000000000117 /* MindSimulation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB010000000000000000101A /* MindSimulation.swift */; };
+		AA0100000000000000000118 /* MindView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB010000000000000000101B /* MindView.swift */; };
 		AA0100000000000000000200 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000002001 /* ShareViewController.swift */; };
 		AA0100000000000000000201 /* SafePlaceShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BB0100000000000000002004 /* SafePlaceShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -81,6 +84,9 @@
 		BB0100000000000000001016 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BB0100000000000000001017 /* SafePlace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SafePlace.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB0100000000000000001018 /* SafePlace.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SafePlace.entitlements; sourceTree = "<group>"; };
+		BB0100000000000000001019 /* MindGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindGraph.swift; sourceTree = "<group>"; };
+		BB010000000000000000101A /* MindSimulation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindSimulation.swift; sourceTree = "<group>"; };
+		BB010000000000000000101B /* MindView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindView.swift; sourceTree = "<group>"; };
 		BB0100000000000000002001 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		BB0100000000000000002002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BB0100000000000000002003 /* SafePlaceShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SafePlaceShare.entitlements; sourceTree = "<group>"; };
@@ -167,6 +173,7 @@
 				BB0100000000000000001009 /* Mood.swift */,
 				BB010000000000000000100A /* CardColor.swift */,
 				BB010000000000000000100B /* Resource.swift */,
+				BB0100000000000000001019 /* MindGraph.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -175,6 +182,7 @@
 			isa = PBXGroup;
 			children = (
 				BB010000000000000000100C /* Store.swift */,
+				BB010000000000000000101A /* MindSimulation.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -191,6 +199,7 @@
 				BB0100000000000000001013 /* OnboardingView.swift */,
 				BB0100000000000000001014 /* GlassCard.swift */,
 				BB0100000000000000001015 /* FormComponents.swift */,
+				BB010000000000000000101B /* MindView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -308,6 +317,9 @@
 				AA0100000000000000000112 /* OnboardingView.swift in Sources */,
 				AA0100000000000000000113 /* GlassCard.swift in Sources */,
 				AA0100000000000000000114 /* FormComponents.swift in Sources */,
+				AA0100000000000000000116 /* MindGraph.swift in Sources */,
+				AA0100000000000000000117 /* MindSimulation.swift in Sources */,
+				AA0100000000000000000118 /* MindView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -409,7 +421,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -419,7 +431,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -436,7 +448,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -446,7 +458,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -469,7 +481,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -492,7 +504,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

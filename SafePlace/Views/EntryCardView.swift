@@ -64,7 +64,7 @@ struct EntryCardView: View {
             }
         }
         .padding(SafeDesign.l)
-        .frame(maxWidth: .infinity, minHeight: 190, alignment: .topLeading)
+        .frame(maxWidth: .infinity, minHeight: 180, alignment: .topLeading)
         .background(color.fill, in: RoundedRectangle(cornerRadius: SafeDesign.radiusXL, style: .continuous))
         .overlay(alignment: .topTrailing) {
             Circle()

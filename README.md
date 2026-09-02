@@ -8,8 +8,10 @@ App de iPhone para guardar las pequeñas cosas que te ayudan: hábitos, personas
 - **Notas de colores** estilo clay con estado de ánimo, categoría y color seleccionable
 - **Journal** — línea de tiempo agrupada por día
 - **Resources** — enlaces, citas y recordatorios
+- **Mind** — grafo tipo Obsidian: una red viva de tus pensamientos, temas y estados de ánimo. Los nodos se mueven, cambian de color (mood/categoría/card), de tamaño (conexiones + extensión del texto) y las conexiones se dibujan según lo que escribes. La energía del movimiento reacciona a cuántas notas tienes y a qué tan feliz te sientes
 - **Compatibilidad con NOTAS de iPhone** — extensión de compartir (Share Extension): comparte texto desde la app Notas de Apple (o cualquier app) directo a SafePlace
 - **Barra de navegación liquid glass** flotante (Luma) con selector que sigue tu dedo
+- **Responsive**: se adapta a iPhone pequeños y grandes, rotación horizontal/vertical, iPad (grids de 3-4 columnas, hero lado a lado, ancho máximo de contenido) y Dynamic Type
 - Onboarding de primera vez con splash animado
 - Tema claro/oscuro/sistema
 
@@ -38,14 +40,17 @@ SafePlace - IOS/
 │   │   ├── Entry.swift              # Nota (título, descripción, categoría, mood, color)
 │   │   ├── Mood.swift               # Estados de ánimo
 │   │   ├── CardColor.swift          # Colores clay
-│   │   └── Resource.swift           # Recurso (link/note)
+│   │   ├── Resource.swift           # Recurso (link/note)
+│   │   └── MindGraph.swift          # Nodos/aristas + heurísticas del grafo Mind
 │   ├── Services/
-│   │   └── Store.swift              # Persistencia + notas compartidas (app group)
+│   │   ├── Store.swift              # Persistencia + notas compartidas (app group)
+│   │   └── MindSimulation.swift     # Física force-directed del grafo Mind
 │   └── Views/
 │       ├── DashboardView.swift      # Pantalla principal
 │       ├── JournalView.swift        # Línea de tiempo
 │       ├── ResourcesView.swift      # Enlaces y recordatorios
 │       ├── NotesView.swift          # Notas compartidas desde el iPhone
+│       ├── MindView.swift           # Grafo neural (Canvas + controles glass)
 │       ├── EntryCardView.swift      # Tarjeta de nota
 │       ├── EntryFormView.swift      # Formulario alta/edición
 │       ├── OnboardingView.swift     # Onboarding de primera vez
@@ -86,6 +91,16 @@ La app Notas de Apple no expone una API pública para leer notas de terceros, as
 4. La nota llega a la pestaña **Notes** de la app, donde puedes leerla y decidir "Keep it" (guardarla en tu safe place) o descartarla
 
 > Nota: para que la extensión funcione en un dispositivo real se necesita una build firmada con tu cuenta de Apple Developer (las builds sin firma vía Actions requieren AltStore y no activan app groups).
+
+## Mind (grafo de pensamientos)
+
+La pestaña **Mind** dibuja tus notas como una red viva:
+
+- **Conexiones**: dos notas se conectan si comparten categoría, mood, color de tarjeta o palabras clave. El slider ajusta la sensibilidad (cuántas conexiones se dibujan).
+- **Color**: por estado de ánimo, por categoría o por color de tarjeta.
+- **Tamaño**: los nodos crecen con más conexiones y con notas más extensas.
+- **Movimiento**: la física *force-directed* mantiene el grafo flotando; la energía depende del ánimo promedio y del número de notas (más "bright" y más notas = más vivo). Se puede pausar.
+- **Interacción**: toca un nodo para enfocarlo (resalta sus conexiones y muestra su tarjeta), arrastra para mover el grafo, pellizca para zoom, y usa **Pin** para fijar un nodo.
 
 ## License
 

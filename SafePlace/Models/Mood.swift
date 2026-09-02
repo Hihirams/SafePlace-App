@@ -17,4 +17,15 @@ struct Mood: Identifiable, Hashable {
     static func mood(for id: String?) -> Mood {
         all.first { $0.id == id } ?? .calm
     }
+
+    /// How "alive" the mood feels — drives the mind graph's motion energy.
+    var energy: CGFloat {
+        switch id {
+        case "bright": return 1.0
+        case "hopeful": return 0.75
+        case "calm": return 0.55
+        case "mixed": return 0.35
+        default: return 0.2
+        }
+    }
 }

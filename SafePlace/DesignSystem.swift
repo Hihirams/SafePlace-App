@@ -60,16 +60,18 @@ enum SafeDesign {
     static let warning = Color(hex: "F59E0B")
     static let error = Color(hex: "EF4444")
 
-    // MARK: - Typography (SF, rounded for figures)
-    static let heroFont = Font.system(size: 40, weight: .bold, design: .rounded)
-    static let displayFont = Font.system(size: 32, weight: .bold, design: .rounded)
-    static let largeTitle = Font.system(size: 28, weight: .bold)
-    static let title = Font.system(size: 22, weight: .bold)
-    static let headline = Font.system(size: 17, weight: .semibold)
+    // MARK: - Typography (SF, rounded for figures) — mobile-native scale.
+    // Display sizes are modest so they fit comfortably on any iPhone; they
+    // scale with Dynamic Type up to a cap applied at the root view.
+    static let heroFont = Font.system(size: 32, weight: .bold, design: .rounded)
+    static let displayFont = Font.system(size: 28, weight: .bold, design: .rounded)
+    static let largeTitle = Font.system(size: 26, weight: .bold)
+    static let title = Font.system(size: 20, weight: .bold)
+    static let headline = Font.system(size: 16, weight: .semibold)
     static let body = Font.system(size: 15, weight: .medium)
     static let caption = Font.system(size: 13, weight: .medium)
     static let micro = Font.system(size: 11, weight: .medium)
-    static let tabLabel = Font.system(size: 10, weight: .semibold)
+    static let tabLabel = Font.system(size: 9.5, weight: .semibold)
 
     // MARK: - Spacing (multiples of 4)
     static let xxs: CGFloat = 4
@@ -94,4 +96,61 @@ enum SafeDesign {
     static let springSnappy = Animation.spring(response: 0.28, dampingFraction: 0.82)
     static let springBouncy = Animation.spring(response: 0.42, dampingFraction: 0.68)
     static let easeOut = Animation.easeOut(duration: 0.25)
+}
+
+// MARK: - Adaptive layout (size-class aware)
+
+enum SafeLayout {
+    /// Cap content width on large screens so lines don't get uncomfortably long.
+    static let contentMaxWidth: CGFloat = 720
+
+    /// Number of flexible grid columns for a given available width.
+    /// Narrow iPhones get a single column, standard phones two, iPads more.
+    static func columns(forWidth width: CGFloat) -> [GridItem] {
+        let count: Int
+        switch width {
+        case ..<380: count = 1
+        case ..<640: count = 2
+        case ..<960: count = 3
+        default:     count = 4
+        }
+        return Array(repeating: GridItem(.flexible(), spacing: 14), count: count)
+    }
+
+    /// Horizontal page padding tuned to the size classes.
+    static func pageInset(_ horizontal: UserInterfaceSizeClass?, _ vertical: UserInterfaceSizeClass?) -> CGFloat {
+        if horizontal == .regular { return 28 }
+        return vertical == .compact ? 16 : 20
+    }
+
+    /// Bottom padding above the floating glass tab bar.
+    static func tabBarClearance(_ horizontal: UserInterfaceSizeClass?) -> CGFloat {
+        horizontal == .regular ? 96 : 110
+    }
+}
+
+extension View {
+    /// Keeps a scroll column centered and capped on large screens.
+    func pageColumn(_ horizontal: UserInterfaceSizeClass?, _ vertical: UserInterfaceSizeClass?) -> some View {
+        frame(maxWidth: SafeLayout.contentMaxWidth)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, SafeLayout.pageInset(horizontal, vertical))
+    }
+}
+
+private struct WidthPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = nextValue() }
+}
+
+extension View {
+    /// Captures the width of the view it is attached to (via its background).
+    func readingWidth(_ binding: Binding<CGFloat>) -> some View {
+        background(
+            GeometryReader { proxy in
+                Color.clear.preference(key: WidthPreferenceKey.self, value: proxy.size.width)
+            }
+        )
+        .onPreferenceChange(WidthPreferenceKey.self) { binding.wrappedValue = $0 }
+    }
 }

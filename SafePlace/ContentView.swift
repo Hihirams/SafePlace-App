@@ -1,7 +1,7 @@
 import SwiftUI
 
 enum Tab: Int, CaseIterable {
-    case home, journal, resources, notes
+    case home, journal, resources, notes, mind
 
     var title: String {
         switch self {
@@ -9,6 +9,7 @@ enum Tab: Int, CaseIterable {
         case .journal: return "Journal"
         case .resources: return "Resources"
         case .notes: return "Notes"
+        case .mind: return "Mind"
         }
     }
     var icon: String {
@@ -17,6 +18,7 @@ enum Tab: Int, CaseIterable {
         case .journal: return "book"
         case .resources: return "link"
         case .notes: return "note.text"
+        case .mind: return "point.3.connected.trianglepath.dotted"
         }
     }
     var selectedIcon: String {
@@ -25,6 +27,7 @@ enum Tab: Int, CaseIterable {
         case .journal: return "book.fill"
         case .resources: return "link"
         case .notes: return "note.text"
+        case .mind: return "point.3.filled.connected.trianglepath.dotted"
         }
     }
 }
@@ -75,6 +78,7 @@ struct RootView: View {
             }
         }
         .preferredColorScheme(mode.colorScheme)
+        .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
         .onAppear {
             if hasSeenOnboarding { scheduleSplashDismiss() }
         }
@@ -109,6 +113,7 @@ struct ContentView: View {
                 JournalView(store: store).tag(Tab.journal)
                 ResourcesView(store: store).tag(Tab.resources)
                 NotesView(store: store).tag(Tab.notes)
+                MindView(store: store).tag(Tab.mind)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
         }
@@ -123,9 +128,10 @@ struct ContentView: View {
 
 struct GlassTabBar: View {
     @Binding var selectedTab: Tab
+    @Environment(\.horizontalSizeClass) private var h
 
     private var selectedIndex: Int { Tab.allCases.firstIndex(of: selectedTab) ?? 0 }
-    private let barHeight: CGFloat = 52
+    private let barHeight: CGFloat = 54
     private let inset: CGFloat = 5
     private let selectorAnim = Animation.interactiveSpring(response: 0.26, dampingFraction: 0.74)
 
@@ -168,7 +174,7 @@ struct GlassTabBar: View {
         .frame(height: barHeight)
         .padding(inset)
         .glassCapsule()
-        .padding(.horizontal, SafeDesign.xxl)
+        .padding(.horizontal, h == .regular ? SafeDesign.xxxl : SafeDesign.l)
         .padding(.bottom, SafeDesign.xs)
     }
 

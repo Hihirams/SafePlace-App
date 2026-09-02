@@ -2,9 +2,12 @@ import SwiftUI
 
 struct ResourcesView: View {
     @ObservedObject var store: Store
+    @Environment(\.horizontalSizeClass) private var h
+    @Environment(\.verticalSizeClass) private var v
     @State private var text = ""
     @State private var url = ""
     @State private var filter: Filter = .all
+    @State private var contentWidth: CGFloat = 0
 
     enum Filter: String, CaseIterable, Identifiable {
         case all = "All"
@@ -44,7 +47,7 @@ struct ResourcesView: View {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, SafeDesign.xxxl)
                 } else {
-                    LazyVGrid(columns: [GridItem(.flexible(), spacing: SafeDesign.m), GridItem(.flexible())], spacing: SafeDesign.m) {
+                    LazyVGrid(columns: SafeLayout.columns(forWidth: contentWidth), spacing: SafeDesign.m) {
                         ForEach(filtered) { resource in
                             resourceCard(resource)
                         }
@@ -52,9 +55,10 @@ struct ResourcesView: View {
                     .animation(SafeDesign.spring, value: filter)
                 }
             }
-            .padding(.horizontal, SafeDesign.xl)
+            .pageColumn(h, v)
             .padding(.top, SafeDesign.l)
-            .padding(.bottom, 110)
+            .padding(.bottom, SafeLayout.tabBarClearance(h))
+            .readingWidth($contentWidth)
         }
     }
 

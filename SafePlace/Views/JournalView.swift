@@ -2,8 +2,11 @@ import SwiftUI
 
 struct JournalView: View {
     @ObservedObject var store: Store
+    @Environment(\.horizontalSizeClass) private var h
+    @Environment(\.verticalSizeClass) private var v
     @State private var editingEntry: Entry?
     @State private var showForm = false
+    @State private var contentWidth: CGFloat = 0
 
     private var grouped: [JournalGroup] {
         let sorted = store.entries.sorted { $0.createdAt > $1.createdAt }
@@ -42,7 +45,7 @@ struct JournalView: View {
                                 .tracking(1.5)
                                 .foregroundStyle(SafeDesign.muted)
 
-                            LazyVGrid(columns: [GridItem(.flexible(), spacing: SafeDesign.m), GridItem(.flexible())], spacing: SafeDesign.m) {
+                            LazyVGrid(columns: SafeLayout.columns(forWidth: contentWidth), spacing: SafeDesign.m) {
                                 ForEach(group.entries) { entry in
                                     EntryCardView(entry: entry) {
                                         editingEntry = entry
@@ -56,9 +59,10 @@ struct JournalView: View {
                     }
                 }
             }
-            .padding(.horizontal, SafeDesign.xl)
+            .pageColumn(h, v)
             .padding(.top, SafeDesign.l)
-            .padding(.bottom, 110)
+            .padding(.bottom, SafeLayout.tabBarClearance(h))
+            .readingWidth($contentWidth)
         }
         .sheet(isPresented: $showForm) {
             EntryFormView(
