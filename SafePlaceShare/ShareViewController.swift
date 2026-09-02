@@ -60,17 +60,13 @@ final class ShareViewController: SLComposeServiceViewController {
         }
     }
 
-    override func didCancel() {
-        extensionContext?.completeRequest(returningItems: [])
-    }
-
     // MARK: - Persistence (shared app-group container)
 
     private func save(_ text: String) {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
 
-        var notes = Self.load()
+        var notes = Self.loadSharedNotes()
         notes.insert(
             SharedNotePayload(
                 id: "n-\(UUID().uuidString)",
@@ -80,7 +76,7 @@ final class ShareViewController: SLComposeServiceViewController {
             ),
             at: 0
         )
-        Self.write(notes)
+        Self.saveSharedNotes(notes)
     }
 
     private static func title(from text: String) -> String {
@@ -100,12 +96,12 @@ final class ShareViewController: SLComposeServiceViewController {
             .appendingPathComponent("SharedNotes.json")
     }
 
-    private static func load() -> [SharedNotePayload] {
+    private static func loadSharedNotes() -> [SharedNotePayload] {
         guard let url = fileURL, let data = try? Data(contentsOf: url) else { return [] }
         return (try? JSONDecoder().decode([SharedNotePayload].self, from: data)) ?? []
     }
 
-    private static func write(_ notes: [SharedNotePayload]) {
+    private static func saveSharedNotes(_ notes: [SharedNotePayload]) {
         guard let url = fileURL else { return }
         do {
             let data = try JSONEncoder().encode(notes)
