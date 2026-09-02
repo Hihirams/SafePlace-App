@@ -1,0 +1,9 @@
+* text=auto
+
+# Xcode / Swift sources must stay LF so the macOS CI build is happy
+*.swift text eol=lf
+*.pbxproj text eol=lf
+*.plist text eol=lf
+*.entitlements text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
