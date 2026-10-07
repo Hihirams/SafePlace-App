@@ -126,6 +126,38 @@ final class Store: ObservableObject {
         persist()
     }
 
+    // MARK: - Backup
+
+    struct Backup: Codable {
+        var entries: [Entry]
+        var categories: [String]
+        var resources: [Resource]
+    }
+
+    func exportJSON() -> Data? {
+        let backup = Backup(entries: entries, categories: categories, resources: resources)
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        return try? encoder.encode(backup)
+    }
+
+    @discardableResult
+    func importJSON(_ data: Data) -> Bool {
+        guard let backup = try? JSONDecoder().decode(Backup.self, from: data) else { return false }
+        entries = backup.entries
+        categories = backup.categories.isEmpty ? Self.defaultCategories : backup.categories
+        resources = backup.resources
+        persist()
+        return true
+    }
+
+    func eraseAll() {
+        entries = []
+        resources = []
+        categories = Self.defaultCategories
+        persist()
+    }
+
     // MARK: - Shared notes (from Apple Notes / Share sheet)
 
     /// Move a shared note into the safe place as a regular entry.

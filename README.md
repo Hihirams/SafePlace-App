@@ -17,10 +17,24 @@ App de iPhone para guardar las pequeñas cosas que te ayudan: hábitos, personas
 
 ## Diseño
 
-- **Canvas**: `#FFFaf0` (crema cálido)
-- **Tarjetas brand**: pink `#FF4D8B`, teal `#1A3A3A`, lavender `#B8A4ED`, peach `#FFB084`, ochre `#E8B94A`, mint `#A4D4C5`, coral `#FF6B5A`, cream `#F5F0E0`
+- **Paleta powder-blush**: powder-blush `#FEC5BB`, almond-silk `#FCD5CE`, soft-blush `#FAE1DD`, seashell `#F8EDEB`, alabaster `#E8E8E4`, alabaster-2 `#D8E2DC`, linen `#ECE4DB`, powder-petal `#FFE5D9`, peach-fuzz `#FFD7BA`, peach-glow `#FEC89A`
+- **Acento**: peach-glow; las tarjetas de nota conservan su paleta viva (pink, teal, lavender, peach, ochre, mint, coral, cream)
+- **Modo oscuro**: negro puro `#000` (superficies casi negras, sin gris) con la paleta adaptada
+- **Logo**: icono de app (escudo + corazón) en la paleta nueva
 - **Liquid glass**: efectos `.ultraThinMaterial` con bordes translúcidos (y Liquid Glass nativo de Apple en iOS 26)
 - **Tipografía**: SF Rounded para cifras y encabezados
+
+## Funciones
+
+- **Quick capture**: botón flotante para registrar un momento en 3 segundos (mood + texto opcional)
+- **Home viva**: check-in de mood del día, "on this day", quick actions, stats y barras clickeables, y vista **Overview / Insights**
+- **Insights** (Swift Charts): notas por día, distribución por mood/categoría, palabras frecuentes y mejor racha — observacional, sin culpa
+- **Ajustes** (desde el avatar): tema, recordatorio diario opcional, export/import JSON, borrar datos, versión y feed de actualización
+- **Journal**: búsqueda, filtro por mood y secciones por día colapsables
+- **Saved**: copiar/compartir/convertir en nota/borrar
+- **Notes**: preview, renombrar, "Keep all"
+- **Mind**: grafo force-directed responsive con nodos con degradado, glow, zoom, pan, pin y etiquetas
+
 
 ## Estructura
 

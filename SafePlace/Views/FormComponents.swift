@@ -74,7 +74,7 @@ struct ClayTextField: View {
             TextField(placeholder, text: $text)
                 .font(SafeDesign.body)
                 .foregroundStyle(SafeDesign.ink)
-                .tint(SafeDesign.ochre)
+                .tint(SafeDesign.accentDeep)
         }
         .padding(.horizontal, SafeDesign.l)
         .padding(.vertical, SafeDesign.m)
@@ -91,7 +91,7 @@ struct ClayTextArea: View {
         TextEditor(text: $text)
             .font(SafeDesign.body)
             .foregroundStyle(SafeDesign.ink)
-            .tint(SafeDesign.ochre)
+            .tint(SafeDesign.accentDeep)
             .scrollContentBackground(.hidden)
             .padding(SafeDesign.m)
             .frame(minHeight: 110)
@@ -192,7 +192,7 @@ struct ClaySearchBar: View {
             TextField("Search", text: $text)
                 .font(SafeDesign.body)
                 .foregroundStyle(SafeDesign.ink)
-                .tint(SafeDesign.ochre)
+                .tint(SafeDesign.accentDeep)
         }
         .padding(.horizontal, SafeDesign.l)
         .padding(.vertical, SafeDesign.m)

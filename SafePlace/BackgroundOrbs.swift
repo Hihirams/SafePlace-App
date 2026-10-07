@@ -1,36 +1,34 @@
 import SwiftUI
 
-/// The app canvas — a warm off-white with two very faint brand glows so the
-/// frosted glass tab bar has something soft to refract. Deliberately subtle:
-/// it should read as clean paper, not a gradient wallpaper.
+/// The app canvas — a soft powder-blush wash with two faint palette glows so the
+/// frosted glass tab bar has something gentle to refract. Deliberately subtle:
+/// it should read as clean paper (light) or deep black (dark), not a wallpaper.
 struct BackgroundOrbs: View {
     var body: some View {
         ZStack {
             SafeDesign.canvas
                 .ignoresSafeArea()
 
-            // Warm clay glow — top trailing
             RadialGradient(
                 colors: [
-                    SafeDesign.peach.opacity(0.12),
-                    SafeDesign.peach.opacity(0.03),
+                    SafeDesign.peachGlow.opacity(0.28),
+                    SafeDesign.peachFuzz.opacity(0.10),
                     .clear
                 ],
                 center: .topTrailing,
-                startRadius: 30,
-                endRadius: 320
+                startRadius: 20,
+                endRadius: 340
             )
             .ignoresSafeArea()
 
-            // Soft lavender glow — bottom leading
             RadialGradient(
                 colors: [
-                    SafeDesign.lavender.opacity(0.08),
+                    SafeDesign.powderBlush.opacity(0.24),
                     .clear
                 ],
                 center: .bottomLeading,
                 startRadius: 20,
-                endRadius: 260
+                endRadius: 300
             )
             .ignoresSafeArea()
         }

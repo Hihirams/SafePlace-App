@@ -31,6 +31,10 @@
 		AA0100000000000000000116 /* MindGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000001019 /* MindGraph.swift */; };
 		AA0100000000000000000117 /* MindSimulation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB010000000000000000101A /* MindSimulation.swift */; };
 		AA0100000000000000000118 /* MindView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB010000000000000000101B /* MindView.swift */; };
+		AA0100000000000000000119 /* QuickCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB010000000000000000101C /* QuickCaptureView.swift */; };
+		AA010000000000000000011A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB010000000000000000101D /* SettingsView.swift */; };
+		AA010000000000000000011B /* InsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB010000000000000000101E /* InsightsView.swift */; };
+		AA010000000000000000011C /* Reminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB010000000000000000101F /* Reminders.swift */; };
 		AA0100000000000000000200 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000002001 /* ShareViewController.swift */; };
 		AA0100000000000000000201 /* SafePlaceShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BB0100000000000000002004 /* SafePlaceShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -87,6 +91,10 @@
 		BB0100000000000000001019 /* MindGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindGraph.swift; sourceTree = "<group>"; };
 		BB010000000000000000101A /* MindSimulation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindSimulation.swift; sourceTree = "<group>"; };
 		BB010000000000000000101B /* MindView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindView.swift; sourceTree = "<group>"; };
+		BB010000000000000000101C /* QuickCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickCaptureView.swift; sourceTree = "<group>"; };
+		BB010000000000000000101D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		BB010000000000000000101E /* InsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsView.swift; sourceTree = "<group>"; };
+		BB010000000000000000101F /* Reminders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminders.swift; sourceTree = "<group>"; };
 		BB0100000000000000002001 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		BB0100000000000000002002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BB0100000000000000002003 /* SafePlaceShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SafePlaceShare.entitlements; sourceTree = "<group>"; };
@@ -183,6 +191,7 @@
 			children = (
 				BB010000000000000000100C /* Store.swift */,
 				BB010000000000000000101A /* MindSimulation.swift */,
+				BB010000000000000000101F /* Reminders.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -200,6 +209,9 @@
 				BB0100000000000000001014 /* GlassCard.swift */,
 				BB0100000000000000001015 /* FormComponents.swift */,
 				BB010000000000000000101B /* MindView.swift */,
+				BB010000000000000000101C /* QuickCaptureView.swift */,
+				BB010000000000000000101D /* SettingsView.swift */,
+				BB010000000000000000101E /* InsightsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -320,6 +332,10 @@
 				AA0100000000000000000116 /* MindGraph.swift in Sources */,
 				AA0100000000000000000117 /* MindSimulation.swift in Sources */,
 				AA0100000000000000000118 /* MindView.swift in Sources */,
+				AA0100000000000000000119 /* QuickCaptureView.swift in Sources */,
+				AA010000000000000000011A /* SettingsView.swift in Sources */,
+				AA010000000000000000011B /* InsightsView.swift in Sources */,
+				AA010000000000000000011C /* Reminders.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
