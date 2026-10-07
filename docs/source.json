@@ -1,0 +1,31 @@
+{
+  "name": "SafePlace",
+  "identifier": "com.hihirams.safeplace.source",
+  "sourceURL": "https://hihirams.github.io/SafePlace-App/source.json",
+  "subtitle": "Builds personales de SafePlace",
+  "description": "Builds automáticos de SafePlace para LiveContainer.",
+  "iconURL": "https://hihirams.github.io/SafePlace-App/icon.png",
+  "apps": [
+    {
+      "name": "SafePlace",
+      "bundleIdentifier": "com.hihirams.safeplace",
+      "developerName": "Hihirams",
+      "subtitle": "Guarda las pequeñas cosas que te ayudan",
+      "localizedDescription": "App de iPhone para guardar hábitos, personas, lugares, música y autocuidado.",
+      "iconURL": "https://hihirams.github.io/SafePlace-App/icon.png",
+      "tintColor": "FF4D8B",
+      "category": "lifestyle",
+      "versions": [
+        {
+          "version": "1.0.0",
+          "buildVersion": "0",
+          "date": "2026-01-01",
+          "localizedDescription": "Plantilla inicial: el workflow la regenera en cada release.",
+          "downloadURL": "https://github.com/Hihirams/SafePlace-App/releases/download/build-1/SafePlace.ipa",
+          "size": 0,
+          "minOSVersion": "17.0"
+        }
+      ]
+    }
+  ]
+}

@@ -70,16 +70,37 @@ SafePlace - IOS/
 - O usar GitHub Actions para build sin firma
 
 ### GitHub Actions
-El workflow `.github/workflows/build-ios.yml` genera un IPA sin firma automáticamente.
 
-1. Ir a **Actions** en el repositorio
-2. Seleccionar **Build iOS IPA**
-3. Click en **Run workflow**
-4. Descargar el IPA desde **Artifacts**
+El workflow `.github/workflows/build-ios.yml` compila y publica el IPA sin firma automáticamente. Se dispara en **cada push a `main`** (o manualmente con **Run workflow**). En cada build:
 
-### Instalación en iPhone
-- Usar [AltStore](https://altstore.io/) o similar para instalar IPAs sin firma
-- O configurar certificados de Apple Developer en GitHub Secrets
+1. Compila el archive (`CODE_SIGNING_ALLOWED=NO`) bumpeando la versión a `1.0.<run_number>` / build `<run_number>`.
+2. Publica el IPA como **GitHub Release** (tag `build-<run_number>`) con URL estable y pública.
+3. Regenera `docs/source.json` (formato **AltSource**) apuntando a ese Release.
+4. Despliega `docs/` a **GitHub Pages**.
+
+> **Prerrequisito:** el repositorio debe ser **público** (los assets de Release y GitHub Pages no son alcanzables por LiveContainer sin token). Pages se habilita automáticamente en el primer run; si falla, actívalo en *Settings → Pages → Build and deployment → Source: GitHub Actions*.
+
+### Instalación / updates en LiveContainer
+
+El feed AltSource queda en:
+
+```
+https://hihirams.github.io/SafePlace-App/source.json
+```
+
+Para agregarlo en el iPhone (una sola vez), abre este enlace en Safari/Notas:
+
+```
+livecontainer://sources?url=https://hihirams.github.io/SafePlace-App/source.json
+```
+
+LiveContainer consulta el feed y, cuando un nuevo push a `main` genera un release, el botón de la app muestra **Update**; un toque descarga e instala la versión nueva (conservando tus datos). También puedes instalar/actualizar de forma puntual con:
+
+```
+livecontainer://install?url=https://github.com/Hihirams/SafePlace-App/releases/latest/download/SafePlace.ipa
+```
+
+AltStore/SideStore y otras herramientas compatibles con AltSource también pueden consumir el mismo feed. La instalación no puede ser silenciosa en segundo plano: iOS requiere confirmación.
 
 ## NOTAS (Apple Notes) — cómo funciona
 
@@ -90,7 +111,7 @@ La app Notas de Apple no expone una API pública para leer notas de terceros, as
 3. Elige **SafePlace**
 4. La nota llega a la pestaña **Notes** de la app, donde puedes leerla y decidir "Keep it" (guardarla en tu safe place) o descartarla
 
-> Nota: para que la extensión funcione en un dispositivo real se necesita una build firmada con tu cuenta de Apple Developer (las builds sin firma vía Actions requieren AltStore y no activan app groups).
+> Nota: para que la extensión funcione en un dispositivo real se necesita una build firmada con tu cuenta de Apple Developer (las builds sin firma vía Actions, instaladas con LiveContainer/AltStore, no activan app groups).
 
 ## Mind (grafo de pensamientos)
 
