@@ -68,7 +68,7 @@ enum SafeDesign {
     static let moodCalm    = Color(hex: "D8E2DC")   // alabaster grey 2
     static let moodHopeful = Color(hex: "FEC5BB")   // powder blush
     static let moodMixed   = Color(hex: "FFD7BA")   // peach fuzz
-    static let moodHeavy   = Color(hex: "E8E8E4")   // alabaster grey
+    static let moodHeavy   = Color(hex: "A9BCD0")   // soft sad blue
 
     // MARK: - Functional
     static let success = Color(hex: "22C55E")

@@ -22,7 +22,7 @@ struct MindEdge: Identifiable {
 }
 
 enum MindColorMode: String, CaseIterable, Identifiable {
-    case mood, category, card
+    case mood, category, card, contagion
 
     var id: String { rawValue }
 
@@ -31,6 +31,7 @@ enum MindColorMode: String, CaseIterable, Identifiable {
         case .mood: return "Mood"
         case .category: return "Category"
         case .card: return "Card"
+        case .contagion: return "Wave"
         }
     }
 
@@ -39,6 +40,7 @@ enum MindColorMode: String, CaseIterable, Identifiable {
         case .mood: return "heart.fill"
         case .category: return "tag.fill"
         case .card: return "square.fill"
+        case .contagion: return "drop.fill"
         }
     }
 }
@@ -122,7 +124,7 @@ struct MindGraph {
 
     private static func color(for entry: Entry, mode: MindColorMode) -> Color {
         switch mode {
-        case .mood:
+        case .mood, .contagion:
             return Mood.mood(for: entry.mood).color
         case .category:
             let palette: [Color] = [
@@ -134,6 +136,18 @@ struct MindGraph {
         case .card:
             return entry.cardColor.fill
         }
+    }
+
+    /// The mood that shows up most across the notes, with how dominant it is
+    /// (its share of all notes, 0...1). Drives the "wave" contagion view.
+    static func dominantMood(of entries: [Entry]) -> (mood: Mood, dominance: CGFloat)? {
+        guard !entries.isEmpty else { return nil }
+        var counts: [String: Int] = [:]
+        for entry in entries { counts[entry.mood, default: 0] += 1 }
+        guard let top = counts.max(by: { $0.value < $1.value }) else { return nil }
+        let mood = Mood.mood(for: top.key)
+        let dominance = CGFloat(top.value) / CGFloat(entries.count)
+        return (mood, dominance)
     }
 
     /// Bigger for connected notes and for notes with more to say.

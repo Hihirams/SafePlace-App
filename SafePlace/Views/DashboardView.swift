@@ -6,6 +6,7 @@ struct DashboardView: View {
     @Binding var selectedTab: Tab
     var onOpenSettings: () -> Void = {}
     @AppStorage("themeMode") private var themeRaw = ThemeMode.system.rawValue
+    @AppStorage("mascotColorHex") private var mascotColorHex = MascotColorOption.peach.rawValue
     @Environment(\.horizontalSizeClass) private var h
     @Environment(\.verticalSizeClass) private var v
 
@@ -101,6 +102,7 @@ struct DashboardView: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: SafeDesign.xl) {
                 header
+                mascotHero
                 todayCard
                 if !onThisDay.isEmpty { onThisDaySection }
                 modePicker
@@ -181,6 +183,20 @@ struct DashboardView: View {
             .pressable()
             .accessibilityLabel("Add a note")
         }
+    }
+
+    // MARK: - Character
+
+    private var mascotHero: some View {
+        VStack(spacing: SafeDesign.s) {
+            MascotView(color: Color(hex: mascotColorHex), size: 210, animate: true)
+                .frame(height: 240)
+            Text("I'm here with you.")
+                .font(SafeDesign.caption)
+                .foregroundStyle(SafeDesign.muted)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, SafeDesign.xs)
     }
 
     // MARK: - Today

@@ -15,6 +15,8 @@ struct EntryFormView: View {
     @State private var color: CardColor
     @State private var showNewCategory = false
     @State private var newCategory = ""
+    @State private var autoSuggested: String?
+    @State private var userChoseCategory = false
 
     init(initial: Entry?, categories: [String], onSave: @escaping (Entry) -> Void, onClose: @escaping () -> Void) {
         self.initial = initial
@@ -53,7 +55,10 @@ struct EntryFormView: View {
                             HStack(spacing: SafeDesign.s) {
                                 Menu {
                                     ForEach(effectiveCategories, id: \.self) { c in
-                                        Button(c) { category = c }
+                                        Button(c) {
+                                            category = c
+                                            userChoseCategory = true
+                                        }
                                     }
                                 } label: {
                                     HStack {
@@ -73,6 +78,7 @@ struct EntryFormView: View {
                                 .buttonStyle(.plain)
 
                                 Button {
+                                    userChoseCategory = true
                                     withAnimation(SafeDesign.spring) { showNewCategory.toggle() }
                                 } label: {
                                     Text(showNewCategory ? "Cancel" : "+ New")
@@ -88,6 +94,12 @@ struct EntryFormView: View {
 
                             if showNewCategory {
                                 ClayTextField(icon: "plus", placeholder: "New category name...", text: $newCategory)
+                            }
+
+                            if initial == nil, let suggested = autoSuggested, category == suggested, !userChoseCategory {
+                                Label("Suggested from your note", systemImage: "sparkles")
+                                    .font(SafeDesign.micro)
+                                    .foregroundStyle(SafeDesign.accentDeep)
                             }
                         }
                     }
@@ -114,6 +126,16 @@ struct EntryFormView: View {
             }
             .background(SafeDesign.canvas.ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
+            .onChange(of: title) { _, _ in applySuggestion() }
+            .onChange(of: description) { _, _ in applySuggestion() }
+        }
+    }
+
+    private func applySuggestion() {
+        guard initial == nil, !userChoseCategory else { return }
+        if let suggested = Categorizer.suggest(title: title, description: description, categories: effectiveCategories) {
+            autoSuggested = suggested
+            category = suggested
         }
     }
 

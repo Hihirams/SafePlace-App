@@ -21,6 +21,7 @@ struct MindView: View {
 
     @State private var editingEntry: Entry?
     @State private var showForm = false
+    @State private var contagionStart = Date()
 
     private var minWeight: CGFloat { 0.2 + (1 - sensitivity) * 1.6 }
 
@@ -81,7 +82,10 @@ struct MindView: View {
         }
         .onAppear(perform: rebuildNodes)
         .onChange(of: store.entries) { _, _ in rebuildNodes() }
-        .onChange(of: colorMode) { _, _ in rebuildNodes() }
+        .onChange(of: colorMode) { _, newMode in
+            if newMode == .contagion { contagionStart = Date() }
+            rebuildNodes()
+        }
         .onChange(of: sensitivity) { _, _ in refreshEdges() }
         .sheet(isPresented: $showForm) {
             EntryFormView(
@@ -103,12 +107,12 @@ struct MindView: View {
 
     private var graphArea: some View {
         GeometryReader { geo in
-            TimelineView(.animation(minimumInterval: 1.0 / 30)) { _ in
+            TimelineView(.animation(minimumInterval: 1.0 / 30)) { timeline in
                 Canvas { context, size in
                     if !paused, let simulation {
                         simulation.step(iterations: 1, energy: energy)
                     }
-                    drawGraph(in: &context, size: size)
+                    drawGraph(in: &context, size: size, date: timeline.date)
                 }
             }
             .onAppear { canvasSize = geo.size }
@@ -147,9 +151,14 @@ struct MindView: View {
         )
     }
 
-    private func drawGraph(in context: inout GraphicsContext, size: CGSize) {
+    private func drawGraph(in context: inout GraphicsContext, size: CGSize, date: Date) {
         guard let simulation else { return }
         _ = size
+
+        let index = Dictionary(uniqueKeysWithValues: graph.nodes.enumerated().map { ($1.id, $0) })
+        let dominant = (colorMode == .contagion) ? MindGraph.dominantMood(of: store.entries) : nil
+        let elapsed = date.timeIntervalSince(contagionStart)
+        let globalProgress = min(max(elapsed / 5.0, 0), 1)
 
         // Edges underneath.
         for edge in graph.edges {
@@ -180,16 +189,24 @@ struct MindView: View {
             if selectedID != nil && !connectedIDs.contains(node.id) { alpha = 0.20 }
             let isSelected = node.id == selectedID
 
+            let nodeColor = blendedNodeColor(
+                for: node,
+                index: index[node.id] ?? 0,
+                total: graph.nodes.count,
+                globalProgress: globalProgress,
+                dominant: dominant
+            )
+
             // Soft colored glow.
             let glow = Path(ellipseIn: CGRect(x: center.x - radius * 1.9, y: center.y - radius * 1.9, width: radius * 3.8, height: radius * 3.8))
-            context.fill(glow, with: .color(node.color.opacity(0.18 * alpha)))
+            context.fill(glow, with: .color(nodeColor.opacity(0.18 * alpha)))
 
             // Body with a soft vertical gradient.
             let bodyRect = CGRect(x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)
             let body = Path(ellipseIn: bodyRect)
             let gradient = Gradient(colors: [
-                node.color.opacity(0.98 * alpha),
-                node.color.opacity(0.72 * alpha)
+                nodeColor.opacity(0.98 * alpha),
+                nodeColor.opacity(0.72 * alpha)
             ])
             context.fill(body, with: .linearGradient(
                 gradient,
@@ -239,6 +256,23 @@ struct MindView: View {
         }
     }
 
+    /// In the "wave" mode every node slowly adopts the dominant mood's color,
+    /// one after another, so the graph visibly drifts toward the feeling that
+    /// is taking over.
+    private func blendedNodeColor(
+        for node: MindNode,
+        index: Int,
+        total: Int,
+        globalProgress: Double,
+        dominant: (mood: Mood, dominance: CGFloat)?
+    ) -> Color {
+        guard let dominant else { return node.color }
+        let stagger = total > 1 ? Double(index) / Double(total) * 0.6 : 0
+        let local = min(max((globalProgress - stagger) / 0.4, 0), 1)
+        let strength = 0.35 + 0.6 * Double(dominant.dominance)
+        return node.color.blended(with: dominant.mood.color, amount: CGFloat(local * strength))
+    }
+
     private func handleTap(at point: CGPoint) {
         guard let simulation else { selectedID = nil; return }
         var bestID: String?
@@ -270,15 +304,21 @@ struct MindView: View {
     }
 
     private var energyPill: some View {
-        Label(
-            "\(store.entries.count) notes · energy \(Int(energy * 100))%",
-            systemImage: paused ? "pause.fill" : "sparkles"
-        )
-        .font(SafeDesign.caption)
-        .foregroundStyle(SafeDesign.ink)
-        .padding(.horizontal, SafeDesign.m)
-        .padding(.vertical, 6)
-        .background(SafeDesign.surfaceCard, in: Capsule())
+        let text: String
+        let icon: String
+        if colorMode == .contagion, let dom = MindGraph.dominantMood(of: store.entries) {
+            text = "mostly \(dom.mood.label.lowercased()) · \(Int(dom.dominance * 100))%"
+            icon = dom.mood.icon
+        } else {
+            text = "\(store.entries.count) notes · energy \(Int(energy * 100))%"
+            icon = paused ? "pause.fill" : "sparkles"
+        }
+        return Label(text, systemImage: icon)
+            .font(SafeDesign.caption)
+            .foregroundStyle(SafeDesign.ink)
+            .padding(.horizontal, SafeDesign.m)
+            .padding(.vertical, 6)
+            .background(SafeDesign.surfaceCard, in: Capsule())
     }
 
     // MARK: - Controls
