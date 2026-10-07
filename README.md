@@ -33,7 +33,10 @@ App de iPhone para guardar las pequeñas cosas que te ayudan: hábitos, personas
 - **Journal**: búsqueda, filtro por mood y secciones por día colapsables
 - **Saved**: copiar/compartir/convertir en nota/borrar
 - **Notes**: preview, renombrar, "Keep all"
+- **Auto-categoría**: al escribir una nota se sugiere una categoría según el contenido (puedes cambiarla antes de guardar)
 - **Mind**: grafo force-directed responsive con nodos con degradado, glow, zoom, pan, pin y etiquetas
+- **Mind · Wave**: vista de contagio — las bolitas adoptan poco a poco el color del sentimiento dominante para mostrar qué emoción manda en tus notas
+- **Personaje**: una forma tipo *dumpling* (sin cara) que aparece en grande en Home, con movimiento suave y color personalizable desde Ajustes
 
 
 ## Estructura

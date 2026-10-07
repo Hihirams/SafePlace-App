@@ -10,6 +10,7 @@ struct QuickCaptureView: View {
     @State private var title: String = ""
     @State private var note: String = ""
     @State private var category: String = ""
+    @State private var userChoseCategory = false
 
     private let moodToColor: [String: CardColor] = [
         "bright": .peach, "calm": .mint, "hopeful": .lavender,
@@ -47,6 +48,15 @@ struct QuickCaptureView: View {
         }
         .onAppear {
             if category.isEmpty { category = store.categories.first ?? "Self-care" }
+        }
+        .onChange(of: title) { _, _ in applySuggestion() }
+        .onChange(of: note) { _, _ in applySuggestion() }
+    }
+
+    private func applySuggestion() {
+        guard !userChoseCategory else { return }
+        if let suggested = Categorizer.suggest(title: title, description: note, categories: store.categories) {
+            withAnimation(SafeDesign.springSnappy) { category = suggested }
         }
     }
 
@@ -93,6 +103,7 @@ struct QuickCaptureView: View {
                     ForEach(store.categories, id: \.self) { c in
                         SelectionPill(title: c, isSelected: category == c) {
                             Haptics.selection()
+                            userChoseCategory = true
                             withAnimation(SafeDesign.springSnappy) { category = c }
                         }
                     }

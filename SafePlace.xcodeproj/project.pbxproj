@@ -35,6 +35,8 @@
 		AA010000000000000000011A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB010000000000000000101D /* SettingsView.swift */; };
 		AA010000000000000000011B /* InsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB010000000000000000101E /* InsightsView.swift */; };
 		AA010000000000000000011C /* Reminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB010000000000000000101F /* Reminders.swift */; };
+		AA010000000000000000011D /* Categorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000001020 /* Categorizer.swift */; };
+		AA010000000000000000011E /* MascotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000001021 /* MascotView.swift */; };
 		AA0100000000000000000200 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000002001 /* ShareViewController.swift */; };
 		AA0100000000000000000201 /* SafePlaceShare.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BB0100000000000000002004 /* SafePlaceShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -95,6 +97,8 @@
 		BB010000000000000000101D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		BB010000000000000000101E /* InsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsView.swift; sourceTree = "<group>"; };
 		BB010000000000000000101F /* Reminders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminders.swift; sourceTree = "<group>"; };
+		BB0100000000000000001020 /* Categorizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Categorizer.swift; sourceTree = "<group>"; };
+		BB0100000000000000001021 /* MascotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MascotView.swift; sourceTree = "<group>"; };
 		BB0100000000000000002001 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		BB0100000000000000002002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BB0100000000000000002003 /* SafePlaceShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SafePlaceShare.entitlements; sourceTree = "<group>"; };
@@ -192,6 +196,7 @@
 				BB010000000000000000100C /* Store.swift */,
 				BB010000000000000000101A /* MindSimulation.swift */,
 				BB010000000000000000101F /* Reminders.swift */,
+				BB0100000000000000001020 /* Categorizer.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -212,6 +217,7 @@
 				BB010000000000000000101C /* QuickCaptureView.swift */,
 				BB010000000000000000101D /* SettingsView.swift */,
 				BB010000000000000000101E /* InsightsView.swift */,
+				BB0100000000000000001021 /* MascotView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -336,6 +342,8 @@
 				AA010000000000000000011A /* SettingsView.swift in Sources */,
 				AA010000000000000000011B /* InsightsView.swift in Sources */,
 				AA010000000000000000011C /* Reminders.swift in Sources */,
+				AA010000000000000000011D /* Categorizer.swift in Sources */,
+				AA010000000000000000011E /* MascotView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

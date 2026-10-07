@@ -10,6 +10,7 @@ struct SettingsView: View {
     @AppStorage("reminderHour") private var reminderHour = 21
     @AppStorage("reminderMinute") private var reminderMinute = 0
     @AppStorage("hapticsEnabled") private var hapticsEnabled = true
+    @AppStorage("mascotColorHex") private var mascotColorHex = MascotColorOption.peach.rawValue
 
     @State private var exportURL: URL?
     @State private var showImporter = false
@@ -45,6 +46,7 @@ struct SettingsView: View {
                     SheetHeader(title: "Settings", subtitle: "Make SafePlace feel like yours.", onClose: { dismiss() })
 
                     appearanceSection
+                    characterSection
                     remindersSection
                     dataSection
                     aboutSection
@@ -83,6 +85,32 @@ struct SettingsView: View {
                     }
                 }
             }
+        }
+    }
+
+    private var characterSection: some View {
+        SettingsCard(title: "Your character", icon: "face.smiling") {
+            VStack(spacing: SafeDesign.m) {
+                MascotView(color: Color(hex: mascotColorHex), size: 120, animate: true)
+                    .frame(height: 130)
+                HStack(spacing: SafeDesign.s) {
+                    ForEach(MascotColorOption.allCases) { option in
+                        Button {
+                            Haptics.selection()
+                            withAnimation(SafeDesign.spring) { mascotColorHex = option.rawValue }
+                        } label: {
+                            Circle()
+                                .fill(option.color)
+                                .frame(width: 34, height: 34)
+                                .overlay {
+                                    Circle().strokeBorder(mascotColorHex == option.rawValue ? SafeDesign.ink : SafeDesign.hairline, lineWidth: 2)
+                                }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity)
         }
     }
 
