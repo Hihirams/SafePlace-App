@@ -128,9 +128,12 @@ struct ContentView: View {
             .tabViewStyle(.page(indexDisplayMode: .never))
         }
         .overlay(alignment: .bottomTrailing) {
-            QuickCaptureButton { showQuickCapture = true }
-                .padding(.trailing, h == .regular ? SafeDesign.xxxl + 8 : SafeDesign.l)
-                .padding(.bottom, SafeLayout.tabBarClearance(h) - 22)
+            if selectedTab != .mind {
+                QuickCaptureButton { showQuickCapture = true }
+                    .padding(.trailing, h == .regular ? SafeDesign.xxxl + 8 : SafeDesign.l)
+                    .padding(.bottom, SafeLayout.tabBarClearance(h) - 22)
+                    .transition(.scale.combined(with: .opacity))
+            }
         }
         .overlay(alignment: .bottom) {
             GlassTabBar(selectedTab: $selectedTab)

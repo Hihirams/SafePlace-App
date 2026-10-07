@@ -61,22 +61,23 @@ struct MindView: View {
                 graphArea
             }
 
-            VStack {
+            VStack(spacing: 0) {
                 header
-                Spacer()
-            }
-            .padding(.horizontal, SafeLayout.pageInset(h, v))
-            .padding(.top, SafeDesign.s)
+                    .padding(.horizontal, SafeLayout.pageInset(h, v))
+                    .padding(.top, SafeDesign.s)
 
-            VStack(spacing: SafeDesign.s) {
-                if let entry = selectedEntry {
-                    selectionCard(entry)
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                Spacer(minLength: SafeDesign.s)
+
+                VStack(spacing: SafeDesign.s) {
+                    if let entry = selectedEntry {
+                        selectionCard(entry)
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                    }
+                    controls
                 }
-                controls
+                .padding(.horizontal, SafeLayout.pageInset(h, v))
+                .padding(.bottom, SafeLayout.tabBarClearance(h))
             }
-            .padding(.horizontal, SafeLayout.pageInset(h, v))
-            .padding(.bottom, SafeLayout.tabBarClearance(h))
         }
         .onAppear(perform: rebuildNodes)
         .onChange(of: store.entries) { _, _ in rebuildNodes() }
@@ -284,27 +285,17 @@ struct MindView: View {
 
     private var controls: some View {
         VStack(spacing: SafeDesign.s) {
-            HStack(spacing: SafeDesign.s) {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: SafeDesign.xs) {
-                        ForEach(MindColorMode.allCases) { mode in
-                            SelectionPill(title: mode.label, icon: mode.icon, isSelected: colorMode == mode) {
-                                Haptics.selection()
-                                withAnimation(SafeDesign.spring) { colorMode = mode }
-                            }
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: SafeDesign.xs) {
+                    ForEach(MindColorMode.allCases) { mode in
+                        SelectionPill(title: mode.label, icon: mode.icon, isSelected: colorMode == mode) {
+                            Haptics.selection()
+                            withAnimation(SafeDesign.spring) { colorMode = mode }
                         }
                     }
                 }
-                .scrollClipDisabled()
-
-                GlassIconButton(icon: paused ? "play.fill" : "pause.fill", size: 38) {
-                    Haptics.tap()
-                    paused.toggle()
-                }
-                GlassIconButton(icon: "minus.magnifyingglass", size: 38) { zoomBy(0.8) }
-                GlassIconButton(icon: "plus.magnifyingglass", size: 38) { zoomBy(1.25) }
-                GlassIconButton(icon: "scope", size: 38) { recenter() }
             }
+            .scrollClipDisabled()
 
             HStack(spacing: SafeDesign.m) {
                 Image(systemName: "circle.dashed")
@@ -322,6 +313,15 @@ struct MindView: View {
                     .font(.system(size: 13))
                     .foregroundStyle(SafeDesign.muted)
             }
+
+            HStack(spacing: SafeDesign.s) {
+                mindControlButton(icon: paused ? "play.fill" : "pause.fill", label: paused ? "Play" : "Pause") {
+                    paused.toggle()
+                }
+                mindControlButton(icon: "minus.magnifyingglass", label: "Out") { zoomBy(0.8) }
+                mindControlButton(icon: "plus.magnifyingglass", label: "In") { zoomBy(1.25) }
+                mindControlButton(icon: "scope", label: "Center") { recenter() }
+            }
         }
         .padding(SafeDesign.m)
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: SafeDesign.radiusXL, style: .continuous))
@@ -330,6 +330,32 @@ struct MindView: View {
                 .strokeBorder(SafeDesign.hairline, lineWidth: 0.75)
         }
         .shadow(color: .black.opacity(0.14), radius: 20, y: 10)
+    }
+
+    private func mindControlButton(icon: String, label: String, action: @escaping () -> Void) -> some View {
+        Button {
+            Haptics.tap()
+            action()
+        } label: {
+            VStack(spacing: 3) {
+                Image(systemName: icon)
+                    .font(.system(size: 16, weight: .semibold))
+                Text(label)
+                    .font(.system(size: 10, weight: .semibold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            .foregroundStyle(SafeDesign.ink)
+            .frame(maxWidth: .infinity)
+            .frame(height: 48)
+            .background(SafeDesign.surfaceCard, in: RoundedRectangle(cornerRadius: SafeDesign.radiusM, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: SafeDesign.radiusM, style: .continuous)
+                    .strokeBorder(SafeDesign.hairline, lineWidth: 0.75)
+            }
+        }
+        .buttonStyle(.plain)
+        .pressable(scale: 0.94)
     }
 
     private func zoomBy(_ factor: CGFloat) {
