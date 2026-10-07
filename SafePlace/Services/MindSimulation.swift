@@ -23,6 +23,8 @@ final class MindSimulation {
     private let attraction: CGFloat = 0.05
     private let centering: CGFloat = 0.02
     private let damping: CGFloat = 0.86
+    private let collisionDistance: CGFloat = 52
+    private let maxSpeed: CGFloat = 18
 
     init(nodes: [MindNode], edges: [MindEdge]) {
         self.edges = edges
@@ -59,7 +61,11 @@ final class MindSimulation {
                     let dy = bodies[i].position.y - bodies[j].position.y
                     let distanceSq = max(dx * dx + dy * dy, 1)
                     let distance = sqrt(distanceSq)
-                    let force = repulsion / distanceSq * e
+                    var force = min(repulsion / distanceSq * e, 60)
+                    // Extra push so nodes never pile on top of each other.
+                    if distance < collisionDistance {
+                        force += (collisionDistance - distance) * 0.6
+                    }
                     let fx = dx / distance * force
                     let fy = dy / distance * force
                     forces[i].dx += fx
@@ -94,8 +100,21 @@ final class MindSimulation {
             for i in 0..<count where !bodies[i].pinned {
                 bodies[i].velocity.dx = (bodies[i].velocity.dx + forces[i].dx) * damping
                 bodies[i].velocity.dy = (bodies[i].velocity.dy + forces[i].dy) * damping
+
+                // Cap speed so the graph never explodes.
+                let speed = hypot(bodies[i].velocity.dx, bodies[i].velocity.dy)
+                if speed > maxSpeed {
+                    bodies[i].velocity.dx *= maxSpeed / speed
+                    bodies[i].velocity.dy *= maxSpeed / speed
+                }
+
                 bodies[i].position.x += bodies[i].velocity.dx
                 bodies[i].position.y += bodies[i].velocity.dy
+
+                // Soft boundary — keep every node inside the world.
+                let margin: CGFloat = 24
+                bodies[i].position.x = min(max(bodies[i].position.x, margin), Self.worldSize - margin)
+                bodies[i].position.y = min(max(bodies[i].position.y, margin), Self.worldSize - margin)
             }
         }
     }

@@ -48,7 +48,7 @@ private struct FrostedCapsule: ViewModifier {
             .background(.ultraThinMaterial, in: Capsule())
             // faint brand wash so the glass carries a hint of the clay palette
             .overlay {
-                Capsule().fill(SafeDesign.ochre.opacity(0.05))
+                Capsule().fill(SafeDesign.accent.opacity(0.08))
             }
             // top specular highlight + hairline edge = refraction cue
             .overlay {

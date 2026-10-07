@@ -138,9 +138,9 @@ struct MindGraph {
 
     /// Bigger for connected notes and for notes with more to say.
     private static func radius(for entry: Entry, degree: Int) -> CGFloat {
-        let connected = log2(CGFloat(degree) + 2) * 4
+        let connected = log2(CGFloat(degree) + 2) * 4.5
         let written = CGFloat(entry.description.count) * 0.012
-        return min(13 + connected + written, 30)
+        return min(16 + connected + written, 34)
     }
 
     // MARK: - Mood energy

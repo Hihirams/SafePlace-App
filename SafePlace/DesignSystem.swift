@@ -1,8 +1,9 @@
 import SwiftUI
 import UIKit
 
-/// SafePlace design system — warm "clay" palette adapted from the web version.
+/// SafePlace design system — soft "powder blush" palette.
 /// Fully adaptive: every semantic color resolves for light and dark automatically.
+/// Dark mode is a true deep black (no grey cast), with the palette adapted on top.
 enum SafeDesign {
 
     // MARK: - Dynamic color helpers
@@ -18,60 +19,72 @@ enum SafeDesign {
         Color(uiColor: UIColor { trait in
             trait.userInterfaceStyle == .dark
                 ? UIColor(white: 1, alpha: darkAlpha)
-                : UIColor(white: 0.09, alpha: lightAlpha)
+                : UIColor(white: 0.16, alpha: lightAlpha)
         })
     }
 
+    // MARK: - New palette (raw values)
+    static let powderBlush   = Color(hex: "FEC5BB")
+    static let almondSilk    = Color(hex: "FCD5CE")
+    static let softBlush     = Color(hex: "FAE1DD")
+    static let seashell      = Color(hex: "F8EDEB")
+    static let alabasterGrey = Color(hex: "E8E8E4")
+    static let alabasterGrey2 = Color(hex: "D8E2DC")
+    static let linen         = Color(hex: "ECE4DB")
+    static let powderPetal   = Color(hex: "FFE5D9")
+    static let peachFuzz     = Color(hex: "FFD7BA")
+    static let peachGlow     = Color(hex: "FEC89A")
+
     // MARK: - Surfaces
-    static let canvas = dyn("FFFaf0", "12100C")            // warm off-white canvas
-    static let surfaceSoft = dyn("FAF5E8", "1A1712")       // subtle grouping
-    static let surfaceCard = dyn("F5F0E0", "221E17")       // card surface
-    static let surfaceStrong = dyn("EBE6D6", "2A251C")     // pressed / raised
-    static let hairline = dynWhiteInk(0.08, 0.10)
+    static let canvas        = dyn("F8EDEB", "000000")   // seashell / pure black
+    static let surfaceSoft   = dyn("FAE1DD", "0A0A0A")   // soft blush / near-black
+    static let surfaceCard   = dyn("FCD5CE", "111111")   // almond silk / near-black
+    static let surfaceStrong = dyn("FEC5BB", "1A1A1A")   // powder blush / raised black
+    static let hairline      = dynWhiteInk(0.10, 0.12)
 
     // MARK: - Ink (text)
-    static let ink = dyn("0A0A0A", "F0ECE3")
-    static let inkSecondary = dyn("3A3A3A", "C9C3B6")
-    static let muted = dynWhiteInk(0.42, 0.42)
+    static let ink          = dyn("2B2320", "F5F0EC")
+    static let inkSecondary = dyn("6B5E57", "B8AFA8")
+    static let muted        = dynWhiteInk(0.45, 0.42)
 
-    // MARK: - Brand (clay accent)
-    static let primary = dyn("0A0A0A", "F0ECE3")
-    static let onPrimary = dyn("FFFFFF", "0A0A0A")
+    // MARK: - Accent (peach glow)
+    static let accent    = peachGlow
+    static let accentDeep = Color(hex: "E8A56B")
+    static let primary   = dyn("FEC89A", "FEC89A")
+    static let onPrimary = dyn("2B2320", "241703")
 
-    // MARK: - Brand card colors (fixed, from the web design)
-    static let pink = Color(hex: "FF4D8B")
-    static let teal = Color(hex: "1A3A3A")
+    // MARK: - Card colors (kept vivid so notes stay distinct)
+    static let pink     = Color(hex: "FF4D8B")
+    static let teal     = Color(hex: "1A3A3A")
     static let lavender = Color(hex: "B8A4ED")
-    static let peach = Color(hex: "FFB084")
-    static let ochre = Color(hex: "E8B94A")
-    static let mint = Color(hex: "A4D4C5")
-    static let coral = Color(hex: "FF6B5A")
-    static let cream = Color(hex: "F5F0E0")
+    static let peach    = Color(hex: "FFB084")
+    static let ochre    = Color(hex: "E8B94A")
+    static let mint     = Color(hex: "A4D4C5")
+    static let coral    = Color(hex: "FF6B5A")
+    static let cream    = Color(hex: "F5F0E0")
 
-    // MARK: - Mood colors
-    static let moodBright = Color(hex: "E8B94A")
-    static let moodCalm = Color(hex: "A4D4C5")
-    static let moodHopeful = Color(hex: "B8A4ED")
-    static let moodMixed = Color(hex: "FFB084")
-    static let moodHeavy = Color(hex: "9A9A9A")
+    // MARK: - Mood colors (palette-adapted)
+    static let moodBright  = Color(hex: "FEC89A")   // peach glow
+    static let moodCalm    = Color(hex: "D8E2DC")   // alabaster grey 2
+    static let moodHopeful = Color(hex: "FEC5BB")   // powder blush
+    static let moodMixed   = Color(hex: "FFD7BA")   // peach fuzz
+    static let moodHeavy   = Color(hex: "E8E8E4")   // alabaster grey
 
     // MARK: - Functional
     static let success = Color(hex: "22C55E")
     static let warning = Color(hex: "F59E0B")
-    static let error = Color(hex: "EF4444")
+    static let error   = Color(hex: "EF4444")
 
-    // MARK: - Typography (SF, rounded for figures) — mobile-native scale.
-    // Display sizes are modest so they fit comfortably on any iPhone; they
-    // scale with Dynamic Type up to a cap applied at the root view.
-    static let heroFont = Font.system(size: 32, weight: .bold, design: .rounded)
+    // MARK: - Typography (SF, rounded for figures)
+    static let heroFont    = Font.system(size: 30, weight: .bold, design: .rounded)
     static let displayFont = Font.system(size: 28, weight: .bold, design: .rounded)
-    static let largeTitle = Font.system(size: 26, weight: .bold)
-    static let title = Font.system(size: 20, weight: .bold)
-    static let headline = Font.system(size: 16, weight: .semibold)
-    static let body = Font.system(size: 15, weight: .medium)
-    static let caption = Font.system(size: 13, weight: .medium)
-    static let micro = Font.system(size: 11, weight: .medium)
-    static let tabLabel = Font.system(size: 9.5, weight: .semibold)
+    static let largeTitle  = Font.system(size: 26, weight: .bold)
+    static let title       = Font.system(size: 20, weight: .bold)
+    static let headline    = Font.system(size: 16, weight: .semibold)
+    static let body        = Font.system(size: 15, weight: .medium)
+    static let caption     = Font.system(size: 13, weight: .medium)
+    static let micro       = Font.system(size: 11, weight: .medium)
+    static let tabLabel    = Font.system(size: 9.5, weight: .semibold)
 
     // MARK: - Spacing (multiples of 4)
     static let xxs: CGFloat = 4
@@ -105,7 +118,6 @@ enum SafeLayout {
     static let contentMaxWidth: CGFloat = 720
 
     /// Number of flexible grid columns for a given available width.
-    /// Narrow iPhones get a single column, standard phones two, iPads more.
     static func columns(forWidth width: CGFloat) -> [GridItem] {
         let count: Int
         switch width {
@@ -125,7 +137,7 @@ enum SafeLayout {
 
     /// Bottom padding above the floating glass tab bar.
     static func tabBarClearance(_ horizontal: UserInterfaceSizeClass?) -> CGFloat {
-        horizontal == .regular ? 96 : 110
+        horizontal == .regular ? 96 : 116
     }
 }
 

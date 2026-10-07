@@ -4,6 +4,7 @@ struct EntryCardView: View {
     let entry: Entry
     var onEdit: () -> Void = {}
     var onDelete: () -> Void = {}
+    var onDuplicate: () -> Void = {}
 
     private var color: CardColor { entry.cardColor }
 
@@ -24,11 +25,13 @@ struct EntryCardView: View {
                 .foregroundStyle(color.foreground)
                 .lineLimit(2)
 
-            Text(entry.description)
-                .font(.system(size: 14))
-                .foregroundStyle(color.foreground.opacity(0.92))
-                .lineLimit(4)
-                .multilineTextAlignment(.leading)
+            if !entry.description.isEmpty {
+                Text(entry.description)
+                    .font(.system(size: 14))
+                    .foregroundStyle(color.foreground.opacity(0.92))
+                    .lineLimit(4)
+                    .multilineTextAlignment(.leading)
+            }
 
             Spacer(minLength: 4)
 
@@ -42,29 +45,22 @@ struct EntryCardView: View {
 
                 Spacer()
 
-                HStack(spacing: 2) {
-                    Button(action: onEdit) {
-                        Image(systemName: "pencil")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(color.accent)
-                            .frame(width: 34, height: 34)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
-
-                    Button(action: onDelete) {
-                        Image(systemName: "trash")
-                            .font(.system(size: 14, weight: .medium))
-                            .foregroundStyle(color.accent)
-                            .frame(width: 34, height: 34)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(.plain)
+                Menu {
+                    Button { onEdit() } label: { Label("Edit", systemImage: "pencil") }
+                    Button { onDuplicate() } label: { Label("Duplicate", systemImage: "doc.on.doc") }
+                    Button(role: .destructive) { onDelete() } label: { Label("Delete", systemImage: "trash") }
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(color.accent)
+                        .frame(width: 34, height: 34)
+                        .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
             }
         }
         .padding(SafeDesign.l)
-        .frame(maxWidth: .infinity, minHeight: 180, alignment: .topLeading)
+        .frame(maxWidth: .infinity, minHeight: 150, alignment: .topLeading)
         .background(color.fill, in: RoundedRectangle(cornerRadius: SafeDesign.radiusXL, style: .continuous))
         .overlay(alignment: .topTrailing) {
             Circle()
@@ -74,6 +70,18 @@ struct EntryCardView: View {
                 .allowsHitTesting(false)
         }
         .clipShape(RoundedRectangle(cornerRadius: SafeDesign.radiusXL, style: .continuous))
+        .contentShape(RoundedRectangle(cornerRadius: SafeDesign.radiusXL, style: .continuous))
+        .onTapGesture {
+            Haptics.tap()
+            onEdit()
+        }
+        .contextMenu {
+            Button { onEdit() } label: { Label("Edit", systemImage: "pencil") }
+            Button { onDuplicate() } label: { Label("Duplicate", systemImage: "doc.on.doc") }
+            Button(role: .destructive) { onDelete() } label: { Label("Delete", systemImage: "trash") }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityHint("Double tap to edit")
     }
 }
 

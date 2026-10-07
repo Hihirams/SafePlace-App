@@ -1,33 +1,33 @@
 import SwiftUI
 
 enum Tab: Int, CaseIterable {
-    case home, journal, resources, notes, mind
+    case home, journal, mind, resources, notes
 
     var title: String {
         switch self {
         case .home: return "Home"
         case .journal: return "Journal"
-        case .resources: return "Resources"
-        case .notes: return "Notes"
         case .mind: return "Mind"
+        case .resources: return "Saved"
+        case .notes: return "Notes"
         }
     }
     var icon: String {
         switch self {
         case .home: return "house"
         case .journal: return "book"
-        case .resources: return "link"
-        case .notes: return "note.text"
         case .mind: return "point.3.connected.trianglepath.dotted"
+        case .resources: return "bookmark"
+        case .notes: return "note.text"
         }
     }
     var selectedIcon: String {
         switch self {
         case .home: return "house.fill"
         case .journal: return "book.fill"
-        case .resources: return "link"
-        case .notes: return "note.text"
         case .mind: return "point.3.filled.connected.trianglepath.dotted"
+        case .resources: return "bookmark.fill"
+        case .notes: return "note.text"
         }
     }
 }
@@ -42,6 +42,13 @@ enum ThemeMode: String, CaseIterable {
         case .system: return nil
         case .light: return .light
         case .dark: return .dark
+        }
+    }
+    var label: String {
+        switch self {
+        case .system: return "System"
+        case .light: return "Light"
+        case .dark: return "Dark"
         }
     }
     var icon: String {
@@ -91,7 +98,7 @@ struct RootView: View {
 
     private func scheduleSplashDismiss() {
         Task {
-            try? await Task.sleep(nanoseconds: 1_800_000_000)
+            try? await Task.sleep(nanoseconds: 1_600_000_000)
             withAnimation(.easeInOut(duration: 0.55)) { showSplash = false }
         }
     }
@@ -102,25 +109,70 @@ struct RootView: View {
 struct ContentView: View {
     @ObservedObject var store: Store
     @State private var selectedTab: Tab = .home
+    @State private var showQuickCapture = false
+    @State private var showSettings = false
+    @Environment(\.horizontalSizeClass) private var h
 
     var body: some View {
         ZStack {
             BackgroundOrbs()
 
-            // Swipeable sections — drag horizontally to move between tabs.
             TabView(selection: $selectedTab) {
-                DashboardView(store: store, selectedTab: $selectedTab).tag(Tab.home)
+                DashboardView(store: store, selectedTab: $selectedTab, onOpenSettings: { showSettings = true })
+                    .tag(Tab.home)
                 JournalView(store: store).tag(Tab.journal)
+                MindView(store: store).tag(Tab.mind)
                 ResourcesView(store: store).tag(Tab.resources)
                 NotesView(store: store).tag(Tab.notes)
-                MindView(store: store).tag(Tab.mind)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
+        }
+        .overlay(alignment: .bottomTrailing) {
+            QuickCaptureButton { showQuickCapture = true }
+                .padding(.trailing, h == .regular ? SafeDesign.xxxl + 8 : SafeDesign.l)
+                .padding(.bottom, SafeLayout.tabBarClearance(h) - 22)
         }
         .overlay(alignment: .bottom) {
             GlassTabBar(selectedTab: $selectedTab)
         }
-        .tint(SafeDesign.ochre)
+        .tint(SafeDesign.accent)
+        .sheet(isPresented: $showQuickCapture) {
+            QuickCaptureView(store: store)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+        }
+        .sheet(isPresented: $showSettings) {
+            SettingsView(store: store)
+        }
+    }
+}
+
+// MARK: - Quick capture button
+
+struct QuickCaptureButton: View {
+    var action: () -> Void
+
+    var body: some View {
+        Button {
+            Haptics.tap()
+            action()
+        } label: {
+            Image(systemName: "plus")
+                .font(.system(size: 20, weight: .bold))
+                .foregroundStyle(SafeDesign.onPrimary)
+                .frame(width: 54, height: 54)
+                .background(
+                    Circle()
+                        .fill(SafeDesign.accent)
+                        .shadow(color: SafeDesign.accentDeep.opacity(0.45), radius: 12, y: 6)
+                )
+                .overlay {
+                    Circle().strokeBorder(.white.opacity(0.35), lineWidth: 0.75)
+                }
+        }
+        .buttonStyle(.plain)
+        .pressable(scale: 0.9)
+        .accessibilityLabel("Quick capture")
     }
 }
 
@@ -131,7 +183,7 @@ struct GlassTabBar: View {
     @Environment(\.horizontalSizeClass) private var h
 
     private var selectedIndex: Int { Tab.allCases.firstIndex(of: selectedTab) ?? 0 }
-    private let barHeight: CGFloat = 54
+    private let barHeight: CGFloat = 56
     private let inset: CGFloat = 5
     private let selectorAnim = Animation.interactiveSpring(response: 0.26, dampingFraction: 0.74)
 
@@ -141,13 +193,11 @@ struct GlassTabBar: View {
             let cell = geo.size.width / count
 
             ZStack(alignment: .leading) {
-                // Moving selection lens — a tinted capsule that rides ON the
-                // glass bar (no nested glassEffect, so no backing rectangle).
                 Capsule(style: .continuous)
-                    .fill(SafeDesign.ochre.opacity(0.22))
+                    .fill(SafeDesign.accent.opacity(0.30))
                     .overlay {
                         Capsule(style: .continuous)
-                            .strokeBorder(.white.opacity(0.18), lineWidth: 0.5)
+                            .strokeBorder(.white.opacity(0.28), lineWidth: 0.5)
                     }
                     .frame(width: cell - 6, height: geo.size.height - 6)
                     .offset(x: cell * CGFloat(selectedIndex) + 3)
@@ -166,6 +216,7 @@ struct GlassTabBar: View {
                         let i = Int(value.location.x / cell)
                         let clamped = min(max(i, 0), Tab.allCases.count - 1)
                         if clamped != selectedIndex {
+                            Haptics.selection()
                             withAnimation(selectorAnim) { selectedTab = Tab.allCases[clamped] }
                         }
                     }
@@ -176,21 +227,25 @@ struct GlassTabBar: View {
         .glassCapsule()
         .padding(.horizontal, h == .regular ? SafeDesign.xxxl : SafeDesign.l)
         .padding(.bottom, SafeDesign.xs)
+        .sensoryFeedback(.selection, trigger: selectedIndex)
     }
 
     private func tabLabel(_ tab: Tab) -> some View {
         let sel = selectedTab == tab
         return VStack(spacing: 3) {
             Image(systemName: sel ? tab.selectedIcon : tab.icon)
-                .font(.system(size: 17, weight: sel ? .semibold : .regular))
+                .font(.system(size: 18, weight: sel ? .semibold : .regular))
                 .foregroundStyle(sel ? SafeDesign.ink : SafeDesign.muted)
                 .bounceEffect(sel)
             Text(tab.title)
-                .font(.system(size: 9.5, weight: .semibold))
+                .font(.system(size: 10, weight: .semibold))
+                .minimumScaleFactor(0.8)
+                .lineLimit(1)
                 .foregroundStyle(sel ? SafeDesign.ink : SafeDesign.muted)
         }
         .frame(maxWidth: .infinity)
         .contentShape(Rectangle())
+        .accessibilityLabel(tab.title)
     }
 }
 
@@ -210,13 +265,13 @@ struct SplashView: View {
 
                 ZStack {
                     Circle()
-                        .stroke(SafeDesign.teal.opacity(0.12), lineWidth: 3)
+                        .stroke(SafeDesign.accent.opacity(0.18), lineWidth: 3)
                         .frame(width: 138, height: 138)
                     Circle()
                         .trim(from: 0, to: progress)
                         .stroke(
                             AngularGradient(
-                                gradient: Gradient(colors: [SafeDesign.ochre.opacity(0.4), SafeDesign.ochre, SafeDesign.teal, SafeDesign.ochre.opacity(0.4)]),
+                                gradient: Gradient(colors: [SafeDesign.accent.opacity(0.4), SafeDesign.accent, SafeDesign.accentDeep, SafeDesign.accent.opacity(0.4)]),
                                 center: .center),
                             style: StrokeStyle(lineWidth: 3, lineCap: .round))
                         .frame(width: 138, height: 138)
@@ -224,20 +279,19 @@ struct SplashView: View {
                         .opacity(textIn ? 1 : 0)
 
                     Circle()
-                        .fill(SafeDesign.teal)
+                        .fill(SafeDesign.surfaceCard)
                         .frame(width: 104, height: 104)
-                        .overlay { Circle().strokeBorder(SafeDesign.teal.opacity(0.25), lineWidth: 1) }
-                        .scaleEffect(badgeIn ? 1 : 0.6)
-                        .opacity(badgeIn ? 1 : 0)
+                        .overlay { Circle().strokeBorder(SafeDesign.accent.opacity(0.35), lineWidth: 1) }
 
-                    Image(systemName: "leaf.fill")
+                    Image(systemName: "shield.lefthalf.filled")
                         .font(.system(size: 44, weight: .semibold))
-                        .foregroundStyle(.white)
-                        .rotationEffect(.degrees(badgeIn ? 0 : -25))
-                        .scaleEffect(badgeIn ? 1 : 0.4)
+                        .foregroundStyle(SafeDesign.accentDeep)
+                        .scaleEffect(badgeIn ? 1 : 0.5)
                         .opacity(badgeIn ? 1 : 0)
                 }
-                .shadow(color: SafeDesign.teal.opacity(0.35), radius: 24, y: 10)
+                .scaleEffect(badgeIn ? 1 : 0.7)
+                .opacity(badgeIn ? 1 : 0)
+                .shadow(color: SafeDesign.accentDeep.opacity(0.30), radius: 24, y: 10)
 
                 VStack(spacing: SafeDesign.s) {
                     Text("SafePlace")
@@ -257,7 +311,7 @@ struct SplashView: View {
                     .fill(SafeDesign.hairline)
                     .frame(width: 120, height: 4)
                     .overlay(alignment: .leading) {
-                        Capsule().fill(SafeDesign.ochre).frame(width: 120 * progress, height: 4)
+                        Capsule().fill(SafeDesign.accent).frame(width: 120 * progress, height: 4)
                     }
                     .opacity(textIn ? 1 : 0)
                     .padding(.bottom, SafeDesign.xxxl)
@@ -265,8 +319,8 @@ struct SplashView: View {
         }
         .task {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.6)) { badgeIn = true }
-            withAnimation(.easeOut(duration: 0.5).delay(0.25)) { textIn = true }
-            withAnimation(.easeInOut(duration: 1.4).delay(0.2)) { progress = 1 }
+            withAnimation(.easeOut(duration: 0.5).delay(0.2)) { textIn = true }
+            withAnimation(.easeInOut(duration: 1.3).delay(0.15)) { progress = 1 }
         }
     }
 }

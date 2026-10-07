@@ -40,7 +40,7 @@ struct OnboardingView: View {
                 HStack(spacing: SafeDesign.s) {
                     Image(systemName: "leaf.fill")
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(SafeDesign.teal)
+                        .foregroundStyle(SafeDesign.accentDeep)
                     Text("SafePlace")
                         .font(.system(size: 22, weight: .bold, design: .rounded))
                         .foregroundStyle(SafeDesign.ink)
@@ -61,7 +61,7 @@ struct OnboardingView: View {
                 HStack(spacing: SafeDesign.s) {
                     ForEach(features.indices, id: \.self) { i in
                         Capsule()
-                            .fill(i == page ? SafeDesign.teal : SafeDesign.hairline)
+                            .fill(i == page ? SafeDesign.accentDeep : SafeDesign.hairline)
                             .frame(width: i == page ? 20 : 6, height: 6)
                             .animation(SafeDesign.spring, value: page)
                     }
@@ -102,13 +102,13 @@ struct OnboardingView: View {
                     .fill(SafeDesign.surfaceCard)
                     .frame(width: 132, height: 132)
                 Circle()
-                    .strokeBorder(SafeDesign.teal.opacity(0.25), lineWidth: 1)
+                    .strokeBorder(SafeDesign.accentDeep.opacity(0.25), lineWidth: 1)
                     .frame(width: 132, height: 132)
                 Image(systemName: feature.icon)
                     .font(.system(size: 48, weight: .medium))
-                    .foregroundStyle(SafeDesign.teal)
+                    .foregroundStyle(SafeDesign.accentDeep)
             }
-            .shadow(color: SafeDesign.teal.opacity(0.2), radius: 26, y: 12)
+            .shadow(color: SafeDesign.accentDeep.opacity(0.2), radius: 26, y: 12)
 
             VStack(spacing: SafeDesign.s) {
                 Text(feature.title)
