@@ -4,7 +4,7 @@ import UniformTypeIdentifiers
 struct SettingsView: View {
     @ObservedObject var store: Store
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.appTheme) private var theme
+    @Environment(\.appTheme) private var appTheme
 
     @AppStorage("themeMode") private var themeRaw = ThemeMode.system.rawValue
     @AppStorage("reminderEnabled") private var reminderEnabled = false
@@ -69,7 +69,7 @@ struct SettingsView: View {
                     .toolbar {
                         ToolbarItem(placement: .topBarTrailing) {
                             Button("Done") { showSharedNotes = false }
-                                .foregroundStyle(theme.tintStrong)
+                                .foregroundStyle(appTheme.tintStrong)
                         }
                     }
                     .toolbarBackground(.hidden, for: .navigationBar)
@@ -126,7 +126,7 @@ struct SettingsView: View {
                     Haptics.tap()
                     showSharedNotes = true
                 } label: {
-                    settingsRowLabel(title: "Review shared notes", icon: "tray.and.arrow.down", tint: theme.tintStrong)
+                    settingsRowLabel(title: "Review shared notes", icon: "tray.and.arrow.down", tint: appTheme.tintStrong)
                 }
                 .buttonStyle(.plain)
             }
@@ -156,13 +156,13 @@ struct SettingsView: View {
                         .font(SafeDesign.body)
                         .foregroundStyle(SafeDesign.ink)
                 }
-                .tint(theme.tintStrong)
+                .tint(appTheme.tintStrong)
 
                 if reminderEnabled {
                     DatePicker("Time", selection: reminderDate, displayedComponents: .hourAndMinute)
                         .font(SafeDesign.body)
                         .foregroundStyle(SafeDesign.ink)
-                        .tint(theme.tintStrong)
+                        .tint(appTheme.tintStrong)
                 }
             }
         }
@@ -173,14 +173,14 @@ struct SettingsView: View {
             VStack(spacing: SafeDesign.s) {
                 if let exportURL {
                     ShareLink(item: exportURL) {
-                        settingsRowLabel(title: "Export backup", icon: "square.and.arrow.up", tint: theme.tintStrong)
+                        settingsRowLabel(title: "Export backup", icon: "square.and.arrow.up", tint: appTheme.tintStrong)
                     }
                     .buttonStyle(.plain)
                 }
                 Button {
                     showImporter = true
                 } label: {
-                    settingsRowLabel(title: "Import backup", icon: "square.and.arrow.down", tint: theme.tintStrong)
+                    settingsRowLabel(title: "Import backup", icon: "square.and.arrow.down", tint: appTheme.tintStrong)
                 }
                 .buttonStyle(.plain)
 
@@ -218,11 +218,11 @@ struct SettingsView: View {
                     HStack {
                         Text("Update feed (LiveContainer)")
                             .font(SafeDesign.body)
-                            .foregroundStyle(theme.tintStrong)
+                            .foregroundStyle(appTheme.tintStrong)
                         Spacer()
                         Image(systemName: "arrow.up.right")
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundStyle(theme.tintStrong)
+                            .foregroundStyle(appTheme.tintStrong)
                     }
                 }
                 Text("Built with care. Your notes stay on your device.")
