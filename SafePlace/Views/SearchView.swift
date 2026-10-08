@@ -334,10 +334,11 @@ struct SearchView: View {
             var searchStart = text.startIndex
             while searchStart < text.endIndex,
                   let range = text.range(of: term, options: [.caseInsensitive, .diacriticInsensitive], range: searchStart..<text.endIndex) {
-                let lower = AttributedString.Index(range.lowerBound, within: attr)
-                let upper = AttributedString.Index(range.upperBound, within: attr)
-                attr[lower..<upper].foregroundColor = theme.tintStrong
-                attr[lower..<upper].inlinePresentationIntent = .stronglyEmphasized
+                if let lower = AttributedString.Index(range.lowerBound, within: attr),
+                   let upper = AttributedString.Index(range.upperBound, within: attr) {
+                    attr[lower..<upper].foregroundColor = theme.tintStrong
+                    attr[lower..<upper].inlinePresentationIntent = .stronglyEmphasized
+                }
                 searchStart = range.upperBound
             }
         }
