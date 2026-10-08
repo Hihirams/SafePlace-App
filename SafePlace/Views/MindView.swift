@@ -156,7 +156,7 @@ struct MindView: View {
         _ = size
 
         let index = Dictionary(uniqueKeysWithValues: graph.nodes.enumerated().map { ($1.id, $0) })
-        let dominant = (colorMode == .contagion) ? MindGraph.dominantMood(of: store.entries) : nil
+        let dominant = MindGraph.dominantMood(of: store.entries)
         let elapsed = date.timeIntervalSince(contagionStart)
         let globalProgress = min(max(elapsed / 5.0, 0), 1)
 
@@ -256,9 +256,8 @@ struct MindView: View {
         }
     }
 
-    /// In the "wave" mode every node slowly adopts the dominant mood's color,
-    /// one after another, so the graph visibly drifts toward the feeling that
-    /// is taking over.
+    /// The graph is always slowly "infected" by the dominant mood, whether or
+    /// not you are on the Wave view. Wave just makes it much stronger.
     private func blendedNodeColor(
         for node: MindNode,
         index: Int,
@@ -269,7 +268,12 @@ struct MindView: View {
         guard let dominant else { return node.color }
         let stagger = total > 1 ? Double(index) / Double(total) * 0.6 : 0
         let local = min(max((globalProgress - stagger) / 0.4, 0), 1)
-        let strength = 0.35 + 0.6 * Double(dominant.dominance)
+        let strength: Double
+        if colorMode == .contagion {
+            strength = 0.55 + 0.45 * Double(dominant.dominance)
+        } else {
+            strength = 0.18 + 0.32 * Double(dominant.dominance)
+        }
         return node.color.blended(with: dominant.mood.color, amount: CGFloat(local * strength))
     }
 

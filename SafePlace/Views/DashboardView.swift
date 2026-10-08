@@ -5,14 +5,11 @@ struct DashboardView: View {
     @ObservedObject var store: Store
     @Binding var selectedTab: Tab
     var onOpenSettings: () -> Void = {}
-    @AppStorage("themeMode") private var themeRaw = ThemeMode.system.rawValue
-    @AppStorage("mascotColorHex") private var mascotColorHex = MascotColorOption.peach.rawValue
+    var onOpenSearch: () -> Void = {}
     @Environment(\.horizontalSizeClass) private var h
     @Environment(\.verticalSizeClass) private var v
+    @Environment(\.appTheme) private var theme
 
-    @State private var search = ""
-    @State private var activeCategory = "all"
-    @State private var sortOrder: SortOrder = .newest
     @State private var editingEntry: Entry?
     @State private var showForm = false
     @State private var contentWidth: CGFloat = 0
@@ -23,24 +20,6 @@ struct DashboardView: View {
         case overview = "Overview"
         case insights = "Insights"
         var id: String { rawValue }
-    }
-
-    enum SortOrder: String, CaseIterable, Identifiable {
-        case newest = "Newest first"
-        case oldest = "Oldest first"
-        case alphabetical = "A → Z"
-        var id: String { rawValue }
-    }
-
-    private var theme: ThemeMode { ThemeMode(rawValue: themeRaw) ?? .system }
-
-    private var greeting: String {
-        switch Calendar.current.component(.hour, from: Date()) {
-        case 5..<12: return "Good morning"
-        case 12..<18: return "Good afternoon"
-        case 18..<22: return "Good evening"
-        default: return "Good night"
-        }
     }
 
     private var todayEntries: [Entry] {
@@ -79,23 +58,8 @@ struct DashboardView: View {
         }
     }
 
-    private var filteredEntries: [Entry] {
-        var list = store.entries
-        if activeCategory != "all" { list = list.filter { $0.category == activeCategory } }
-        if !search.trimmingCharacters(in: .whitespaces).isEmpty {
-            let q = search.trimmingCharacters(in: .whitespaces).lowercased()
-            list = list.filter {
-                $0.title.lowercased().contains(q)
-                    || $0.description.lowercased().contains(q)
-                    || $0.category.lowercased().contains(q)
-            }
-        }
-        switch sortOrder {
-        case .newest: list.sort { $0.createdAt > $1.createdAt }
-        case .oldest: list.sort { $0.createdAt < $1.createdAt }
-        case .alphabetical: list.sort { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
-        }
-        return list
+    private var recentEntries: [Entry] {
+        Array(store.entries.sorted { $0.createdAt > $1.createdAt }.prefix(6))
     }
 
     var body: some View {
@@ -108,15 +72,14 @@ struct DashboardView: View {
                 modePicker
 
                 if mode == .overview {
-                    quickActions
                     statsPanel
-                    notesSection
+                    recentSection
                 } else {
                     InsightsView(store: store)
                 }
             }
             .pageColumn(h, v)
-            .padding(.top, SafeDesign.l)
+            .padding(.top, SafeDesign.m)
             .padding(.bottom, SafeLayout.tabBarClearance(h))
             .readingWidth($contentWidth)
         }
@@ -135,62 +98,54 @@ struct DashboardView: View {
     // MARK: - Header
 
     private var header: some View {
-        HStack(spacing: SafeDesign.m) {
-            Button {
-                Haptics.tap()
-                onOpenSettings()
-            } label: {
-                ZStack {
-                    Circle().fill(SafeDesign.accent).frame(width: 42, height: 42)
-                    Text("SP")
-                        .font(.system(size: 15, weight: .bold, design: .rounded))
-                        .foregroundStyle(SafeDesign.onPrimary)
+        ZStack {
+            Text("SafePlace")
+                .font(.system(size: 27, weight: .semibold, design: .serif))
+                .foregroundStyle(SafeDesign.ink)
+
+            HStack {
+                Button {
+                    Haptics.tap()
+                    onOpenSettings()
+                } label: {
+                    ZStack {
+                        Circle().fill(theme.tint.opacity(0.35)).frame(width: 40, height: 40)
+                        Image(systemName: "person.fill")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(theme.tintStrong)
+                    }
+                    .overlay { Circle().strokeBorder(SafeDesign.hairline, lineWidth: 1) }
                 }
-                .overlay { Circle().strokeBorder(SafeDesign.accentDeep.opacity(0.4), lineWidth: 1) }
-            }
-            .buttonStyle(.plain)
-            .pressable(scale: 0.92)
-            .accessibilityLabel("Settings")
+                .buttonStyle(.plain)
+                .pressable(scale: 0.92)
+                .accessibilityLabel("Profile and settings")
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text(greeting)
-                    .font(SafeDesign.caption)
-                    .foregroundStyle(SafeDesign.inkSecondary)
-                Text("SafePlace")
-                    .font(SafeDesign.title)
-                    .foregroundStyle(SafeDesign.ink)
-            }
+                Spacer()
 
-            Spacer()
-
-            GlassIconButton(icon: theme.icon) {
-                Haptics.selection()
-                withAnimation(SafeDesign.spring) { themeRaw = theme.next.rawValue }
+                Button {
+                    Haptics.tap()
+                    onOpenSearch()
+                } label: {
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(SafeDesign.ink)
+                        .frame(width: 40, height: 40)
+                        .background(SafeDesign.surfaceSoft, in: Circle())
+                        .overlay { Circle().strokeBorder(SafeDesign.hairline, lineWidth: 1) }
+                }
+                .buttonStyle(.plain)
+                .pressable(scale: 0.92)
+                .accessibilityLabel("Search notes")
             }
-
-            Button {
-                Haptics.tap()
-                editingEntry = nil
-                showForm = true
-            } label: {
-                Image(systemName: "plus")
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundStyle(SafeDesign.onPrimary)
-                    .frame(width: 44, height: 44)
-                    .background(Circle().fill(SafeDesign.accent))
-            }
-            .buttonStyle(.plain)
-            .pressable()
-            .accessibilityLabel("Add a note")
         }
     }
 
     // MARK: - Character
 
     private var mascotHero: some View {
-        VStack(spacing: SafeDesign.s) {
-            MascotView(color: Color(hex: mascotColorHex), size: 210, animate: true)
-                .frame(height: 240)
+        VStack(spacing: SafeDesign.xs) {
+            MascotView(size: 200, animate: true)
+                .frame(height: 224)
             Text("I'm here with you.")
                 .font(SafeDesign.caption)
                 .foregroundStyle(SafeDesign.muted)
@@ -248,12 +203,12 @@ struct DashboardView: View {
             if justCheckedIn {
                 Label("Saved. Nice check-in.", systemImage: "checkmark.circle.fill")
                     .font(SafeDesign.caption)
-                    .foregroundStyle(SafeDesign.accentDeep)
+                    .foregroundStyle(theme.tintStrong)
                     .transition(.opacity)
             }
         }
         .padding(SafeDesign.l)
-        .background(SafeDesign.surfaceSoft, in: RoundedRectangle(cornerRadius: SafeDesign.radiusXL, style: .continuous))
+        .background(SafeDesign.surfaceCard, in: RoundedRectangle(cornerRadius: SafeDesign.radiusXL, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: SafeDesign.radiusXL, style: .continuous)
                 .strokeBorder(SafeDesign.hairline, lineWidth: 0.75)
@@ -271,7 +226,7 @@ struct DashboardView: View {
         }
         .padding(.horizontal, SafeDesign.s)
         .padding(.vertical, 6)
-        .background(SafeDesign.surfaceStrong, in: Capsule())
+        .background(SafeDesign.surfaceSoft, in: Capsule())
     }
 
     // MARK: - On this day
@@ -318,48 +273,12 @@ struct DashboardView: View {
         }
     }
 
-    // MARK: - Quick actions
-
-    private var quickActions: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: SafeDesign.xs) {
-                quickAction("New note", "square.and.pencil") { editingEntry = nil; showForm = true }
-                quickAction("Journal", "book") { selectedTab = .journal }
-                quickAction("Mind", "point.3.connected.trianglepath.dotted") { selectedTab = .mind }
-                quickAction("Saved", "bookmark") { selectedTab = .resources }
-                quickAction("Shared", "note.text") { selectedTab = .notes }
-            }
-        }
-        .scrollClipDisabled()
-    }
-
-    private func quickAction(_ title: String, _ icon: String, action: @escaping () -> Void) -> some View {
-        Button {
-            Haptics.tap()
-            action()
-        } label: {
-            Label(title, systemImage: icon)
-                .font(SafeDesign.caption)
-                .foregroundStyle(SafeDesign.ink)
-                .padding(.horizontal, SafeDesign.l)
-                .frame(height: 40)
-                .background(SafeDesign.surfaceSoft, in: Capsule())
-                .overlay { Capsule().strokeBorder(SafeDesign.hairline, lineWidth: 1) }
-        }
-        .buttonStyle(.plain)
-        .pressable(scale: 0.95)
-    }
-
     // MARK: - Stats
 
     private var statsPanel: some View {
         let columns = SafeLayout.columns(forWidth: contentWidth)
         return LazyVGrid(columns: columns, spacing: SafeDesign.m) {
-            Button { activeCategory = "all" } label: {
-                statCard(number: "\(store.entries.count)", label: store.entries.count == 1 ? "thing saved" : "things saved")
-            }
-            .buttonStyle(.plain)
-
+            statCard(number: "\(store.entries.count)", label: store.entries.count == 1 ? "thing saved" : "things saved")
             statCard(number: "\(store.categories.count)", label: "categories")
 
             statCardWide {
@@ -375,31 +294,25 @@ struct DashboardView: View {
                     } else {
                         VStack(spacing: SafeDesign.s) {
                             ForEach(categoryCounts, id: \.name) { item in
-                                Button {
-                                    Haptics.selection()
-                                    activeCategory = item.name
-                                } label: {
-                                    HStack(spacing: SafeDesign.xs) {
-                                        Text(item.name)
-                                            .font(.system(size: 12, weight: .medium))
-                                            .foregroundStyle(activeCategory == item.name ? SafeDesign.ink : SafeDesign.inkSecondary)
-                                            .lineLimit(1)
-                                            .frame(width: 84, alignment: .leading)
-                                        GeometryReader { geo in
-                                            ZStack(alignment: .leading) {
-                                                Capsule().fill(SafeDesign.surfaceStrong)
-                                                Capsule().fill(SafeDesign.accentDeep)
-                                                    .frame(width: geo.size.width * item.fraction)
-                                            }
+                                HStack(spacing: SafeDesign.xs) {
+                                    Text(item.name)
+                                        .font(.system(size: 12, weight: .medium))
+                                        .foregroundStyle(SafeDesign.inkSecondary)
+                                        .lineLimit(1)
+                                        .frame(width: 84, alignment: .leading)
+                                    GeometryReader { geo in
+                                        ZStack(alignment: .leading) {
+                                            Capsule().fill(SafeDesign.surfaceStrong)
+                                            Capsule().fill(theme.tintStrong)
+                                                .frame(width: geo.size.width * item.fraction)
                                         }
-                                        .frame(height: 8)
-                                        Text("\(item.count)")
-                                            .font(.system(size: 12, weight: .medium))
-                                            .foregroundStyle(SafeDesign.muted)
-                                            .frame(width: 22, alignment: .trailing)
                                     }
+                                    .frame(height: 8)
+                                    Text("\(item.count)")
+                                        .font(.system(size: 12, weight: .medium))
+                                        .foregroundStyle(SafeDesign.muted)
+                                        .frame(width: 22, alignment: .trailing)
                                 }
-                                .buttonStyle(.plain)
                             }
                         }
                     }
@@ -438,14 +351,22 @@ struct DashboardView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(SafeDesign.l)
-        .background(SafeDesign.surfaceSoft, in: RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous))
+        .background(SafeDesign.surfaceCard, in: RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous)
+                .strokeBorder(SafeDesign.hairline, lineWidth: 0.75)
+        }
     }
 
     private func statCardWide<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         content()
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(SafeDesign.l)
-            .background(SafeDesign.surfaceSoft, in: RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous))
+            .background(SafeDesign.surfaceCard, in: RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous)
+                    .strokeBorder(SafeDesign.hairline, lineWidth: 0.75)
+            }
     }
 
     private var categoryCounts: [CategoryCount] {
@@ -464,74 +385,42 @@ struct DashboardView: View {
             .filter { $0.count > 0 }
     }
 
-    // MARK: - Notes
+    // MARK: - Recent
 
-    private var notesSection: some View {
-        VStack(alignment: .leading, spacing: SafeDesign.l) {
+    private var recentSection: some View {
+        VStack(alignment: .leading, spacing: SafeDesign.m) {
             HStack {
-                Text("Your notes")
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                Text("Recent")
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
                     .foregroundStyle(SafeDesign.ink)
                 Spacer()
-            }
-
-            ClaySearchBar(text: $search)
-
-            HStack {
-                Menu {
-                    ForEach(SortOrder.allCases) { order in
-                        Button(order.rawValue) { sortOrder = order }
-                    }
-                } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "arrow.up.arrow.down").font(.system(size: 12, weight: .semibold))
-                        Text(sortOrder.rawValue).font(SafeDesign.caption)
-                    }
-                    .foregroundStyle(SafeDesign.inkSecondary)
-                    .padding(.horizontal, SafeDesign.l)
-                    .padding(.vertical, SafeDesign.s)
-                    .background(SafeDesign.surfaceSoft, in: Capsule())
-                }
-                .buttonStyle(.plain)
-
-                Spacer()
-
                 Button {
                     Haptics.tap()
-                    editingEntry = nil
-                    showForm = true
+                    selectedTab = .journal
                 } label: {
                     HStack(spacing: 4) {
-                        Image(systemName: "plus").font(.system(size: 12, weight: .semibold))
-                        Text("Add").font(SafeDesign.caption)
+                        Text("See all").font(SafeDesign.caption)
+                        Image(systemName: "arrow.right").font(.system(size: 11, weight: .semibold))
                     }
-                    .foregroundStyle(SafeDesign.onPrimary)
-                    .padding(.horizontal, SafeDesign.l)
-                    .padding(.vertical, SafeDesign.s)
-                    .background(Capsule().fill(SafeDesign.accent))
+                    .foregroundStyle(theme.tintStrong)
                 }
                 .buttonStyle(.plain)
-                .pressable(scale: 0.95)
             }
 
-            categoryTabs
-
-            if filteredEntries.isEmpty {
+            if recentEntries.isEmpty {
                 VStack(spacing: SafeDesign.s) {
                     Image(systemName: "leaf")
                         .font(.system(size: 34, weight: .light))
                         .foregroundStyle(SafeDesign.muted)
-                    Text(search.isEmpty && activeCategory == "all"
-                         ? "Your safe place is ready for its first note."
-                         : "No notes match right now.")
+                    Text("Your safe place is ready for its first note.")
                         .font(SafeDesign.body)
                         .foregroundStyle(SafeDesign.muted)
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, SafeDesign.xxxl)
+                .padding(.vertical, SafeDesign.xxl)
             } else {
                 LazyVGrid(columns: SafeLayout.columns(forWidth: contentWidth), spacing: SafeDesign.m) {
-                    ForEach(filteredEntries) { entry in
+                    ForEach(recentEntries) { entry in
                         EntryCardView(entry: entry) {
                             editingEntry = entry
                             showForm = true
@@ -540,42 +429,10 @@ struct DashboardView: View {
                         } onDuplicate: {
                             duplicateEntry(entry)
                         }
-                        .transition(.opacity)
                     }
                 }
-                .animation(SafeDesign.spring, value: filteredEntries.map(\.id))
             }
         }
-    }
-
-    private var categoryTabs: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: SafeDesign.xs) {
-                categoryTab("All", isActive: activeCategory == "all") { activeCategory = "all" }
-                ForEach(store.categories, id: \.self) { category in
-                    categoryTab(category, isActive: activeCategory == category) { activeCategory = category }
-                }
-                categoryTab("+ New", isActive: false) { addCategory() }
-            }
-        }
-        .scrollClipDisabled()
-    }
-
-    private func categoryTab(_ title: String, isActive: Bool, action: @escaping () -> Void) -> some View {
-        Button {
-            Haptics.selection()
-            action()
-        } label: {
-            Text(title)
-                .font(SafeDesign.caption)
-                .foregroundStyle(isActive ? SafeDesign.ink : SafeDesign.muted)
-                .padding(.horizontal, SafeDesign.l)
-                .padding(.vertical, SafeDesign.s)
-                .background {
-                    if isActive { Capsule().fill(SafeDesign.surfaceCard) } else { Capsule().fill(.clear) }
-                }
-        }
-        .buttonStyle(.plain)
     }
 
     // MARK: - Actions
@@ -627,22 +484,6 @@ struct DashboardView: View {
         copy.createdAt = Date()
         store.addEntry(copy)
         Haptics.success()
-    }
-
-    private func addCategory() {
-        let alert = UIAlertController(title: "New category", message: "Name of the new category:", preferredStyle: .alert)
-        alert.addTextField { $0.placeholder = "e.g. Rest" }
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        alert.addAction(UIAlertAction(title: "Add", style: .default) { _ in
-            if let name = alert.textFields?.first?.text { store.addCategory(name) }
-        })
-        rootViewController()?.present(alert, animated: true)
-    }
-
-    private func rootViewController() -> UIViewController? {
-        UIApplication.shared.connectedScenes
-            .compactMap { ($0 as? UIWindowScene)?.keyWindow }
-            .first?.rootViewController
     }
 }
 

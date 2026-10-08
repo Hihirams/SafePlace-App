@@ -4,17 +4,18 @@ import UniformTypeIdentifiers
 struct SettingsView: View {
     @ObservedObject var store: Store
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.appTheme) private var theme
 
     @AppStorage("themeMode") private var themeRaw = ThemeMode.system.rawValue
     @AppStorage("reminderEnabled") private var reminderEnabled = false
     @AppStorage("reminderHour") private var reminderHour = 21
     @AppStorage("reminderMinute") private var reminderMinute = 0
     @AppStorage("hapticsEnabled") private var hapticsEnabled = true
-    @AppStorage("mascotColorHex") private var mascotColorHex = MascotColorOption.peach.rawValue
 
     @State private var exportURL: URL?
     @State private var showImporter = false
     @State private var showEraseConfirm = false
+    @State private var showSharedNotes = false
     @State private var importMessage: String?
 
     private var theme: ThemeMode { ThemeMode(rawValue: themeRaw) ?? .system }
@@ -47,6 +48,7 @@ struct SettingsView: View {
 
                     appearanceSection
                     characterSection
+                    sharedNotesSection
                     remindersSection
                     dataSection
                     aboutSection
@@ -60,6 +62,18 @@ struct SettingsView: View {
         .onAppear { exportURL = makeExportFile() }
         .fileImporter(isPresented: $showImporter, allowedContentTypes: [.json]) { result in
             handleImport(result)
+        }
+        .sheet(isPresented: $showSharedNotes) {
+            NavigationStack {
+                NotesView(store: store)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button("Done") { showSharedNotes = false }
+                                .foregroundStyle(theme.tintStrong)
+                        }
+                    }
+                    .toolbarBackground(.hidden, for: .navigationBar)
+            }
         }
         .alert("Erase all data?", isPresented: $showEraseConfirm) {
             Button("Cancel", role: .cancel) {}
@@ -90,27 +104,32 @@ struct SettingsView: View {
 
     private var characterSection: some View {
         SettingsCard(title: "Your character", icon: "face.smiling") {
-            VStack(spacing: SafeDesign.m) {
-                MascotView(color: Color(hex: mascotColorHex), size: 120, animate: true)
+            VStack(spacing: SafeDesign.s) {
+                MascotView(size: 120, animate: true)
                     .frame(height: 130)
-                HStack(spacing: SafeDesign.s) {
-                    ForEach(MascotColorOption.allCases) { option in
-                        Button {
-                            Haptics.selection()
-                            withAnimation(SafeDesign.spring) { mascotColorHex = option.rawValue }
-                        } label: {
-                            Circle()
-                                .fill(option.color)
-                                .frame(width: 34, height: 34)
-                                .overlay {
-                                    Circle().strokeBorder(mascotColorHex == option.rawValue ? SafeDesign.ink : SafeDesign.hairline, lineWidth: 2)
-                                }
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
+                Text("It changes color with how you've been feeling.")
+                    .font(SafeDesign.caption)
+                    .foregroundStyle(SafeDesign.muted)
+                    .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)
+        }
+    }
+
+    private var sharedNotesSection: some View {
+        SettingsCard(title: "Shared notes", icon: "note.text") {
+            VStack(alignment: .leading, spacing: SafeDesign.s) {
+                Text("Notes you share from Apple Notes (or any app) wait here until you keep them.")
+                    .font(SafeDesign.caption)
+                    .foregroundStyle(SafeDesign.inkSecondary)
+                Button {
+                    Haptics.tap()
+                    showSharedNotes = true
+                } label: {
+                    settingsRowLabel(title: "Review shared notes", icon: "tray.and.arrow.down", tint: theme.tintStrong)
+                }
+                .buttonStyle(.plain)
+            }
         }
     }
 
@@ -137,13 +156,13 @@ struct SettingsView: View {
                         .font(SafeDesign.body)
                         .foregroundStyle(SafeDesign.ink)
                 }
-                .tint(SafeDesign.accentDeep)
+                .tint(theme.tintStrong)
 
                 if reminderEnabled {
                     DatePicker("Time", selection: reminderDate, displayedComponents: .hourAndMinute)
                         .font(SafeDesign.body)
                         .foregroundStyle(SafeDesign.ink)
-                        .tint(SafeDesign.accentDeep)
+                        .tint(theme.tintStrong)
                 }
             }
         }
@@ -154,14 +173,14 @@ struct SettingsView: View {
             VStack(spacing: SafeDesign.s) {
                 if let exportURL {
                     ShareLink(item: exportURL) {
-                        settingsRowLabel(title: "Export backup", icon: "square.and.arrow.up", tint: SafeDesign.accentDeep)
+                        settingsRowLabel(title: "Export backup", icon: "square.and.arrow.up", tint: theme.tintStrong)
                     }
                     .buttonStyle(.plain)
                 }
                 Button {
                     showImporter = true
                 } label: {
-                    settingsRowLabel(title: "Import backup", icon: "square.and.arrow.down", tint: SafeDesign.accentDeep)
+                    settingsRowLabel(title: "Import backup", icon: "square.and.arrow.down", tint: theme.tintStrong)
                 }
                 .buttonStyle(.plain)
 
@@ -199,11 +218,11 @@ struct SettingsView: View {
                     HStack {
                         Text("Update feed (LiveContainer)")
                             .font(SafeDesign.body)
-                            .foregroundStyle(SafeDesign.accentDeep)
+                            .foregroundStyle(theme.tintStrong)
                         Spacer()
                         Image(systemName: "arrow.up.right")
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundStyle(SafeDesign.accentDeep)
+                            .foregroundStyle(theme.tintStrong)
                     }
                 }
                 Text("Built with care. Your notes stay on your device.")

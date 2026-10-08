@@ -1,6 +1,6 @@
 import SwiftUI
 
-// MARK: - Primary button (clay: dark ink capsule)
+// MARK: - Primary button (sober ink capsule)
 
 struct PrimaryButton: View {
     let title: String
@@ -17,11 +17,11 @@ struct PrimaryButton: View {
                 Text(title)
                     .font(SafeDesign.headline)
             }
-            .foregroundStyle(SafeDesign.onPrimary)
+            .foregroundStyle(SafeDesign.canvas)
             .frame(maxWidth: .infinity)
             .frame(height: 52)
             .background {
-                Capsule().fill(SafeDesign.primary)
+                Capsule().fill(SafeDesign.ink)
             }
         }
         .buttonStyle(.plain)
@@ -64,6 +64,7 @@ struct ClayTextField: View {
     let icon: String
     let placeholder: String
     @Binding var text: String
+    @Environment(\.appTheme) private var theme
 
     var body: some View {
         HStack(spacing: SafeDesign.m) {
@@ -74,7 +75,7 @@ struct ClayTextField: View {
             TextField(placeholder, text: $text)
                 .font(SafeDesign.body)
                 .foregroundStyle(SafeDesign.ink)
-                .tint(SafeDesign.accentDeep)
+                .tint(theme.tintStrong)
         }
         .padding(.horizontal, SafeDesign.l)
         .padding(.vertical, SafeDesign.m)
@@ -86,12 +87,13 @@ struct ClayTextField: View {
 struct ClayTextArea: View {
     let placeholder: String
     @Binding var text: String
+    @Environment(\.appTheme) private var theme
 
     var body: some View {
         TextEditor(text: $text)
             .font(SafeDesign.body)
             .foregroundStyle(SafeDesign.ink)
-            .tint(SafeDesign.accentDeep)
+            .tint(theme.tintStrong)
             .scrollContentBackground(.hidden)
             .padding(SafeDesign.m)
             .frame(minHeight: 110)
@@ -119,6 +121,7 @@ struct SelectionPill: View {
     var icon: String? = nil
     let isSelected: Bool
     let action: () -> Void
+    @Environment(\.appTheme) private var theme
 
     var body: some View {
         Button(action: action) {
@@ -130,12 +133,12 @@ struct SelectionPill: View {
                 Text(title)
                     .font(SafeDesign.caption)
             }
-            .foregroundStyle(isSelected ? SafeDesign.onPrimary : SafeDesign.inkSecondary)
+            .foregroundStyle(isSelected ? SafeDesign.ink : SafeDesign.inkSecondary)
             .padding(.horizontal, SafeDesign.l)
             .padding(.vertical, SafeDesign.s)
             .background {
                 if isSelected {
-                    Capsule().fill(SafeDesign.primary)
+                    Capsule().fill(theme.tint)
                 } else {
                     Capsule().strokeBorder(SafeDesign.hairline, lineWidth: 1)
                 }
@@ -183,6 +186,7 @@ struct SheetHeader: View {
 
 struct ClaySearchBar: View {
     @Binding var text: String
+    @Environment(\.appTheme) private var theme
 
     var body: some View {
         HStack(spacing: SafeDesign.m) {
@@ -192,7 +196,7 @@ struct ClaySearchBar: View {
             TextField("Search", text: $text)
                 .font(SafeDesign.body)
                 .foregroundStyle(SafeDesign.ink)
-                .tint(SafeDesign.accentDeep)
+                .tint(theme.tintStrong)
         }
         .padding(.horizontal, SafeDesign.l)
         .padding(.vertical, SafeDesign.m)

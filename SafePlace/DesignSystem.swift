@@ -35,12 +35,12 @@ enum SafeDesign {
     static let peachFuzz     = Color(hex: "FFD7BA")
     static let peachGlow     = Color(hex: "FEC89A")
 
-    // MARK: - Surfaces
-    static let canvas        = dyn("F8EDEB", "000000")   // seashell / pure black
-    static let surfaceSoft   = dyn("FAE1DD", "0A0A0A")   // soft blush / near-black
-    static let surfaceCard   = dyn("FCD5CE", "111111")   // almond silk / near-black
-    static let surfaceStrong = dyn("FEC5BB", "1A1A1A")   // powder blush / raised black
-    static let hairline      = dynWhiteInk(0.10, 0.12)
+    // MARK: - Surfaces (white & sober, mood tint comes from AppTheme)
+    static let canvas        = dyn("FCFBFA", "000000")   // near-white / pure black
+    static let surfaceSoft   = dyn("F6F4F2", "141414")   // subtle grouping
+    static let surfaceCard   = dyn("FFFFFF", "0E0E0E")   // white card / near-black
+    static let surfaceStrong = dyn("EFEBE7", "1C1C1C")   // pressed / raised
+    static let hairline      = dynWhiteInk(0.09, 0.12)
 
     // MARK: - Ink (text)
     static let ink          = dyn("2B2320", "F5F0EC")
