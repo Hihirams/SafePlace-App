@@ -231,20 +231,21 @@ struct GlassTabBar: View {
             Haptics.tap()
             onCreate()
         } label: {
-            ZStack {
-                Circle()
-                    .fill(theme.tintStrong)
-                    .frame(width: 54, height: 54)
-                    .shadow(color: theme.tintStrong.opacity(0.40), radius: 12, y: 6)
+            VStack(spacing: 3) {
                 Image(systemName: "plus")
-                    .font(.system(size: 22, weight: .bold))
-                    .foregroundStyle(.white)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(theme.tintStrong)
+                Text("Create")
+                    .font(.system(size: 10, weight: .semibold))
+                    .minimumScaleFactor(0.8)
+                    .lineLimit(1)
+                    .foregroundStyle(SafeDesign.muted)
             }
-            .overlay { Circle().strokeBorder(.white.opacity(0.45), lineWidth: 1) }
-            .offset(y: -14)
+            .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .pressable(scale: 0.9)
+        .pressable(scale: 0.94)
         .accessibilityLabel("Create a note")
     }
 
