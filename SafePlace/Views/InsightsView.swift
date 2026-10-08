@@ -6,6 +6,7 @@ struct InsightsView: View {
     @ObservedObject var store: Store
     @Environment(\.horizontalSizeClass) private var h
     @Environment(\.verticalSizeClass) private var v
+    @Environment(\.appTheme) private var theme
 
     private struct DayCount: Identifiable {
         let date: Date
@@ -120,7 +121,7 @@ struct InsightsView: View {
                     x: .value("Day", item.date, unit: .day),
                     y: .value("Notes", item.count)
                 )
-                .foregroundStyle(SafeDesign.accentDeep.gradient)
+                .foregroundStyle(theme.tintStrong.gradient)
                 .cornerRadius(4)
             }
             .chartYAxis {
@@ -187,7 +188,7 @@ struct InsightsView: View {
                     GeometryReader { geo in
                         ZStack(alignment: .leading) {
                             Capsule().fill(SafeDesign.surfaceStrong)
-                            Capsule().fill(SafeDesign.accentDeep)
+                            Capsule().fill(theme.tintStrong)
                                 .frame(width: geo.size.width * fraction(item.count))
                         }
                     }

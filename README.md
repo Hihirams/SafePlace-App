@@ -17,26 +17,25 @@ App de iPhone para guardar las pequeñas cosas que te ayudan: hábitos, personas
 
 ## Diseño
 
-- **Paleta powder-blush**: powder-blush `#FEC5BB`, almond-silk `#FCD5CE`, soft-blush `#FAE1DD`, seashell `#F8EDEB`, alabaster `#E8E8E4`, alabaster-2 `#D8E2DC`, linen `#ECE4DB`, powder-petal `#FFE5D9`, peach-fuzz `#FFD7BA`, peach-glow `#FEC89A`
-- **Acento**: peach-glow; las tarjetas de nota conservan su paleta viva (pink, teal, lavender, peach, ochre, mint, coral, cream)
-- **Modo oscuro**: negro puro `#000` (superficies casi negras, sin gris) con la paleta adaptada
-- **Logo**: icono de app (escudo + corazón) en la paleta nueva
+- **Base blanca y sobria** con la paleta solo en detalles; el color de acento es **dinámico**: se deriva del estado emocional (mood dominante) y tiñe acentos, el personaje, las gráficas y un glow de fondo muy leve
+- **Paleta**: powder-blush `#FEC5BB`, almond-silk `#FCD5CE`, soft-blush `#FAE1DD`, seashell `#F8EDEB`, alabaster `#E8E8E4`, alabaster-2 `#D8E2DC`, linen `#ECE4DB`, powder-petal `#FFE5D9`, peach-fuzz `#FFD7BA`, peach-glow `#FEC89A`; las tarjetas de nota conservan su paleta viva
+- **Modo oscuro**: negro puro `#000` (superficies casi negras, sin gris)
+- **Logo**: icono de app (escudo + corazón); wordmark "SafePlace" en serif
 - **Liquid glass**: efectos `.ultraThinMaterial` con bordes translúcidos (y Liquid Glass nativo de Apple en iOS 26)
-- **Tipografía**: SF Rounded para cifras y encabezados
+- **Tipografía**: serif para el wordmark, SF Rounded para cifras
 
 ## Funciones
 
-- **Quick capture**: botón flotante para registrar un momento en 3 segundos (mood + texto opcional)
-- **Home viva**: check-in de mood del día, "on this day", quick actions, stats y barras clickeables, y vista **Overview / Insights**
+- **Home sobria**: header con avatar + wordmark centrado + buscador; personaje grande que cambia de color con tu estado de ánimo; check-in de mood; "on this day"; segmentado **Overview / Insights**
+- **Create (centro del navbar)**: botón central elevado que abre una pantalla dedicada de composición
+- **Búsqueda**: busca notas por palabras exactas, keywords, similitud difusa o emoción, con **preview** del texto y términos resaltados
 - **Insights** (Swift Charts): notas por día, distribución por mood/categoría, palabras frecuentes y mejor racha — observacional, sin culpa
-- **Ajustes** (desde el avatar): tema, recordatorio diario opcional, export/import JSON, borrar datos, versión y feed de actualización
+- **Ajustes** (desde el avatar): tema (único lugar), recordatorio diario, **importar notas compartidas**, export/import JSON, borrar datos, versión y feed de actualización
 - **Journal**: búsqueda, filtro por mood y secciones por día colapsables
 - **Saved**: copiar/compartir/convertir en nota/borrar
-- **Notes**: preview, renombrar, "Keep all"
 - **Auto-categoría**: al escribir una nota se sugiere una categoría según el contenido (puedes cambiarla antes de guardar)
-- **Mind**: grafo force-directed responsive con nodos con degradado, glow, zoom, pan, pin y etiquetas
-- **Mind · Wave**: vista de contagio — las bolitas adoptan poco a poco el color del sentimiento dominante para mostrar qué emoción manda en tus notas
-- **Personaje**: una forma tipo *dumpling* (sin cara) que aparece en grande en Home, con movimiento suave y color personalizable desde Ajustes
+- **Mind**: grafo force-directed responsive con nodos con degradado, glow, zoom, pan, pin y etiquetas; el **contagio** del mood dominante es siempre activo y la vista **Wave** lo hace más fuerte
+- **Notas de iPhone**: comparte desde Apple Notes; se revisan/importan desde **Ajustes → Shared notes**
 
 
 ## Estructura
