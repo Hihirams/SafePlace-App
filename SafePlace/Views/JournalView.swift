@@ -51,17 +51,15 @@ struct JournalView: View {
                             dayHeader(group)
 
                             if !collapsed.contains(group.day) {
-                                LazyVGrid(columns: SafeLayout.columns(forWidth: contentWidth), spacing: SafeDesign.m) {
+                                VStack(spacing: 0) {
                                     ForEach(group.entries) { entry in
-                                        EntryCardView(entry: entry) {
-                                            editingEntry = entry
-                                            showForm = true
-                                        } onDelete: {
-                                            Haptics.warning()
-                                            store.deleteEntry(id: entry.id)
-                                        } onDuplicate: {
-                                            duplicate(entry)
-                                        }
+                                        EditorialNoteRow(
+                                            entry: entry,
+                                            onEdit: { editingEntry = entry; showForm = true },
+                                            onDelete: { Haptics.warning(); store.deleteEntry(id: entry.id) },
+                                            onDuplicate: { duplicate(entry) }
+                                        )
+                                        if entry.id != group.entries.last?.id { Hairline() }
                                     }
                                 }
                                 .transition(.opacity.combined(with: .move(edge: .top)))

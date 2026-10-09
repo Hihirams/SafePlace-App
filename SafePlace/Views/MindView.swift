@@ -8,9 +8,10 @@ struct MindView: View {
 
     @State private var graph = MindGraph(nodes: [], edges: [])
     @State private var simulation: MindSimulation?
-    @State private var colorMode: MindColorMode = .mood
+    @State private var colorMode: MindColorMode = .contagion
     @State private var sensitivity: CGFloat = 0.5
     @State private var paused = false
+    @State private var showOptions = false
     @State private var selectedID: String?
     @State private var zoom: CGFloat = 1
     @State private var pan: CGSize = .zero
@@ -76,7 +77,7 @@ struct MindView: View {
                         selectionCard(entry)
                             .transition(.move(edge: .bottom).combined(with: .opacity))
                     }
-                    controls
+                    viewSwitcher
                 }
                 .padding(.horizontal, SafeLayout.pageInset(h, v))
                 .padding(.bottom, SafeLayout.tabBarClearance(h))
@@ -89,6 +90,18 @@ struct MindView: View {
             rebuildNodes()
         }
         .onChange(of: sensitivity) { _, _ in refreshEdges() }
+        .sheet(isPresented: $showOptions) {
+            MindOptionsSheet(
+                colorMode: $colorMode,
+                sensitivity: $sensitivity,
+                paused: $paused,
+                onZoomOut: { zoomBy(0.8) },
+                onZoomIn: { zoomBy(1.25) },
+                onRecenter: { recenter() }
+            )
+            .presentationDetents([.medium])
+            .presentationDragIndicator(.visible)
+        }
         .sheet(isPresented: $showForm) {
             EntryFormView(
                 initial: editingEntry,
@@ -328,84 +341,44 @@ struct MindView: View {
             .background(SafeDesign.surfaceCard, in: Capsule())
     }
 
-    // MARK: - Controls
+    // MARK: - View switcher (compact, non-intrusive)
 
-    private var controls: some View {
-        VStack(spacing: SafeDesign.s) {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: SafeDesign.xs) {
-                    ForEach(MindColorMode.allCases) { mode in
-                        SelectionPill(title: mode.label, icon: mode.icon, isSelected: colorMode == mode) {
-                            Haptics.selection()
-                            withAnimation(SafeDesign.spring) { colorMode = mode }
-                        }
+    private var viewSwitcher: some View {
+        HStack(spacing: SafeDesign.s) {
+            Menu {
+                ForEach(MindColorMode.allCases) { mode in
+                    Button {
+                        Haptics.selection()
+                        withAnimation(SafeDesign.spring) { colorMode = mode }
+                    } label: {
+                        Label(mode.label, systemImage: mode.icon)
                     }
                 }
-            }
-            .scrollClipDisabled()
-
-            HStack(spacing: SafeDesign.m) {
-                Image(systemName: "circle.dashed")
-                    .font(.system(size: 13))
-                    .foregroundStyle(SafeDesign.muted)
-                    .accessibilityHidden(true)
-                Slider(
-                    value: Binding(
-                        get: { Double(sensitivity) },
-                        set: { sensitivity = CGFloat($0) }
-                    ),
-                    in: 0...1
-                )
-                .tint(SafeDesign.accentDeep)
-                .accessibilityLabel("Connection sensitivity")
-                Image(systemName: "circle.grid.cross.fill")
-                    .font(.system(size: 13))
-                    .foregroundStyle(SafeDesign.muted)
-                    .accessibilityHidden(true)
-            }
-
-            HStack(spacing: SafeDesign.s) {
-                mindControlButton(icon: paused ? "play.fill" : "pause.fill", label: paused ? "Play" : "Pause") {
-                    paused.toggle()
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: colorMode.icon)
+                        .font(.system(size: 13, weight: .semibold))
+                    Text(colorMode.label)
+                        .font(SafeDesign.caption)
+                    Image(systemName: "chevron.up.chevron.down")
+                        .font(.system(size: 9, weight: .semibold))
                 }
-                mindControlButton(icon: "minus.magnifyingglass", label: "Out") { zoomBy(0.8) }
-                mindControlButton(icon: "plus.magnifyingglass", label: "In") { zoomBy(1.25) }
-                mindControlButton(icon: "scope", label: "Center") { recenter() }
+                .foregroundStyle(SafeDesign.ink)
+                .padding(.horizontal, SafeDesign.m)
+                .frame(minHeight: 40)
+                .background(SafeDesign.surfaceCard, in: Capsule())
+                .overlay { Capsule().strokeBorder(SafeDesign.hairline, lineWidth: 1) }
             }
-        }
-        .padding(SafeDesign.m)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: SafeDesign.radiusXL, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: SafeDesign.radiusXL, style: .continuous)
-                .strokeBorder(SafeDesign.hairline, lineWidth: 0.75)
-        }
-        .shadow(color: .black.opacity(0.14), radius: 20, y: 10)
-    }
+            .accessibilityLabel("Mind view")
+            .accessibilityIdentifier("mind-view")
 
-    private func mindControlButton(icon: String, label: String, action: @escaping () -> Void) -> some View {
-        Button {
-            Haptics.tap()
-            action()
-        } label: {
-            VStack(spacing: 3) {
-                Image(systemName: icon)
-                    .font(.system(size: 16, weight: .semibold))
-                Text(label)
-                    .font(.system(size: 10, weight: .semibold))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-            }
-            .foregroundStyle(SafeDesign.ink)
-            .frame(maxWidth: .infinity)
-            .frame(height: 48)
-            .background(SafeDesign.surfaceCard, in: RoundedRectangle(cornerRadius: SafeDesign.radiusM, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: SafeDesign.radiusM, style: .continuous)
-                    .strokeBorder(SafeDesign.hairline, lineWidth: 0.75)
+            Spacer()
+
+            GlassIconButton(icon: "slider.horizontal.3", size: 40, label: "Mind options") {
+                Haptics.tap()
+                showOptions = true
             }
         }
-        .buttonStyle(.plain)
-        .pressable(scale: 0.94)
     }
 
     private func zoomBy(_ factor: CGFloat) {
@@ -540,6 +513,78 @@ struct MindView: View {
     private func refreshEdges() {
         graph = MindGraph.build(from: store.entries, colorMode: colorMode, minWeight: minWeight)
         simulation?.update(edges: graph.edges)
+    }
+}
+
+private struct MindOptionsSheet: View {
+    @Binding var colorMode: MindColorMode
+    @Binding var sensitivity: CGFloat
+    @Binding var paused: Bool
+    var onZoomOut: () -> Void
+    var onZoomIn: () -> Void
+    var onRecenter: () -> Void
+
+    @Environment(\.appTheme) private var theme
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: SafeDesign.xl) {
+                    SheetHeader(title: "Mind", subtitle: "Tune how your graph looks.", onClose: { dismiss() })
+
+                    VStack(alignment: .leading, spacing: SafeDesign.s) {
+                        sectionLabel("VIEW")
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: SafeDesign.xs) {
+                                ForEach(MindColorMode.allCases) { mode in
+                                    SelectionPill(title: mode.label, icon: mode.icon, isSelected: colorMode == mode) {
+                                        Haptics.selection()
+                                        withAnimation(SafeDesign.spring) { colorMode = mode }
+                                    }
+                                }
+                            }
+                        }
+                        .scrollClipDisabled()
+                    }
+
+                    VStack(alignment: .leading, spacing: SafeDesign.s) {
+                        sectionLabel("CONNECTIONS")
+                        Slider(
+                            value: Binding(
+                                get: { Double(sensitivity) },
+                                set: { sensitivity = CGFloat($0) }
+                            ),
+                            in: 0...1
+                        )
+                        .tint(theme.tintStrong)
+                        .accessibilityLabel("Connection sensitivity")
+                    }
+
+                    HStack(spacing: SafeDesign.s) {
+                        SecondaryButton(title: paused ? "Play" : "Pause", icon: paused ? "play.fill" : "pause.fill") {
+                            paused.toggle()
+                        }
+                        SecondaryButton(title: "Center", icon: "scope") { onRecenter() }
+                    }
+                    HStack(spacing: SafeDesign.s) {
+                        SecondaryButton(title: "Zoom out", icon: "minus.magnifyingglass") { onZoomOut() }
+                        SecondaryButton(title: "Zoom in", icon: "plus.magnifyingglass") { onZoomIn() }
+                    }
+                }
+                .padding(.horizontal, SafeDesign.l)
+                .padding(.bottom, SafeDesign.xxl)
+            }
+            .background(SafeDesign.canvas.ignoresSafeArea())
+            .toolbar(.hidden, for: .navigationBar)
+        }
+    }
+
+    private func sectionLabel(_ text: String) -> some View {
+        Text(text)
+            .font(.system(size: 11, weight: .semibold))
+            .tracking(1.5)
+            .foregroundStyle(SafeDesign.muted)
     }
 }
 

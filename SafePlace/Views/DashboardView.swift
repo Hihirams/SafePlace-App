@@ -37,25 +37,31 @@ struct DashboardView: View {
     }
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(alignment: .leading, spacing: SafeDesign.xl) {
-                header
-                mascotHero
-                todayCard
-                if !onThisDay.isEmpty { onThisDaySection }
-                modePicker
+        VStack(spacing: 0) {
+            header
+                .padding(.horizontal, SafeLayout.pageInset(h, v))
+                .padding(.top, SafeDesign.s)
+                .padding(.bottom, SafeDesign.s)
 
-                if mode == .overview {
-                    statsPanel
-                    recentSection
-                } else {
-                    InsightsView(store: store)
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: SafeDesign.xl) {
+                    mascotHero
+                    todayCard
+                    if !onThisDay.isEmpty { onThisDaySection }
+                    modePicker
+
+                    if mode == .overview {
+                        statsPanel
+                        recentSection
+                    } else {
+                        InsightsView(store: store)
+                    }
                 }
+                .pageColumn(h, v)
+                .padding(.top, SafeDesign.m)
+                .padding(.bottom, SafeLayout.tabBarClearance(h))
+                .readingWidth($contentWidth)
             }
-            .pageColumn(h, v)
-            .padding(.top, SafeDesign.m)
-            .padding(.bottom, SafeLayout.tabBarClearance(h))
-            .readingWidth($contentWidth)
         }
         .sheet(isPresented: $showForm) {
             EntryFormView(
@@ -73,45 +79,63 @@ struct DashboardView: View {
 
     private var header: some View {
         ZStack {
-            Text("SafePlace")
-                .font(.system(size: 27, weight: .semibold, design: .serif))
-                .foregroundStyle(SafeDesign.ink)
+            HStack(spacing: SafeDesign.xs) {
+                BrandMark(size: 11, color: theme.tintStrong)
+                Text("SafePlace")
+                    .font(SafeDesign.serifTitle)
+                    .foregroundStyle(SafeDesign.ink)
+            }
 
             HStack {
-                Button {
-                    Haptics.tap()
-                    onOpenSettings()
-                } label: {
-                    ZStack {
-                        Circle().fill(theme.tint.opacity(0.35)).frame(width: 40, height: 40)
-                        Image(systemName: "person.fill")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(theme.tintStrong)
-                    }
-                    .overlay { Circle().strokeBorder(SafeDesign.hairline, lineWidth: 1) }
-                }
-                .buttonStyle(.plain)
-                .pressable(scale: 0.92)
-                .accessibilityLabel("Profile and settings")
-
+                avatar
                 Spacer()
-
-                Button {
-                    Haptics.tap()
-                    onOpenSearch()
-                } label: {
-                    Image(systemName: "magnifyingglass")
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(SafeDesign.ink)
-                        .frame(width: 40, height: 40)
-                        .background(SafeDesign.surfaceSoft, in: Circle())
-                        .overlay { Circle().strokeBorder(SafeDesign.hairline, lineWidth: 1) }
-                }
-                .buttonStyle(.plain)
-                .pressable(scale: 0.92)
-                .accessibilityLabel("Search notes")
+                searchButton
             }
         }
+    }
+
+    private var avatar: some View {
+        Button {
+            Haptics.tap()
+            onOpenSettings()
+        } label: {
+            ZStack {
+                Circle()
+                    .fill(RadialGradient(
+                        colors: [theme.tint, theme.tintStrong],
+                        center: .topLeading,
+                        startRadius: 2,
+                        endRadius: 46))
+                    .frame(width: 42, height: 42)
+                Text("S")
+                    .font(.system(.title3, design: .serif).weight(.semibold))
+                    .foregroundStyle(SafeDesign.onPrimary)
+            }
+            .overlay { Circle().strokeBorder(.white.opacity(0.55), lineWidth: 1) }
+            .shadow(color: theme.tintStrong.opacity(0.25), radius: 8, y: 4)
+        }
+        .buttonStyle(.plain)
+        .pressable(scale: 0.92)
+        .accessibilityLabel("Profile and settings")
+        .accessibilityIdentifier("home-avatar")
+    }
+
+    private var searchButton: some View {
+        Button {
+            Haptics.tap()
+            onOpenSearch()
+        } label: {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(SafeDesign.ink)
+                .frame(width: 42, height: 42)
+                .background(Circle().fill(SafeDesign.surfaceCard))
+                .overlay { Circle().strokeBorder(SafeDesign.hairline, lineWidth: 1) }
+        }
+        .buttonStyle(.plain)
+        .pressable(scale: 0.92)
+        .accessibilityLabel("Search notes")
+        .accessibilityIdentifier("home-search")
     }
 
     // MARK: - Character
@@ -354,10 +378,10 @@ struct DashboardView: View {
     // MARK: - Recent
 
     private var recentSection: some View {
-        VStack(alignment: .leading, spacing: SafeDesign.m) {
+        VStack(alignment: .leading, spacing: 0) {
             HStack {
                 Text("Recent")
-                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .font(SafeDesign.serifTitle)
                     .foregroundStyle(SafeDesign.ink)
                 Spacer()
                 Button {
@@ -372,6 +396,7 @@ struct DashboardView: View {
                 }
                 .buttonStyle(.plain)
             }
+            .padding(.bottom, SafeDesign.s)
 
             if recentEntries.isEmpty {
                 VStack(spacing: SafeDesign.s) {
@@ -385,17 +410,14 @@ struct DashboardView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, SafeDesign.xxl)
             } else {
-                LazyVGrid(columns: SafeLayout.columns(forWidth: contentWidth), spacing: SafeDesign.m) {
-                    ForEach(recentEntries) { entry in
-                        EntryCardView(entry: entry) {
-                            editingEntry = entry
-                            showForm = true
-                        } onDelete: {
-                            deleteEntry(entry)
-                        } onDuplicate: {
-                            duplicateEntry(entry)
-                        }
-                    }
+                ForEach(recentEntries) { entry in
+                    EditorialNoteRow(
+                        entry: entry,
+                        onEdit: { editingEntry = entry; showForm = true },
+                        onDelete: { deleteEntry(entry) },
+                        onDuplicate: { duplicateEntry(entry) }
+                    )
+                    if entry.id != recentEntries.last?.id { Hairline() }
                 }
             }
         }

@@ -40,6 +40,7 @@
 		AA010000000000000000011F /* MoodState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000001022 /* MoodState.swift */; };
 		AA0100000000000000000120 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000001023 /* SearchView.swift */; };
 		AA0100000000000000000121 /* NoteStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000001024 /* NoteStats.swift */; };
+		AA0100000000000000000122 /* CreateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000001025 /* CreateView.swift */; };
 		AA0100000000000000000300 /* LogicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000003002 /* LogicTests.swift */; };
 		AA0100000000000000000400 /* SmokeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000004002 /* SmokeUITests.swift */; };
 		AA0100000000000000000200 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000002001 /* ShareViewController.swift */; };
@@ -121,6 +122,7 @@
 		BB0100000000000000001022 /* MoodState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoodState.swift; sourceTree = "<group>"; };
 		BB0100000000000000001023 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		BB0100000000000000001024 /* NoteStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteStats.swift; sourceTree = "<group>"; };
+		BB0100000000000000001025 /* CreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateView.swift; sourceTree = "<group>"; };
 		BB0100000000000000002001 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		BB0100000000000000002002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BB0100000000000000002003 /* SafePlaceShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SafePlaceShare.entitlements; sourceTree = "<group>"; };
@@ -265,6 +267,7 @@
 				BB010000000000000000101E /* InsightsView.swift */,
 				BB0100000000000000001021 /* MascotView.swift */,
 				BB0100000000000000001023 /* SearchView.swift */,
+				BB0100000000000000001025 /* CreateView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -453,6 +456,7 @@
 				AA010000000000000000011F /* MoodState.swift in Sources */,
 				AA0100000000000000000120 /* SearchView.swift in Sources */,
 				AA0100000000000000000121 /* NoteStats.swift in Sources */,
+				AA0100000000000000000122 /* CreateView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

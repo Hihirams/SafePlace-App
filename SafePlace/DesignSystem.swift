@@ -35,16 +35,16 @@ enum SafeDesign {
     static let peachFuzz     = Color(hex: "FFD7BA")
     static let peachGlow     = Color(hex: "FEC89A")
 
-    // MARK: - Surfaces (white & sober, mood tint comes from AppTheme)
-    static let canvas        = dyn("FCFBFA", "000000")   // near-white / pure black
-    static let surfaceSoft   = dyn("F6F4F2", "141414")   // subtle grouping
-    static let surfaceCard   = dyn("FFFFFF", "0E0E0E")   // white card / near-black
-    static let surfaceStrong = dyn("EFEBE7", "1C1C1C")   // pressed / raised
-    static let hairline      = dynWhiteInk(0.09, 0.12)
+    // MARK: - Surfaces (warm editorial paper)
+    static let canvas        = dyn("FAF8F4", "000000")   // warm near-white / pure black
+    static let surfaceSoft   = dyn("F3EFE8", "141414")   // soft paper
+    static let surfaceCard   = dyn("FFFFFF", "0E0E0E")   // white sheet / near-black
+    static let surfaceStrong = dyn("ECE7DF", "1C1C1C")   // pressed / raised
+    static let hairline      = dynWhiteInk(0.10, 0.12)
 
     // MARK: - Ink (text)
-    static let ink          = dyn("2B2320", "F5F0EC")
-    static let inkSecondary = dyn("6B5E57", "B8AFA8")
+    static let ink          = dyn("2A2622", "F3EEE7")
+    static let inkSecondary = dyn("6B625A", "B8AFA6")
     static let muted        = dynWhiteInk(0.66, 0.55)
 
     // MARK: - Accent (peach glow)
@@ -76,9 +76,13 @@ enum SafeDesign {
     static let error   = Color(hex: "EF4444")
 
     // MARK: - Typography (semantic so it scales with Dynamic Type)
-    static let heroFont    = Font.system(.title, design: .rounded).weight(.bold)
-    static let displayFont = Font.system(.title, design: .rounded).weight(.bold)
-    static let largeTitle  = Font.system(.title).weight(.bold)
+    // Display / titles are serif; body & UI are SF.
+    static let serifHero   = Font.system(.largeTitle, design: .serif).weight(.semibold)
+    static let serifTitle  = Font.system(.title2, design: .serif).weight(.semibold)
+    static let serifHead   = Font.system(.title3, design: .serif).weight(.semibold)
+    static let heroFont    = Font.system(.title, design: .serif).weight(.semibold)
+    static let displayFont = Font.system(.title, design: .serif).weight(.semibold)
+    static let largeTitle  = Font.system(.title2, design: .serif).weight(.semibold)
     static let title       = Font.system(.title3).weight(.bold)
     static let headline    = Font.system(.headline)
     static let body        = Font.system(.subheadline).weight(.medium)

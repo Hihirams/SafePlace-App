@@ -29,6 +29,34 @@ enum Haptics {
     }
 }
 
+// MARK: - Interface style (immediate theme switching)
+
+enum InterfaceStyle {
+    static func apply(_ mode: ThemeMode) {
+        let style: UIUserInterfaceStyle
+        switch mode {
+        case .system: style = .unspecified
+        case .light: style = .light
+        case .dark: style = .dark
+        }
+        for scene in UIApplication.shared.connectedScenes {
+            guard let windowScene = scene as? UIWindowScene else { continue }
+            for window in windowScene.windows { window.overrideUserInterfaceStyle = style }
+        }
+    }
+}
+
+extension View {
+    /// Applies the theme both as a preferred scheme and as a window override so
+    /// it takes effect immediately on every screen, including cached tab pages.
+    func interfaceStyle(_ mode: ThemeMode) -> some View {
+        self
+            .preferredColorScheme(mode.colorScheme)
+            .onAppear { InterfaceStyle.apply(mode) }
+            .onChange(of: mode) { _, newMode in InterfaceStyle.apply(newMode) }
+    }
+}
+
 // MARK: - Symbol Effect Helpers
 // Wraps iOS 17+ symbol effects with availability checks
 

@@ -83,7 +83,7 @@ struct RootView: View {
             }
         }
         .environment(\.appTheme, AppTheme(moodState: moodState))
-        .preferredColorScheme(mode.colorScheme)
+        .interfaceStyle(mode)
         .onAppear {
             if ProcessInfo.processInfo.arguments.contains("-uitesting") {
                 hasSeenOnboarding = true
@@ -140,16 +140,7 @@ struct ContentView: View {
         }
         .tint(SafeDesign.accent)
         .fullScreenCover(isPresented: $showCreate) {
-            EntryFormView(
-                initial: nil,
-                categories: store.categories,
-                onSave: { entry in
-                    store.addEntry(entry)
-                    Haptics.success()
-                    showCreate = false
-                },
-                onClose: { showCreate = false }
-            )
+            CreateView(store: store) { showCreate = false }
         }
         .fullScreenCover(isPresented: $showSearch) {
             SearchView(store: store)
@@ -187,15 +178,15 @@ struct GlassTabBar: View {
             let count = CGFloat(slots.count)
             let cell = geo.size.width / count
 
-            ZStack(alignment: .topLeading) {
+            ZStack(alignment: .leading) {
                 Capsule(style: .continuous)
-                    .fill(theme.tint.opacity(0.28))
+                    .fill(theme.tint.opacity(0.30))
                     .overlay {
                         Capsule(style: .continuous)
                             .strokeBorder(.white.opacity(0.28), lineWidth: 0.5)
                     }
-                    .frame(width: cell - 6, height: barHeight - 6)
-                    .offset(x: cell * CGFloat(selectedIndex) + 3, y: 3)
+                    .frame(width: max(cell - 6, 0), height: barHeight - 6)
+                    .offset(x: cell * CGFloat(selectedIndex) + 3)
                     .animation(selectorAnim, value: selectedIndex)
 
                 HStack(spacing: 0) {
@@ -208,6 +199,7 @@ struct GlassTabBar: View {
                         }
                     }
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .contentShape(Rectangle())
             .gesture(
