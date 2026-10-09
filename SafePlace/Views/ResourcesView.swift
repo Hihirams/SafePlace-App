@@ -5,6 +5,7 @@ struct ResourcesView: View {
     @ObservedObject var store: Store
     @Environment(\.horizontalSizeClass) private var h
     @Environment(\.verticalSizeClass) private var v
+    @Environment(\.appTheme) private var theme
     @State private var text = ""
     @State private var url = ""
     @State private var filter: Filter = .all
@@ -38,9 +39,10 @@ struct ResourcesView: View {
                 if filtered.isEmpty {
                     emptyState
                 } else {
-                    LazyVGrid(columns: SafeLayout.columns(forWidth: contentWidth), spacing: SafeDesign.m) {
+                    VStack(spacing: 0) {
                         ForEach(filtered) { resource in
-                            resourceCard(resource)
+                            resourceRow(resource)
+                            if resource.id != filtered.last?.id { Hairline() }
                         }
                     }
                     .animation(SafeDesign.spring, value: filter)
@@ -104,73 +106,68 @@ struct ResourcesView: View {
         .padding(.vertical, SafeDesign.xxxl)
     }
 
-    private func resourceCard(_ resource: Resource) -> some View {
-        VStack(alignment: .leading, spacing: SafeDesign.m) {
-            if resource.isLink, let link = URL(string: resource.url) {
-                Link(destination: link) {
+    private func resourceRow(_ resource: Resource) -> some View {
+        HStack(alignment: .top, spacing: SafeDesign.m) {
+            Image(systemName: resource.isLink ? "link" : "text.quote")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(theme.tintStrong)
+                .frame(width: 26, height: 26)
+
+            VStack(alignment: .leading, spacing: 4) {
+                if resource.isLink, let link = URL(string: resource.url) {
+                    Link(destination: link) {
+                        Text(resource.text)
+                            .font(SafeDesign.serifHead)
+                            .foregroundStyle(SafeDesign.ink)
+                            .underline(true, color: SafeDesign.hairline)
+                            .multilineTextAlignment(.leading)
+                    }
+                } else {
                     Text(resource.text)
-                        .font(SafeDesign.body)
-                        .fontWeight(.medium)
+                        .font(SafeDesign.serifHead)
                         .foregroundStyle(SafeDesign.ink)
-                        .underline(true, color: SafeDesign.accentDeep.opacity(0.5))
                         .multilineTextAlignment(.leading)
                 }
-            } else {
-                Text(resource.text)
-                    .font(SafeDesign.body)
-                    .fontWeight(.medium)
-                    .foregroundStyle(SafeDesign.ink)
-                    .multilineTextAlignment(.leading)
-            }
 
-            Spacer(minLength: 4)
-
-            HStack {
-                Label(resource.isLink ? "link" : "note", systemImage: resource.isLink ? "link" : "doc.text")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(SafeDesign.muted)
+                if resource.isLink, let host = URL(string: resource.url)?.host {
+                    Text(host)
+                        .font(SafeDesign.micro)
+                        .foregroundStyle(SafeDesign.muted)
+                }
 
                 if copiedID == resource.id {
                     Text("Copied")
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(SafeDesign.accentDeep)
+                        .font(SafeDesign.micro)
+                        .foregroundStyle(theme.tintStrong)
                         .transition(.opacity)
                 }
-
-                Spacer()
-
-                Menu {
-                    Button { copy(resource) } label: { Label("Copy", systemImage: "doc.on.doc") }
-                    if resource.isLink, let link = URL(string: resource.url) {
-                        ShareLink(item: link) { Label("Share link", systemImage: "square.and.arrow.up") }
-                    } else {
-                        ShareLink(item: resource.text) { Label("Share", systemImage: "square.and.arrow.up") }
-                    }
-                    Button { convertToNote(resource) } label: { Label("Save as note", systemImage: "note.text.badge.plus") }
-                    Button(role: .destructive) {
-                        Haptics.warning()
-                        withAnimation(SafeDesign.spring) { store.deleteResource(id: resource.id) }
-                    } label: { Label("Delete", systemImage: "trash") }
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundStyle(SafeDesign.inkSecondary)
-                        .frame(width: 34, height: 34)
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
             }
+
+            Spacer(minLength: 0)
+
+            Menu {
+                Button { copy(resource) } label: { Label("Copy", systemImage: "doc.on.doc") }
+                if resource.isLink, let link = URL(string: resource.url) {
+                    ShareLink(item: link) { Label("Share link", systemImage: "square.and.arrow.up") }
+                } else {
+                    ShareLink(item: resource.text) { Label("Share", systemImage: "square.and.arrow.up") }
+                }
+                Button { convertToNote(resource) } label: { Label("Save as note", systemImage: "note.text.badge.plus") }
+                Button(role: .destructive) {
+                    Haptics.warning()
+                    withAnimation(SafeDesign.spring) { store.deleteResource(id: resource.id) }
+                } label: { Label("Delete", systemImage: "trash") }
+            } label: {
+                Image(systemName: "ellipsis")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(SafeDesign.muted)
+                    .frame(width: 34, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Saved item options")
         }
-        .padding(SafeDesign.l)
-        .frame(maxWidth: .infinity, minHeight: 130, alignment: .topLeading)
-        .background(
-            resource.isLink ? SafeDesign.surfaceSoft : SafeDesign.surfaceCard,
-            in: RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous)
-        )
-        .overlay {
-            RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous)
-                .strokeBorder(SafeDesign.hairline, lineWidth: 0.75)
-        }
+        .padding(.vertical, SafeDesign.s)
     }
 
     private func saveResource() {

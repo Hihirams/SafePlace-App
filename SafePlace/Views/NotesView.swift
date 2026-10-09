@@ -4,6 +4,7 @@ struct NotesView: View {
     @ObservedObject var store: Store
     @Environment(\.horizontalSizeClass) private var h
     @Environment(\.verticalSizeClass) private var v
+    @Environment(\.appTheme) private var theme
     @State private var notes: [SharedNote] = []
     @State private var previewing: SharedNote?
 
@@ -37,6 +38,7 @@ struct NotesView: View {
 
                     ForEach(notes) { note in
                         sharedNoteCard(note)
+                        if note.id != notes.last?.id { Hairline() }
                     }
                 }
             }
@@ -117,9 +119,9 @@ struct NotesView: View {
             HStack {
                 Image(systemName: "note.text")
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(SafeDesign.accentDeep)
+                    .foregroundStyle(theme.tintStrong)
                 Text(note.title.isEmpty ? "Untitled note" : note.title)
-                    .font(SafeDesign.headline)
+                    .font(SafeDesign.serifHead)
                     .foregroundStyle(SafeDesign.ink)
                     .lineLimit(2)
                 Spacer()
@@ -144,10 +146,10 @@ struct NotesView: View {
                     }
                     .font(SafeDesign.caption)
                     .fontWeight(.semibold)
-                    .foregroundStyle(SafeDesign.onPrimary)
+                    .foregroundStyle(SafeDesign.canvas)
                     .padding(.horizontal, SafeDesign.l)
                     .frame(minHeight: 40)
-                    .background(Capsule().fill(SafeDesign.accent))
+                    .background(Capsule().fill(SafeDesign.ink))
                 }
                 .buttonStyle(.plain)
                 .pressable(scale: 0.95)
@@ -178,13 +180,8 @@ struct NotesView: View {
             }
             .padding(.top, SafeDesign.xs)
         }
-        .padding(SafeDesign.l)
+        .padding(.vertical, SafeDesign.m)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(SafeDesign.surfaceCard, in: RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous)
-                .strokeBorder(SafeDesign.hairline, lineWidth: 0.75)
-        }
     }
 
     // MARK: - Actions
