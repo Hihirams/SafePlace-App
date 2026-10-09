@@ -49,7 +49,7 @@ final class MindSimulation {
         let count = bodies.count
         guard count > 0 else { return }
         let e = max(energy, 0.05)
-        let index = Dictionary(uniqueKeysWithValues: bodies.enumerated().map { ($1.id, $0) })
+        let index = Dictionary(bodies.enumerated().map { ($1.id, $0) }, uniquingKeysWith: { first, _ in first })
 
         for _ in 0..<iterations {
             var forces = [CGVector](repeating: .zero, count: count)

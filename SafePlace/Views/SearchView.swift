@@ -286,14 +286,16 @@ struct SearchView: View {
     }
 
     private func fuzzy(_ hay: String, _ term: String) -> Bool {
-        guard term.count >= 3 else { return false }
-        let prefix = String(term.prefix(3))
-        return hay.contains(prefix)
+        guard term.count >= 4 else { return false }
+        return hay.split(whereSeparator: { !$0.isLetter }).contains { word in
+            let w = String(word)
+            return w.count >= 3 && (w.hasPrefix(term) || term.hasPrefix(w))
+        }
     }
 
     private func emotions(in text: String) -> Set<String> {
         let map: [String: [String]] = [
-            "heavy": ["triste", "tristeza", "sad", "mal", "bajón", "bajon", "deprimido", "llorar", "solo", "sola", "solo"],
+            "heavy": ["triste", "tristeza", "sad", "mal", "bajón", "bajon", "deprimido", "llorar", "solo", "sola"],
             "bright": ["feliz", "contento", "alegre", "happy", "genial", "increíble", "increible", "bueno"],
             "calm": ["tranquilo", "tranquila", "calma", "relajado", "paz", "calmado"],
             "hopeful": ["esperanza", "ilusión", "ilusion", "motivado", "hope"],
@@ -312,13 +314,21 @@ struct SearchView: View {
         let source = entry.description.isEmpty ? entry.title : entry.description
         guard !source.isEmpty else { return AttributedString(entry.title) }
 
-        var anchor = source.range(of: query, options: .caseInsensitive)?.lowerBound
+        var anchor = source.startIndex
+        var found = false
+        if let q = source.range(of: query, options: .caseInsensitive)?.lowerBound {
+            anchor = q
+            found = true
+        }
         for term in terms {
-            if let r = source.range(of: term, options: .caseInsensitive) {
-                if anchor == nil || r.lowerBound < anchor! { anchor = r.lowerBound }
+            if let r = source.range(of: term, options: .caseInsensitive)?.lowerBound {
+                if !found || r < anchor {
+                    anchor = r
+                    found = true
+                }
             }
         }
-        let start = anchor ?? source.startIndex
+        let start = anchor
         let from = source.index(start, offsetBy: -70, limitedBy: source.startIndex) ?? source.startIndex
         let to = source.index(start, offsetBy: 150, limitedBy: source.endIndex) ?? source.endIndex
 

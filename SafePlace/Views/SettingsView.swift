@@ -217,15 +217,17 @@ struct SettingsView: View {
                         .font(SafeDesign.body)
                         .foregroundStyle(SafeDesign.ink)
                 }
-                Link(destination: URL(string: "https://hihirams.github.io/SafePlace-App/source.json")!) {
-                    HStack {
-                        Text("Update feed (LiveContainer)")
-                            .font(SafeDesign.body)
-                            .foregroundStyle(appTheme.tintStrong)
-                        Spacer()
-                        Image(systemName: "arrow.up.right")
-                            .font(.system(size: 12, weight: .semibold))
-                            .foregroundStyle(appTheme.tintStrong)
+                if let feedURL = URL(string: "https://hihirams.github.io/SafePlace-App/source.json") {
+                    Link(destination: feedURL) {
+                        HStack {
+                            Text("Update feed (LiveContainer)")
+                                .font(SafeDesign.body)
+                                .foregroundStyle(appTheme.tintStrong)
+                            Spacer()
+                            Image(systemName: "arrow.up.right")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(appTheme.tintStrong)
+                        }
                     }
                 }
                 Text("Built with care. Your notes stay on your device.")

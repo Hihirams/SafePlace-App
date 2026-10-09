@@ -216,7 +216,6 @@ struct GlassTabBar: View {
                         let i = Int(value.location.x / cell)
                         guard i >= 0, i < slots.count, case .tab(let tab) = slots[i] else { return }
                         if tab != selectedTab {
-                            Haptics.selection()
                             withAnimation(selectorAnim) { selectedTab = tab }
                         }
                     }

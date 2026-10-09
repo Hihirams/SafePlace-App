@@ -371,11 +371,12 @@ struct DashboardView: View {
 
     private var categoryCounts: [CategoryCount] {
         let total = store.entries.count
-        let counts = store.categories
+        guard total > 0 else { return [] }
+        let names = Array(Set(store.categories).union(store.entries.map { $0.category }))
+        let counts = names
             .map { name in (name, store.entries.filter { $0.category == name }.count) }
             .filter { $0.1 > 0 }
             .sorted { $0.1 > $1.1 }
-        guard total > 0 else { return [] }
         return counts.map { CategoryCount(name: $0.0, count: $0.1, fraction: CGFloat($0.1) / CGFloat(total)) }
     }
 

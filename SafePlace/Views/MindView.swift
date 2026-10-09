@@ -158,7 +158,7 @@ struct MindView: View {
         guard let simulation else { return }
         _ = size
 
-        let index = Dictionary(uniqueKeysWithValues: graph.nodes.enumerated().map { ($1.id, $0) })
+        let index = Dictionary(graph.nodes.enumerated().map { ($1.id, $0) }, uniquingKeysWith: { first, _ in first })
         let dominant = MindGraph.dominantMood(of: store.entries)
         let elapsed = date.timeIntervalSince(contagionStart)
         let globalProgress = min(max(elapsed / 5.0, 0), 1)

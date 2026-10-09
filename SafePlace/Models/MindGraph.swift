@@ -104,7 +104,15 @@ struct MindGraph {
         "are", "not", "but", "all", "about", "into", "out", "my", "your",
         "a", "an", "i", "to", "of", "in", "on", "it", "me", "we", "you",
         "he", "she", "they", "is", "be", "at", "by", "so", "when", "what",
-        "them", "their", "just", "can", "will", "like", "make", "get"
+        "them", "their", "just", "can", "will", "like", "make", "get",
+        // Spanish
+        "que", "los", "las", "una", "uno", "unos", "unas", "para", "con",
+        "por", "como", "más", "mas", "pero", "porque", "cuando", "todo",
+        "toda", "esta", "este", "esto", "muy", "del", "mis", "me", "mi",
+        "se", "su", "sus", "lo", "le", "ya", "sin", "sobre", "entre",
+        "también", "tambien", "hay", "ser", "hacer", "tiene", "tengo",
+        "estoy", "está", "esta", "son", "fue", "era", "algo", "donde",
+        "desde", "hasta", "nos", "les", "ese", "esa", "esos", "esas"
     ]
 
     private static func keywords(_ entry: Entry) -> Set<String> {
@@ -131,7 +139,8 @@ struct MindGraph {
                 SafeDesign.pink, SafeDesign.teal, SafeDesign.lavender,
                 SafeDesign.peach, SafeDesign.ochre, SafeDesign.mint, SafeDesign.coral
             ]
-            let hash = abs(entry.category.hashValue)
+            // Stable hash (String.hashValue is seeded per launch).
+            let hash = entry.category.unicodeScalars.reduce(0) { ($0 &* 31 &+ Int($1.value)) & 0x7fffffff }
             return palette[hash % palette.count]
         case .card:
             return entry.cardColor.fill
