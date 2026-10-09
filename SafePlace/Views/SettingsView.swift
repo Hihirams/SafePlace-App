@@ -1,10 +1,14 @@
 import SwiftUI
+import PhotosUI
 import UniformTypeIdentifiers
 
 struct SettingsView: View {
     @ObservedObject var store: Store
     @Environment(\.dismiss) private var dismiss
     @Environment(\.appTheme) private var appTheme
+    @EnvironmentObject private var profile: ProfilePhotoModel
+
+    @State private var photoItem: PhotosPickerItem?
 
     @AppStorage("themeMode") private var themeRaw = ThemeMode.system.rawValue
     @AppStorage("reminderEnabled") private var reminderEnabled = false
@@ -46,6 +50,7 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: SafeDesign.xl) {
                     SheetHeader(title: "Settings", subtitle: "Make SafePlace feel like yours.", onClose: { dismiss() })
 
+                    profileSection
                     appearanceSection
                     characterSection
                     sharedNotesSection
@@ -59,6 +64,7 @@ struct SettingsView: View {
             .background(SafeDesign.canvas.ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
         }
+        .sheetTheme()
         .onAppear { exportURL = makeExportFile() }
         .fileImporter(isPresented: $showImporter, allowedContentTypes: [.json]) { result in
             handleImport(result)
@@ -88,6 +94,42 @@ struct SettingsView: View {
     }
 
     // MARK: - Sections
+
+    private var profileSection: some View {
+        SettingsCard(title: "Profile photo", icon: "person.crop.circle") {
+            HStack(spacing: SafeDesign.m) {
+                ProfileAvatar(size: 56, image: profile.image)
+                VStack(alignment: .leading, spacing: SafeDesign.xs) {
+                    PhotosPicker(selection: $photoItem, matching: .images) {
+                        Text(profile.image == nil ? "Choose photo" : "Change photo")
+                            .font(SafeDesign.body)
+                            .foregroundStyle(appTheme.tintStrong)
+                    }
+                    if profile.image != nil {
+                        Button {
+                            Haptics.tap()
+                            profile.clear()
+                        } label: {
+                            Text("Remove")
+                                .font(SafeDesign.caption)
+                                .foregroundStyle(SafeDesign.error)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                Spacer()
+            }
+            .onChange(of: photoItem) { _, item in
+                guard let item else { return }
+                Task {
+                    if let data = try? await item.loadTransferable(type: Data.self) {
+                        profile.update(data: data)
+                        Haptics.success()
+                    }
+                }
+            }
+        }
+    }
 
     private var appearanceSection: some View {
         SettingsCard(title: "Appearance", icon: "paintbrush") {

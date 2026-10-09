@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// Shared building blocks for the sectioned layout.
 
@@ -182,5 +183,73 @@ struct GlassIconButton: View {
         .buttonStyle(.plain)
         .pressable()
         .accessibilityLabel(label ?? icon)
+    }
+}
+
+// MARK: - Profile photo
+
+enum ProfilePhotoStore {
+    static var url: URL {
+        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+            ?? URL(fileURLWithPath: NSTemporaryDirectory())
+        return docs.appendingPathComponent("ProfilePhoto.jpg")
+    }
+
+    static func load() -> UIImage? {
+        UIImage(contentsOfFile: url.path)
+    }
+
+    static func save(_ data: Data) {
+        try? data.write(to: url, options: .atomic)
+    }
+
+    static func delete() {
+        try? FileManager.default.removeItem(at: url)
+    }
+}
+
+final class ProfilePhotoModel: ObservableObject {
+    @Published var image: UIImage?
+
+    init() { image = ProfilePhotoStore.load() }
+
+    func update(data: Data) {
+        ProfilePhotoStore.save(data)
+        image = ProfilePhotoStore.load()
+    }
+
+    func clear() {
+        ProfilePhotoStore.delete()
+        image = nil
+    }
+}
+
+/// The user avatar: their photo, or a soft mood-tinted fallback (no letter).
+struct ProfileAvatar: View {
+    var size: CGFloat = 42
+    var image: UIImage?
+
+    @Environment(\.appTheme) private var theme
+
+    var body: some View {
+        ZStack {
+            if let image {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: size, height: size)
+                    .clipShape(Circle())
+            } else {
+                Circle()
+                    .fill(RadialGradient(colors: [theme.tint, theme.tintStrong],
+                                         center: .topLeading, startRadius: 2, endRadius: size))
+                    .frame(width: size, height: size)
+                Image(systemName: "person.fill")
+                    .font(.system(size: size * 0.4, weight: .semibold))
+                    .foregroundStyle(SafeDesign.onPrimary.opacity(0.85))
+            }
+        }
+        .overlay { Circle().strokeBorder(.white.opacity(0.5), lineWidth: 1) }
+        .frame(width: size, height: size)
     }
 }

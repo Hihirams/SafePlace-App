@@ -9,6 +9,7 @@ struct DashboardView: View {
     @Environment(\.horizontalSizeClass) private var h
     @Environment(\.verticalSizeClass) private var v
     @Environment(\.appTheme) private var theme
+    @EnvironmentObject private var profile: ProfilePhotoModel
 
     @State private var editingEntry: Entry?
     @State private var showForm = false
@@ -63,15 +64,11 @@ struct DashboardView: View {
                 .readingWidth($contentWidth)
             }
         }
-        .sheet(isPresented: $showForm) {
-            EntryFormView(
-                initial: editingEntry,
-                categories: store.categories,
-                onSave: saveEntry,
-                onClose: { showForm = false; editingEntry = nil }
-            )
-            .presentationDetents([.large])
-            .presentationDragIndicator(.hidden)
+        .fullScreenCover(isPresented: $showForm) {
+            CreateView(store: store, editing: editingEntry) {
+                showForm = false
+                editingEntry = nil
+            }
         }
     }
 
@@ -79,12 +76,9 @@ struct DashboardView: View {
 
     private var header: some View {
         ZStack {
-            HStack(spacing: SafeDesign.xs) {
-                BrandMark(size: 11, color: theme.tintStrong)
-                Text("SafePlace")
-                    .font(SafeDesign.serifTitle)
-                    .foregroundStyle(SafeDesign.ink)
-            }
+            Text("SafePlace")
+                .font(SafeDesign.serifTitle)
+                .foregroundStyle(SafeDesign.ink)
 
             HStack {
                 avatar
@@ -99,20 +93,8 @@ struct DashboardView: View {
             Haptics.tap()
             onOpenSettings()
         } label: {
-            ZStack {
-                Circle()
-                    .fill(RadialGradient(
-                        colors: [theme.tint, theme.tintStrong],
-                        center: .topLeading,
-                        startRadius: 2,
-                        endRadius: 46))
-                    .frame(width: 42, height: 42)
-                Text("S")
-                    .font(.system(.title3, design: .serif).weight(.semibold))
-                    .foregroundStyle(SafeDesign.onPrimary)
-            }
-            .overlay { Circle().strokeBorder(.white.opacity(0.55), lineWidth: 1) }
-            .shadow(color: theme.tintStrong.opacity(0.25), radius: 8, y: 4)
+            ProfileAvatar(size: 42, image: profile.image)
+                .shadow(color: theme.tintStrong.opacity(0.25), radius: 8, y: 4)
         }
         .buttonStyle(.plain)
         .pressable(scale: 0.92)
@@ -156,21 +138,14 @@ struct DashboardView: View {
 
     private var todayCard: some View {
         VStack(alignment: .leading, spacing: SafeDesign.m) {
-            AdaptiveStack(spacing: SafeDesign.s) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("TODAY")
-                        .font(.system(size: 11, weight: .semibold))
-                        .tracking(1.5)
-                        .foregroundStyle(SafeDesign.muted)
-                    Text(todayEntries.isEmpty ? "How are you feeling?" : "\(todayEntries.count) \(todayEntries.count == 1 ? "moment" : "moments") saved today")
-                        .font(SafeDesign.headline)
-                        .foregroundStyle(SafeDesign.ink)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                HStack(spacing: SafeDesign.xs) {
-                    miniStat("\(daysThisWeek)", "this week")
-                    miniStat("\(personalBest)", "best run")
-                }
+            HStack(alignment: .firstTextBaseline) {
+                Text("How are you feeling?")
+                    .font(SafeDesign.serifTitle)
+                    .foregroundStyle(SafeDesign.ink)
+                Spacer()
+                Text("\(daysThisWeek) this week · best \(personalBest)")
+                    .font(SafeDesign.micro)
+                    .foregroundStyle(SafeDesign.muted)
             }
 
             HStack(spacing: SafeDesign.xs) {
@@ -178,11 +153,11 @@ struct DashboardView: View {
                     Button {
                         checkIn(m)
                     } label: {
-                        VStack(spacing: 6) {
+                        VStack(spacing: 7) {
                             ZStack {
-                                Circle().fill(m.color).frame(width: 44, height: 44)
+                                Circle().fill(m.color).frame(width: 52, height: 52)
                                 Image(systemName: m.icon)
-                                    .font(.system(size: 17, weight: .semibold))
+                                    .font(.system(size: 20, weight: .semibold))
                                     .foregroundStyle(SafeDesign.ink)
                             }
                             .overlay { Circle().strokeBorder(SafeDesign.ink.opacity(0.08), lineWidth: 1) }
@@ -190,6 +165,7 @@ struct DashboardView: View {
                                 .font(.system(size: 10, weight: .semibold))
                                 .foregroundStyle(SafeDesign.inkSecondary)
                                 .lineLimit(1)
+                                .minimumScaleFactor(0.8)
                         }
                         .frame(maxWidth: .infinity)
                     }
@@ -204,27 +180,9 @@ struct DashboardView: View {
                     .foregroundStyle(theme.tintStrong)
                     .transition(.opacity)
             }
-        }
-        .padding(SafeDesign.l)
-        .background(SafeDesign.surfaceCard, in: RoundedRectangle(cornerRadius: SafeDesign.radiusXL, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: SafeDesign.radiusXL, style: .continuous)
-                .strokeBorder(SafeDesign.hairline, lineWidth: 0.75)
-        }
-    }
 
-    private func miniStat(_ number: String, _ label: String) -> some View {
-        VStack(spacing: 1) {
-            Text(number)
-                .font(.system(size: 16, weight: .bold, design: .rounded))
-                .foregroundStyle(SafeDesign.ink)
-            Text(label)
-                .font(.system(size: 9, weight: .medium))
-                .foregroundStyle(SafeDesign.muted)
+            Hairline()
         }
-        .padding(.horizontal, SafeDesign.s)
-        .padding(.vertical, 6)
-        .background(SafeDesign.surfaceSoft, in: Capsule())
     }
 
     // MARK: - On this day
@@ -338,33 +296,26 @@ struct DashboardView: View {
     }
 
     private func statCard(number: String, label: String) -> some View {
-        VStack(alignment: .leading, spacing: SafeDesign.xs) {
+        VStack(alignment: .leading, spacing: 2) {
             Text(number)
-                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .font(.system(size: 36, weight: .semibold, design: .serif))
                 .foregroundStyle(SafeDesign.ink)
             Text(label.uppercased())
-                .font(.system(size: 11, weight: .medium))
-                .tracking(1)
+                .font(.system(size: 10, weight: .medium))
+                .tracking(1.2)
                 .foregroundStyle(SafeDesign.muted)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(SafeDesign.l)
-        .background(SafeDesign.surfaceCard, in: RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous)
-                .strokeBorder(SafeDesign.hairline, lineWidth: 0.75)
-        }
+        .padding(.vertical, SafeDesign.s)
     }
 
     private func statCardWide<Content: View>(@ViewBuilder content: () -> Content) -> some View {
-        content()
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(SafeDesign.l)
-            .background(SafeDesign.surfaceCard, in: RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous)
-                    .strokeBorder(SafeDesign.hairline, lineWidth: 0.75)
-            }
+        VStack(alignment: .leading, spacing: 0) {
+            content()
+            Hairline()
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, SafeDesign.s)
     }
 
     private var categoryCounts: [NoteStats.CategoryCount] {
@@ -452,13 +403,6 @@ struct DashboardView: View {
         case "mixed": return .ochre
         default: return .pink
         }
-    }
-
-    private func saveEntry(_ entry: Entry) {
-        if store.entries.contains(where: { $0.id == entry.id }) { store.updateEntry(entry) } else { store.addEntry(entry) }
-        Haptics.success()
-        showForm = false
-        editingEntry = nil
     }
 
     private func deleteEntry(_ entry: Entry) {

@@ -1,18 +1,29 @@
 import SwiftUI
 
-/// A blank canvas to pour thoughts onto: no fields, no boxes — just paper,
-/// a serif prompt, and a quiet row of controls at the bottom.
+/// A blank canvas to pour thoughts onto — and the editor for existing notes.
+/// No fields, no boxes: just paper, a serif prompt, and a quiet row of controls.
 struct CreateView: View {
     @ObservedObject var store: Store
+    var editing: Entry?
     var onClose: () -> Void
 
     @Environment(\.appTheme) private var theme
 
-    @State private var text = ""
-    @State private var mood: String = Mood.calm.id
-    @State private var category = ""
-    @State private var userChoseCategory = false
+    @State private var text: String
+    @State private var mood: String
+    @State private var category: String
+    @State private var userChoseCategory: Bool
     @FocusState private var focused: Bool
+
+    init(store: Store, editing: Entry? = nil, onClose: @escaping () -> Void) {
+        _store = ObservedObject(wrappedValue: store)
+        self.editing = editing
+        self.onClose = onClose
+        _text = State(initialValue: editing?.description ?? "")
+        _mood = State(initialValue: editing?.mood ?? Mood.calm.id)
+        _category = State(initialValue: editing?.category ?? "")
+        _userChoseCategory = State(initialValue: editing != nil)
+    }
 
     private var trimmed: String { text.trimmingCharacters(in: .whitespacesAndNewlines) }
 
@@ -26,7 +37,8 @@ struct CreateView: View {
                 bottomBar
             }
         }
-        .onAppear { focused = true }
+        .sheetTheme()
+        .onAppear { if editing == nil { focused = true } }
         .onChange(of: text) { _, _ in applySuggestion() }
     }
 
@@ -50,7 +62,10 @@ struct CreateView: View {
 
             Spacer()
 
-            BrandMark(size: 11, color: theme.tintStrong)
+            Text(editing == nil ? "New thought" : "Edit")
+                .font(.system(size: 11, weight: .semibold))
+                .tracking(1.5)
+                .foregroundStyle(SafeDesign.muted)
 
             Spacer()
 
@@ -160,7 +175,7 @@ struct CreateView: View {
     // MARK: - Actions
 
     private func applySuggestion() {
-        guard !userChoseCategory else { return }
+        guard editing == nil, !userChoseCategory else { return }
         if let suggested = Categorizer.suggest(title: trimmed, description: "", categories: store.categories) {
             category = suggested
         }
@@ -174,16 +189,26 @@ struct CreateView: View {
         let resolvedCategory = category.isEmpty
             ? (Categorizer.suggest(title: body, description: "", categories: store.categories) ?? "Self-care")
             : category
-        let entry = Entry(
-            id: "e-\(UUID().uuidString)",
-            title: title.isEmpty ? "Untitled" : String(title.prefix(80)),
-            description: body,
-            category: resolvedCategory,
-            mood: mood,
-            color: color(for: mood).rawValue,
-            createdAt: Date()
-        )
-        store.addEntry(entry)
+
+        if let editing {
+            var updated = editing
+            updated.title = title.isEmpty ? "Untitled" : String(title.prefix(80))
+            updated.description = body
+            updated.category = resolvedCategory
+            updated.mood = mood
+            updated.color = color(for: mood).rawValue
+            store.updateEntry(updated)
+        } else {
+            store.addEntry(Entry(
+                id: "e-\(UUID().uuidString)",
+                title: title.isEmpty ? "Untitled" : String(title.prefix(80)),
+                description: body,
+                category: resolvedCategory,
+                mood: mood,
+                color: color(for: mood).rawValue,
+                createdAt: Date()
+            ))
+        }
         Haptics.success()
         onClose()
     }

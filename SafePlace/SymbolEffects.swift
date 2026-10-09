@@ -55,6 +55,18 @@ extension View {
             .onAppear { InterfaceStyle.apply(mode) }
             .onChange(of: mode) { _, newMode in InterfaceStyle.apply(newMode) }
     }
+
+    /// For sheets/covers, which live in their own presentation container and
+    /// don't inherit the root theme change. Reads the stored mode directly.
+    func sheetTheme() -> some View { modifier(SheetTheme()) }
+}
+
+private struct SheetTheme: ViewModifier {
+    @AppStorage("themeMode") private var themeRaw = ThemeMode.system.rawValue
+
+    func body(content: Content) -> some View {
+        content.interfaceStyle(ThemeMode(rawValue: themeRaw) ?? .system)
+    }
 }
 
 // MARK: - Symbol Effect Helpers

@@ -73,20 +73,11 @@ struct JournalView: View {
             .padding(.bottom, SafeLayout.tabBarClearance(h))
             .readingWidth($contentWidth)
         }
-        .sheet(isPresented: $showForm) {
-            EntryFormView(
-                initial: editingEntry,
-                categories: store.categories,
-                onSave: { entry in
-                    store.updateEntry(entry)
-                    Haptics.success()
-                    showForm = false
-                    editingEntry = nil
-                },
-                onClose: { showForm = false; editingEntry = nil }
-            )
-            .presentationDetents([.large])
-            .presentationDragIndicator(.hidden)
+        .fullScreenCover(isPresented: $showForm) {
+            CreateView(store: store, editing: editingEntry) {
+                showForm = false
+                editingEntry = nil
+            }
         }
     }
 

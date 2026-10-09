@@ -23,20 +23,15 @@ struct SearchView: View {
             .background(SafeDesign.canvas.ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
         }
+        .sheetTheme()
         .onAppear {
             recents = UserDefaults.standard.stringArray(forKey: recentsKey) ?? []
             focused = true
         }
-        .sheet(isPresented: $showEdit) {
-            if let entry = editingEntry {
-                EntryFormView(
-                    initial: entry,
-                    categories: store.categories,
-                    onSave: { store.updateEntry($0); showEdit = false },
-                    onClose: { showEdit = false }
-                )
-                .presentationDetents([.large])
-                .presentationDragIndicator(.hidden)
+        .fullScreenCover(isPresented: $showEdit) {
+            CreateView(store: store, editing: editingEntry) {
+                showEdit = false
+                editingEntry = nil
             }
         }
     }

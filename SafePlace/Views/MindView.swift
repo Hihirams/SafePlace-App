@@ -6,27 +6,29 @@ struct MindView: View {
     @Environment(\.horizontalSizeClass) private var h
     @Environment(\.verticalSizeClass) private var v
 
-    @State private var graph = MindGraph(nodes: [], edges: [])
+    @State private var graph = MindGraph(hubs: [], nodes: [], edges: [])
     @State private var simulation: MindSimulation?
-    @State private var colorMode: MindColorMode = .contagion
-    @State private var sensitivity: CGFloat = 0.5
-    @State private var paused = false
-    @State private var showOptions = false
+    @State private var colorMode: MindColorMode = .wave
+    @State private var focusCategory: String?
     @State private var selectedID: String?
     @State private var zoom: CGFloat = 1
     @State private var pan: CGSize = .zero
     @State private var canvasSize: CGSize = .zero
-
     @State private var dragStartPan: CGSize = .zero
     @State private var zoomStart: CGFloat = 1
-
-    @State private var editingEntry: Entry?
-    @State private var showForm = false
     @State private var contagionStart = Date()
     @State private var isVisible = false
+
+    @State private var editingEntry: Entry?
+    @State private var showEdit = false
+
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    private var minWeight: CGFloat { 0.2 + (1 - sensitivity) * 1.6 }
+    // MARK: - Derived
+
+    private var dominant: (mood: Mood, dominance: CGFloat)? {
+        MindGraph.dominantMood(of: store.entries)
+    }
 
     private var energy: CGFloat {
         let mood = MindGraph.averageEnergy(of: store.entries)
@@ -39,20 +41,9 @@ struct MindView: View {
         return store.entries.first { $0.id == selectedID }
     }
 
-    private var connectedIDs: Set<String> {
-        guard let selectedID else { return [] }
-        var result: Set<String> = [selectedID]
-        for edge in graph.edges where edge.from == selectedID || edge.to == selectedID {
-            result.insert(edge.from == selectedID ? edge.to : edge.from)
-        }
-        return result
-    }
-
-    /// Scale that fits the fixed physics "world" into the current canvas.
     private var baseScale: CGFloat {
         guard canvasSize.width > 0, canvasSize.height > 0 else { return 1 }
-        let usable = min(canvasSize.width, canvasSize.height)
-        return usable / MindSimulation.worldSize
+        return min(canvasSize.width, canvasSize.height) / MindSimulation.worldSize
     }
 
     var body: some View {
@@ -83,38 +74,14 @@ struct MindView: View {
                 .padding(.bottom, SafeLayout.tabBarClearance(h))
             }
         }
-        .onAppear(perform: rebuildNodes)
-        .onChange(of: store.entries) { _, _ in rebuildNodes() }
-        .onChange(of: colorMode) { _, newMode in
-            if newMode == .contagion { contagionStart = Date() }
-            rebuildNodes()
-        }
-        .onChange(of: sensitivity) { _, _ in refreshEdges() }
-        .sheet(isPresented: $showOptions) {
-            MindOptionsSheet(
-                colorMode: $colorMode,
-                sensitivity: $sensitivity,
-                paused: $paused,
-                onZoomOut: { zoomBy(0.8) },
-                onZoomIn: { zoomBy(1.25) },
-                onRecenter: { recenter() }
-            )
-            .presentationDetents([.medium])
-            .presentationDragIndicator(.visible)
-        }
-        .sheet(isPresented: $showForm) {
-            EntryFormView(
-                initial: editingEntry,
-                categories: store.categories,
-                onSave: { entry in
-                    store.updateEntry(entry)
-                    showForm = false
-                    editingEntry = nil
-                },
-                onClose: { showForm = false; editingEntry = nil }
-            )
-            .presentationDetents([.large])
-            .presentationDragIndicator(.hidden)
+        .onAppear(perform: rebuild)
+        .onChange(of: store.entries) { _, _ in rebuild() }
+        .onChange(of: colorMode) { _, _ in rebuild() }
+        .fullScreenCover(isPresented: $showEdit) {
+            CreateView(store: store, editing: editingEntry) {
+                showEdit = false
+                editingEntry = nil
+            }
         }
     }
 
@@ -124,7 +91,7 @@ struct MindView: View {
         GeometryReader { geo in
             TimelineView(.animation(minimumInterval: 1.0 / 30)) { timeline in
                 Canvas { context, size in
-                    if !paused, !reduceMotion, isVisible, let simulation {
+                    if !reduceMotion, isVisible, let simulation {
                         simulation.step(iterations: 1, energy: energy)
                     }
                     drawGraph(in: &context, size: size, date: timeline.date)
@@ -134,26 +101,18 @@ struct MindView: View {
             .onDisappear { isVisible = false }
             .onChange(of: geo.size) { _, newSize in canvasSize = newSize }
             .contentShape(Rectangle())
-            .gesture(
-                SpatialTapGesture().onEnded { value in
-                    handleTap(at: value.location)
-                }
-            )
+            .gesture(SpatialTapGesture().onEnded { handleTap(at: $0.location) })
             .simultaneousGesture(
                 DragGesture()
                     .onChanged { value in
-                        pan = CGSize(
-                            width: dragStartPan.width + value.translation.width,
-                            height: dragStartPan.height + value.translation.height
-                        )
+                        pan = CGSize(width: dragStartPan.width + value.translation.width,
+                                     height: dragStartPan.height + value.translation.height)
                     }
                     .onEnded { _ in dragStartPan = pan }
             )
             .simultaneousGesture(
                 MagnifyGesture()
-                    .onChanged { value in
-                        zoom = min(max(zoomStart * value.magnification, 0.5), 3.5)
-                    }
+                    .onChanged { value in zoom = min(max(zoomStart * value.magnification, 0.6), 3.0) }
                     .onEnded { _ in zoomStart = zoom }
             )
         }
@@ -167,150 +126,177 @@ struct MindView: View {
         )
     }
 
+    private func contagionAmount(_ date: Date) -> CGFloat {
+        guard let dominant else { return 0 }
+        let elapsed = date.timeIntervalSince(contagionStart)
+        let progress = min(max(elapsed / 4.0, 0), 1)
+        return CGFloat(progress) * (0.55 + 0.4 * dominant.dominance)
+    }
+
+    private func color(base: Color, date: Date) -> Color {
+        guard colorMode == .wave, let dominant else { return base }
+        return base.blended(with: dominant.mood.color, amount: contagionAmount(date))
+    }
+
     private func drawGraph(in context: inout GraphicsContext, size: CGSize, date: Date) {
         guard let simulation else { return }
         _ = size
 
-        let index = Dictionary(graph.nodes.enumerated().map { ($1.id, $0) }, uniquingKeysWith: { first, _ in first })
-        let dominant = MindGraph.dominantMood(of: store.entries)
-        let elapsed = date.timeIntervalSince(contagionStart)
-        let globalProgress = min(max(elapsed / 5.0, 0), 1)
+        let focused = focusCategory
 
-        // Edges underneath.
-        for edge in graph.edges {
-            guard let a = simulation.position(for: edge.from),
-                  let b = simulation.position(for: edge.to) else { continue }
-            let sa = toScreen(a)
-            let sb = toScreen(b)
-            var alpha = 0.12 + (edge.weight / 3.0) * 0.42
-            if selectedID != nil && !connectedIDs.contains(edge.from) { alpha *= 0.15 }
-
-            var path = Path()
-            path.move(to: sa)
-            path.addLine(to: sb)
-            context.stroke(
-                path,
-                with: .color(SafeDesign.ink.opacity(alpha)),
-                style: StrokeStyle(lineWidth: 0.8 + (edge.weight / 3.0) * 1.8, lineCap: .round)
-            )
+        // Edges: only for the focused category's members.
+        if let focused {
+            for edge in graph.edges where edge.to == focused {
+                guard let a = simulation.position(for: edge.from),
+                      let b = simulation.position(for: edge.to) else { continue }
+                var path = Path()
+                path.move(to: toScreen(a))
+                path.addLine(to: toScreen(b))
+                context.stroke(path, with: .color(SafeDesign.ink.opacity(0.22)), lineWidth: 1)
+            }
         }
 
-        // Nodes on top.
-        for node in graph.nodes {
-            guard let position = simulation.position(for: node.id) else { continue }
+        // Members (only inside the focused category).
+        if let focused {
+            for node in graph.nodes where node.category == focused {
+                guard let position = simulation.position(for: node.id) else { continue }
+                let center = toScreen(position)
+                let radius = max(node.radius * baseScale * zoom, 6)
+                let nodeColor = color(base: node.color, date: date)
+                let isSelected = node.id == selectedID
+
+                context.fill(Path(ellipseIn: CGRect(x: center.x - radius * 1.8, y: center.y - radius * 1.8, width: radius * 3.6, height: radius * 3.6)),
+                             with: .color(nodeColor.opacity(0.16)))
+                let bodyRect = CGRect(x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)
+                context.fill(Path(ellipseIn: bodyRect), with: .color(nodeColor))
+                context.fill(Path(ellipseIn: CGRect(x: center.x - radius * 0.5, y: center.y - radius * 0.7, width: radius, height: radius * 0.7)),
+                             with: .color(.white.opacity(0.3)))
+                if isSelected {
+                    context.stroke(Path(ellipseIn: bodyRect.insetBy(dx: -3, dy: -3)), with: .color(SafeDesign.ink.opacity(0.85)), lineWidth: 2.5)
+                }
+            }
+        }
+
+        // Hubs always.
+        for hub in graph.hubs {
+            guard let position = simulation.position(for: hub.id) else { continue }
             let center = toScreen(position)
-            let radius = max(node.radius * baseScale * zoom, 7)
+            let radius = max(hub.radius * baseScale * zoom, 18)
+            let hubColor = color(base: hub.color, date: date)
+            let isFocused = hub.id == focusCategory
 
-            var alpha: CGFloat = 1
-            if selectedID != nil && !connectedIDs.contains(node.id) { alpha = 0.20 }
-            let isSelected = node.id == selectedID
-
-            let nodeColor = blendedNodeColor(
-                for: node,
-                index: index[node.id] ?? 0,
-                total: graph.nodes.count,
-                globalProgress: globalProgress,
-                dominant: dominant
-            )
-
-            // Soft colored glow.
-            let glow = Path(ellipseIn: CGRect(x: center.x - radius * 1.9, y: center.y - radius * 1.9, width: radius * 3.8, height: radius * 3.8))
-            context.fill(glow, with: .color(nodeColor.opacity(0.18 * alpha)))
-
-            // Body with a soft vertical gradient.
+            context.fill(Path(ellipseIn: CGRect(x: center.x - radius * 1.5, y: center.y - radius * 1.5, width: radius * 3, height: radius * 3)),
+                         with: .color(hubColor.opacity(0.16)))
             let bodyRect = CGRect(x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)
-            let body = Path(ellipseIn: bodyRect)
-            let gradient = Gradient(colors: [
-                nodeColor.opacity(0.98 * alpha),
-                nodeColor.opacity(0.72 * alpha)
-            ])
-            context.fill(body, with: .linearGradient(
-                gradient,
-                startPoint: CGPoint(x: center.x, y: center.y - radius),
-                endPoint: CGPoint(x: center.x, y: center.y + radius)
-            ))
+            context.fill(Path(ellipseIn: bodyRect), with: .color(hubColor))
+            context.fill(Path(ellipseIn: CGRect(x: center.x - radius * 0.5, y: center.y - radius * 0.72, width: radius, height: radius * 0.7)),
+                         with: .color(.white.opacity(0.28)))
+            context.stroke(Path(ellipseIn: bodyRect.insetBy(dx: isFocused ? -4 : -2, dy: isFocused ? -4 : -2)),
+                           with: .color(isFocused ? SafeDesign.ink.opacity(0.8) : .white.opacity(0.45)),
+                           lineWidth: isFocused ? 2.5 : 1)
 
-            // Top highlight for a glossy orb.
-            let highlight = Path(ellipseIn: CGRect(
-                x: center.x - radius * 0.5,
-                y: center.y - radius * 0.72,
-                width: radius * 1.0,
-                height: radius * 0.7
-            ))
-            context.fill(highlight, with: .color(.white.opacity(0.28 * alpha)))
+            let label = Text("\(hub.category) · \(hub.count)")
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(SafeDesign.ink)
+            let resolved = context.resolve(label)
+            let textSize = resolved.measure(in: CGSize(width: 240, height: 30))
+            let chipRect = CGRect(x: center.x - textSize.width / 2 - 8, y: center.y + radius + 8,
+                                  width: textSize.width + 16, height: textSize.height + 6)
+            context.fill(Path(roundedRect: chipRect, cornerRadius: 9), with: .color(SafeDesign.surfaceCard))
+            context.stroke(Path(roundedRect: chipRect, cornerRadius: 9), with: .color(SafeDesign.hairline), lineWidth: 0.75)
+            context.draw(resolved, at: CGPoint(x: chipRect.midX, y: chipRect.midY), anchor: .center)
+        }
 
-            // Selected ring.
-            if isSelected {
-                let ring = Path(ellipseIn: bodyRect.insetBy(dx: -3, dy: -3))
-                context.stroke(ring, with: .color(SafeDesign.ink.opacity(0.85)), lineWidth: 2.5)
-            }
-
-            // Pinned ring.
-            if simulation.isPinned(node.id) {
-                let ring = Path(ellipseIn: bodyRect.insetBy(dx: -5, dy: -5))
-                context.stroke(ring, with: .color(SafeDesign.accentDeep.opacity(0.9)), lineWidth: 1.5)
-            }
-
-            // Focused label chip.
-            if isSelected {
-                let title = node.entry.title.isEmpty ? "Untitled" : node.entry.title
-                let text = Text(title)
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(SafeDesign.ink)
-                let resolved = context.resolve(text)
-                let textSize = resolved.measure(in: CGSize(width: 220, height: 40))
-                let chipRect = CGRect(
-                    x: center.x - textSize.width / 2 - 8,
-                    y: center.y + radius + 10,
-                    width: textSize.width + 16,
-                    height: textSize.height + 8
-                )
-                context.fill(Path(roundedRect: chipRect, cornerRadius: 10), with: .color(SafeDesign.surfaceCard))
-                context.stroke(Path(roundedRect: chipRect, cornerRadius: 10), with: .color(SafeDesign.hairline), lineWidth: 0.75)
-                context.draw(resolved, at: CGPoint(x: chipRect.midX, y: chipRect.midY), anchor: .center)
-            }
+        // Focused member label.
+        if let selectedID, let node = graph.nodes.first(where: { $0.id == selectedID }),
+           let position = simulation.position(for: node.id) {
+            let center = toScreen(position)
+            let radius = max(node.radius * baseScale * zoom, 6)
+            let title = node.entry.title.isEmpty ? "Untitled" : node.entry.title
+            let resolved = context.resolve(Text(title).font(.system(size: 12, weight: .semibold)).foregroundStyle(SafeDesign.ink))
+            let textSize = resolved.measure(in: CGSize(width: 220, height: 40))
+            let chipRect = CGRect(x: center.x - textSize.width / 2 - 8, y: center.y + radius + 10, width: textSize.width + 16, height: textSize.height + 8)
+            context.fill(Path(roundedRect: chipRect, cornerRadius: 10), with: .color(SafeDesign.surfaceCard))
+            context.stroke(Path(roundedRect: chipRect, cornerRadius: 10), with: .color(SafeDesign.hairline), lineWidth: 0.75)
+            context.draw(resolved, at: CGPoint(x: chipRect.midX, y: chipRect.midY), anchor: .center)
         }
     }
 
-    /// The graph is always slowly "infected" by the dominant mood, whether or
-    /// not you are on the Wave view. Wave just makes it much stronger.
-    private func blendedNodeColor(
-        for node: MindNode,
-        index: Int,
-        total: Int,
-        globalProgress: Double,
-        dominant: (mood: Mood, dominance: CGFloat)?
-    ) -> Color {
-        guard let dominant else { return node.color }
-        let stagger = total > 1 ? Double(index) / Double(total) * 0.6 : 0
-        let local = min(max((globalProgress - stagger) / 0.4, 0), 1)
-        let strength: Double
-        if colorMode == .contagion {
-            strength = 0.55 + 0.45 * Double(dominant.dominance)
-        } else {
-            strength = 0.18 + 0.32 * Double(dominant.dominance)
-        }
-        return node.color.blended(with: dominant.mood.color, amount: CGFloat(local * strength))
-    }
+    // MARK: - Interaction
 
     private func handleTap(at point: CGPoint) {
-        guard let simulation else { selectedID = nil; return }
-        var bestID: String?
-        var bestDistance = CGFloat.infinity
+        guard let simulation else { return }
 
-        for node in graph.nodes {
-            guard let position = simulation.position(for: node.id) else { continue }
+        // Hub hit?
+        var bestHub: MindHub?
+        var bestHubDistance = CGFloat.infinity
+        for hub in graph.hubs {
+            guard let position = simulation.position(for: hub.id) else { continue }
             let center = toScreen(position)
-            let hitRadius = max(node.radius * baseScale * zoom, 26)
+            let hitRadius = max(hub.radius * baseScale * zoom, 34)
             let distance = hypot(center.x - point.x, center.y - point.y)
-            if distance < hitRadius && distance < bestDistance {
-                bestDistance = distance
-                bestID = node.id
+            if distance < hitRadius && distance < bestHubDistance {
+                bestHubDistance = distance
+                bestHub = hub
+            }
+        }
+        if let bestHub {
+            focus(on: bestHub)
+            return
+        }
+
+        // Member hit inside the focused category?
+        if let focused = focusCategory {
+            var bestID: String?
+            var bestDistance = CGFloat.infinity
+            for node in graph.nodes where node.category == focused {
+                guard let position = simulation.position(for: node.id) else { continue }
+                let center = toScreen(position)
+                let hitRadius = max(node.radius * baseScale * zoom, 26)
+                let distance = hypot(center.x - point.x, center.y - point.y)
+                if distance < hitRadius && distance < bestDistance {
+                    bestDistance = distance
+                    bestID = node.id
+                }
+            }
+            if let bestID {
+                Haptics.selection()
+                withAnimation(SafeDesign.spring) { selectedID = bestID }
+                return
             }
         }
 
-        if bestID != nil { Haptics.selection() }
-        withAnimation(SafeDesign.spring) { selectedID = bestID }
+        clearFocus()
+    }
+
+    private func focus(on hub: MindHub) {
+        guard let position = simulation?.position(for: hub.id) else { return }
+        Haptics.selection()
+        let targetZoom: CGFloat = 1.9
+        let s = baseScale * targetZoom
+        let newPan = CGSize(
+            width: -((position.x - MindSimulation.worldSize / 2) * s),
+            height: -((position.y - MindSimulation.worldSize / 2) * s)
+        )
+        withAnimation(SafeDesign.spring) {
+            focusCategory = hub.id
+            selectedID = nil
+            zoom = targetZoom
+            pan = newPan
+        }
+        zoomStart = targetZoom
+        dragStartPan = newPan
+    }
+
+    private func clearFocus() {
+        withAnimation(SafeDesign.spring) {
+            focusCategory = nil
+            selectedID = nil
+            zoom = 1
+            pan = .zero
+        }
+        zoomStart = 1
+        dragStartPan = .zero
     }
 
     // MARK: - Header
@@ -319,19 +305,19 @@ struct MindView: View {
         HStack {
             BadgePill(text: "mind")
             Spacer()
-            energyPill
+            statusPill
         }
     }
 
-    private var energyPill: some View {
+    private var statusPill: some View {
         let text: String
         let icon: String
-        if colorMode == .contagion, let dom = MindGraph.dominantMood(of: store.entries) {
-            text = "mostly \(dom.mood.label.lowercased()) · \(Int(dom.dominance * 100))%"
-            icon = dom.mood.icon
+        if colorMode == .wave, let dominant {
+            text = "mostly \(dominant.mood.label.lowercased()) · \(Int(dominant.dominance * 100))%"
+            icon = dominant.mood.icon
         } else {
-            text = "\(store.entries.count) notes · energy \(Int(energy * 100))%"
-            icon = paused ? "pause.fill" : "sparkles"
+            text = "\(graph.hubs.count) categories · \(store.entries.count) notes"
+            icon = "tag.fill"
         }
         return Label(text, systemImage: icon)
             .font(SafeDesign.caption)
@@ -339,12 +325,13 @@ struct MindView: View {
             .padding(.horizontal, SafeDesign.m)
             .padding(.vertical, 6)
             .background(SafeDesign.surfaceCard, in: Capsule())
+            .overlay { Capsule().strokeBorder(SafeDesign.hairline, lineWidth: 1) }
     }
 
-    // MARK: - View switcher (compact, non-intrusive)
+    // MARK: - View switcher (Wave / Category)
 
     private var viewSwitcher: some View {
-        HStack(spacing: SafeDesign.s) {
+        HStack {
             Menu {
                 ForEach(MindColorMode.allCases) { mode in
                     Button {
@@ -356,12 +343,9 @@ struct MindView: View {
                 }
             } label: {
                 HStack(spacing: 6) {
-                    Image(systemName: colorMode.icon)
-                        .font(.system(size: 13, weight: .semibold))
-                    Text(colorMode.label)
-                        .font(SafeDesign.caption)
-                    Image(systemName: "chevron.up.chevron.down")
-                        .font(.system(size: 9, weight: .semibold))
+                    Image(systemName: colorMode.icon).font(.system(size: 13, weight: .semibold))
+                    Text(colorMode.label).font(SafeDesign.caption)
+                    Image(systemName: "chevron.up.chevron.down").font(.system(size: 9, weight: .semibold))
                 }
                 .foregroundStyle(SafeDesign.ink)
                 .padding(.horizontal, SafeDesign.m)
@@ -373,29 +357,7 @@ struct MindView: View {
             .accessibilityIdentifier("mind-view")
 
             Spacer()
-
-            GlassIconButton(icon: "slider.horizontal.3", size: 40, label: "Mind options") {
-                Haptics.tap()
-                showOptions = true
-            }
         }
-    }
-
-    private func zoomBy(_ factor: CGFloat) {
-        Haptics.tap()
-        withAnimation(SafeDesign.springSnappy) {
-            zoom = min(max(zoom * factor, 0.5), 3.5)
-        }
-        zoomStart = zoom
-    }
-
-    private func recenter() {
-        withAnimation(SafeDesign.springSnappy) {
-            zoom = 1
-            pan = .zero
-        }
-        zoomStart = 1
-        dragStartPan = .zero
     }
 
     // MARK: - Selection card
@@ -403,17 +365,15 @@ struct MindView: View {
     private func selectionCard(_ entry: Entry) -> some View {
         VStack(alignment: .leading, spacing: SafeDesign.s) {
             HStack(spacing: SafeDesign.xs) {
-                HStack(spacing: 6) {
-                    Circle().fill(entry.cardColor.fill).frame(width: 12, height: 12)
-                    Text(entry.moodValue.label)
-                        .font(SafeDesign.caption)
-                        .foregroundStyle(SafeDesign.inkSecondary)
-                }
+                Text(entry.moodValue.label.uppercased())
+                    .font(.system(size: 10, weight: .semibold))
+                    .tracking(1.2)
+                    .foregroundStyle(SafeDesign.muted)
                 Text(entry.category)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.system(size: 11, weight: .medium))
                     .foregroundStyle(SafeDesign.ink)
                     .padding(.horizontal, SafeDesign.s)
-                    .padding(.vertical, 5)
+                    .padding(.vertical, 4)
                     .background(SafeDesign.surfaceStrong, in: Capsule())
                 Spacer()
                 Button {
@@ -430,7 +390,7 @@ struct MindView: View {
             }
 
             Text(entry.title)
-                .font(SafeDesign.title)
+                .font(SafeDesign.serifHead)
                 .foregroundStyle(SafeDesign.ink)
                 .lineLimit(2)
 
@@ -441,36 +401,21 @@ struct MindView: View {
                     .lineLimit(3)
             }
 
-            HStack(spacing: SafeDesign.s) {
+            HStack {
                 Spacer()
-                Button {
-                    Haptics.soft()
-                    withAnimation(SafeDesign.spring) { simulation?.togglePin(entry.id) }
-                } label: {
-                    Label(simulation?.isPinned(entry.id) == true ? "Pinned" : "Pin",
-                          systemImage: simulation?.isPinned(entry.id) == true ? "pin.fill" : "pin")
-                        .font(SafeDesign.caption)
-                        .foregroundStyle(SafeDesign.inkSecondary)
-                        .padding(.horizontal, SafeDesign.m)
-                        .frame(minHeight: 34)
-                        .background(Capsule().strokeBorder(SafeDesign.hairline, lineWidth: 1))
-                }
-                .buttonStyle(.plain)
-
                 Button {
                     Haptics.tap()
                     editingEntry = entry
-                    showForm = true
+                    showEdit = true
                 } label: {
                     Label("Edit", systemImage: "pencil")
                         .font(SafeDesign.caption)
-                        .foregroundStyle(SafeDesign.onPrimary)
+                        .foregroundStyle(SafeDesign.canvas)
                         .padding(.horizontal, SafeDesign.m)
                         .frame(minHeight: 34)
-                        .background(Capsule().fill(SafeDesign.accent))
+                        .background(Capsule().fill(SafeDesign.ink))
                 }
                 .buttonStyle(.plain)
-                .pressable(scale: 0.95)
             }
         }
         .padding(SafeDesign.l)
@@ -479,7 +424,7 @@ struct MindView: View {
             RoundedRectangle(cornerRadius: SafeDesign.radiusXL, style: .continuous)
                 .strokeBorder(SafeDesign.hairline, lineWidth: 0.75)
         }
-        .shadow(color: .black.opacity(0.18), radius: 24, y: 12)
+        .shadow(color: .black.opacity(0.16), radius: 20, y: 10)
     }
 
     // MARK: - Empty state
@@ -490,9 +435,9 @@ struct MindView: View {
                 .font(.system(size: 40, weight: .light))
                 .foregroundStyle(SafeDesign.muted)
             Text("Your mind, connected.")
-                .font(SafeDesign.largeTitle)
+                .font(SafeDesign.serifTitle)
                 .foregroundStyle(SafeDesign.ink)
-            Text("Add a few notes and this space turns into a living network of your thoughts, moods and topics.")
+            Text("Add a few notes and this space turns into a living map of your thoughts, grouped by what matters.")
                 .font(SafeDesign.body)
                 .foregroundStyle(SafeDesign.inkSecondary)
                 .multilineTextAlignment(.center)
@@ -503,88 +448,16 @@ struct MindView: View {
 
     // MARK: - Rebuild
 
-    private func rebuildNodes() {
-        graph = MindGraph.build(from: store.entries, colorMode: colorMode, minWeight: minWeight)
-        simulation = MindSimulation(nodes: graph.nodes, edges: graph.edges)
+    private func rebuild() {
+        graph = MindGraph.build(from: store.entries)
+        simulation = MindSimulation(hubs: graph.hubs, nodes: graph.nodes)
         selectedID = nil
-        recenter()
-    }
-
-    private func refreshEdges() {
-        graph = MindGraph.build(from: store.entries, colorMode: colorMode, minWeight: minWeight)
-        simulation?.update(edges: graph.edges)
-    }
-}
-
-private struct MindOptionsSheet: View {
-    @Binding var colorMode: MindColorMode
-    @Binding var sensitivity: CGFloat
-    @Binding var paused: Bool
-    var onZoomOut: () -> Void
-    var onZoomIn: () -> Void
-    var onRecenter: () -> Void
-
-    @Environment(\.appTheme) private var theme
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        NavigationStack {
-            ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: SafeDesign.xl) {
-                    SheetHeader(title: "Mind", subtitle: "Tune how your graph looks.", onClose: { dismiss() })
-
-                    VStack(alignment: .leading, spacing: SafeDesign.s) {
-                        sectionLabel("VIEW")
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: SafeDesign.xs) {
-                                ForEach(MindColorMode.allCases) { mode in
-                                    SelectionPill(title: mode.label, icon: mode.icon, isSelected: colorMode == mode) {
-                                        Haptics.selection()
-                                        withAnimation(SafeDesign.spring) { colorMode = mode }
-                                    }
-                                }
-                            }
-                        }
-                        .scrollClipDisabled()
-                    }
-
-                    VStack(alignment: .leading, spacing: SafeDesign.s) {
-                        sectionLabel("CONNECTIONS")
-                        Slider(
-                            value: Binding(
-                                get: { Double(sensitivity) },
-                                set: { sensitivity = CGFloat($0) }
-                            ),
-                            in: 0...1
-                        )
-                        .tint(theme.tintStrong)
-                        .accessibilityLabel("Connection sensitivity")
-                    }
-
-                    HStack(spacing: SafeDesign.s) {
-                        SecondaryButton(title: paused ? "Play" : "Pause", icon: paused ? "play.fill" : "pause.fill") {
-                            paused.toggle()
-                        }
-                        SecondaryButton(title: "Center", icon: "scope") { onRecenter() }
-                    }
-                    HStack(spacing: SafeDesign.s) {
-                        SecondaryButton(title: "Zoom out", icon: "minus.magnifyingglass") { onZoomOut() }
-                        SecondaryButton(title: "Zoom in", icon: "plus.magnifyingglass") { onZoomIn() }
-                    }
-                }
-                .padding(.horizontal, SafeDesign.l)
-                .padding(.bottom, SafeDesign.xxl)
-            }
-            .background(SafeDesign.canvas.ignoresSafeArea())
-            .toolbar(.hidden, for: .navigationBar)
-        }
-    }
-
-    private func sectionLabel(_ text: String) -> some View {
-        Text(text)
-            .font(.system(size: 11, weight: .semibold))
-            .tracking(1.5)
-            .foregroundStyle(SafeDesign.muted)
+        focusCategory = nil
+        zoom = 1
+        pan = .zero
+        zoomStart = 1
+        dragStartPan = .zero
+        contagionStart = Date()
     }
 }
 

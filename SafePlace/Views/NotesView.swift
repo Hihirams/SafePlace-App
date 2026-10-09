@@ -44,6 +44,7 @@ struct NotesView: View {
             .padding(.top, SafeDesign.l)
             .padding(.bottom, SafeLayout.tabBarClearance(h))
         }
+        .sheetTheme()
         .onAppear(perform: reload)
         .onChange(of: store.entries.count) { _, _ in reload() }
         .sheet(item: $previewing) { note in

@@ -68,6 +68,7 @@ struct RootView: View {
     @AppStorage("themeMode") private var themeRaw = ThemeMode.system.rawValue
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @StateObject private var store = Store()
+    @StateObject private var profile = ProfilePhotoModel()
     @State private var showSplash = true
 
     private var mode: ThemeMode { ThemeMode(rawValue: themeRaw) ?? .system }
@@ -83,6 +84,7 @@ struct RootView: View {
             }
         }
         .environment(\.appTheme, AppTheme(moodState: moodState))
+        .environmentObject(profile)
         .interfaceStyle(mode)
         .onAppear {
             if ProcessInfo.processInfo.arguments.contains("-uitesting") {
@@ -276,76 +278,39 @@ struct GlassTabBar: View {
 // MARK: - Splash
 
 struct SplashView: View {
-    @State private var badgeIn = false
-    @State private var textIn = false
-    @State private var progress: CGFloat = 0
     @Environment(\.appTheme) private var theme
+    @State private var fillIn = false
+    @State private var revealed = 0
+    private let word = "SafePlace"
 
     var body: some View {
         ZStack {
-            BackgroundOrbs()
+            theme.tint
+                .ignoresSafeArea()
+                .opacity(fillIn ? 1 : 0)
 
-            VStack(spacing: SafeDesign.xl) {
-                Spacer()
+            RadialGradient(
+                colors: [.clear, theme.tintStrong.opacity(0.35)],
+                center: .center,
+                startRadius: 40,
+                endRadius: 520
+            )
+            .ignoresSafeArea()
+            .opacity(fillIn ? 1 : 0)
 
-                ZStack {
-                    Circle()
-                        .stroke(theme.tint.opacity(0.18), lineWidth: 3)
-                        .frame(width: 138, height: 138)
-                    Circle()
-                        .trim(from: 0, to: progress)
-                        .stroke(
-                            AngularGradient(
-                                gradient: Gradient(colors: [theme.tint.opacity(0.4), theme.tint, theme.tintStrong, theme.tint.opacity(0.4)]),
-                                center: .center),
-                            style: StrokeStyle(lineWidth: 3, lineCap: .round))
-                        .frame(width: 138, height: 138)
-                        .rotationEffect(.degrees(-90))
-                        .opacity(textIn ? 1 : 0)
-
-                    Circle()
-                        .fill(SafeDesign.surfaceCard)
-                        .frame(width: 104, height: 104)
-                        .overlay { Circle().strokeBorder(theme.tint.opacity(0.35), lineWidth: 1) }
-
-                    Image(systemName: "shield.lefthalf.filled")
-                        .font(.system(size: 44, weight: .semibold))
-                        .foregroundStyle(theme.tintStrong)
-                        .scaleEffect(badgeIn ? 1 : 0.5)
-                        .opacity(badgeIn ? 1 : 0)
-                }
-                .scaleEffect(badgeIn ? 1 : 0.7)
-                .opacity(badgeIn ? 1 : 0)
-                .shadow(color: theme.tintStrong.opacity(0.30), radius: 24, y: 10)
-
-                VStack(spacing: SafeDesign.s) {
-                    Text("SafePlace")
-                        .font(.system(size: 38, weight: .bold, design: .serif))
-                        .foregroundStyle(SafeDesign.ink)
-                        .tracking(textIn ? 1 : 8)
-                        .opacity(textIn ? 1 : 0)
-                    Text("A quiet home for the things that helped you.")
-                        .font(SafeDesign.caption)
-                        .foregroundStyle(SafeDesign.inkSecondary)
-                        .opacity(textIn ? 1 : 0)
-                }
-
-                Spacer()
-
-                Capsule()
-                    .fill(SafeDesign.hairline)
-                    .frame(width: 120, height: 4)
-                    .overlay(alignment: .leading) {
-                        Capsule().fill(theme.tintStrong).frame(width: 120 * progress, height: 4)
-                    }
-                    .opacity(textIn ? 1 : 0)
-                    .padding(.bottom, SafeDesign.xxxl)
-            }
+            Text(String(word.prefix(revealed)))
+                .font(.system(size: 46, weight: .semibold, design: .serif))
+                .tracking(2)
+                .foregroundStyle(SafeDesign.onPrimary)
         }
-        .task {
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.6)) { badgeIn = true }
-            withAnimation(.easeOut(duration: 0.5).delay(0.2)) { textIn = true }
-            withAnimation(.easeInOut(duration: 1.3).delay(0.15)) { progress = 1 }
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.6)) { fillIn = true }
+            Task {
+                for index in 0...word.count {
+                    try? await Task.sleep(nanoseconds: 85_000_000)
+                    withAnimation(.easeOut(duration: 0.12)) { revealed = index }
+                }
+            }
         }
     }
 }

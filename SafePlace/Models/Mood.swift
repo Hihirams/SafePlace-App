@@ -20,7 +20,7 @@ struct Mood: Identifiable, Hashable {
     static let hopeful = Mood(
         id: "hopeful", label: "Hopeful",
         color: SafeDesign.moodHopeful, deepColor: Color(hex: "E79A8C"),
-        icon: "flower2.fill", valence: 0.6)
+        icon: "camera.macro", valence: 0.6)
     static let mixed = Mood(
         id: "mixed", label: "Mixed",
         color: SafeDesign.moodMixed, deepColor: Color(hex: "E8B183"),
