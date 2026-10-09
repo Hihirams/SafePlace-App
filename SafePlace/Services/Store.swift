@@ -53,20 +53,28 @@ final class Store: ObservableObject {
         "Habits", "People", "Places", "Activities", "Music", "Self-care"
     ]
 
-    init() {
-        let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        fileURL = documents.appendingPathComponent("SafePlaceData.json")
+    init(fileURL: URL? = nil, seed: Bool = true) {
+        let resolved = fileURL
+            ?? FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?
+                .appendingPathComponent("SafePlaceData.json")
+            ?? URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("SafePlaceData.json")
+        self.fileURL = resolved
 
-        if let data = try? Data(contentsOf: fileURL),
+        if let data = try? Data(contentsOf: resolved),
            let saved = try? JSONDecoder().decode(PersistedData.self, from: data) {
             entries = saved.entries
             categories = saved.categories
             resources = saved.resources
-        } else {
+        } else if seed {
             entries = Self.seedEntries
             categories = Self.defaultCategories
             resources = []
-            Store.save(entries: entries, categories: categories, resources: resources, to: fileURL)
+            Store.save(entries: entries, categories: categories, resources: resources, to: resolved)
+        } else {
+            entries = []
+            categories = Self.defaultCategories
+            resources = []
+            Store.save(entries: entries, categories: categories, resources: resources, to: resolved)
         }
     }
 
