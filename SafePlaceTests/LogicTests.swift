@@ -1,5 +1,6 @@
 import Testing
 import Foundation
+import SwiftUI
 @testable import SafePlace
 
 // MARK: - Helpers
@@ -139,6 +140,36 @@ struct StoreTests {
         store.eraseAll()
         #expect(store.entries.isEmpty)
         #expect(store.categories == Store.defaultCategories)
+    }
+}
+
+// MARK: - SearchRanker
+
+@Suite("SearchRanker")
+struct SearchRankerTests {
+    @Test func findsExactTitleMatch() {
+        let entries = [makeEntry("1", title: "Morning walk", description: "by the park")]
+        let results = SearchRanker.results(for: "walk", in: entries, highlight: .black)
+        #expect(results.first?.entry.id == "1")
+    }
+
+    @Test func emptyQueryReturnsNothing() {
+        let results = SearchRanker.results(for: "   ", in: [makeEntry("1")], highlight: .black)
+        #expect(results.isEmpty)
+    }
+
+    @Test func emotionQueryBoostsMatchingMood() {
+        let entries = [
+            makeEntry("1", mood: "heavy", title: "a", description: "b"),
+            makeEntry("2", mood: "bright", title: "c", description: "d")
+        ]
+        let results = SearchRanker.results(for: "me siento triste", in: entries, highlight: .black)
+        #expect(results.first?.entry.id == "1")
+    }
+
+    @Test func fuzzyMatchesPrefix() {
+        #expect(SearchRanker.fuzzy("tristeza profunda", "triste") == true)
+        #expect(SearchRanker.fuzzy("hola mundo", "zzzz") == false)
     }
 }
 

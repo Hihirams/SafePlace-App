@@ -13,13 +13,6 @@ struct SearchView: View {
 
     private let recentsKey = "recentSearches"
 
-    private struct SearchResult: Identifiable {
-        let entry: Entry
-        let score: Double
-        let snippet: AttributedString
-        var id: String { entry.id }
-    }
-
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -197,7 +190,7 @@ struct SearchView: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: SafeDesign.xs) {
                 Circle().fill(result.entry.cardColor.fill).frame(width: 9, height: 9)
-                Text(highlight(result.entry.title, terms: terms))
+                Text(SearchRanker.highlight(result.entry.title, terms: SearchRanker.terms(from: query), color: theme.tintStrong))
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundStyle(SafeDesign.ink)
                     .lineLimit(1)
@@ -248,21 +241,68 @@ struct SearchView: View {
 
     // MARK: - Ranking
 
-    private var terms: [String] {
+    private var results: [SearchResult] {
+        SearchRanker.results(for: query, in: store.entries, highlight: theme.tintStrong)
+    }
+
+    private func remember(_ text: String) {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.count >= 2 else { return }
+        var list = recents.filter { $0.caseInsensitiveCompare(trimmed) != .orderedSame }
+        list.insert(trimmed, at: 0)
+        recents = Array(list.prefix(8))
+        UserDefaults.standard.set(recents, forKey: recentsKey)
+    }
+}
+
+// MARK: - Ranking engine (pure, unit-testable)
+
+struct SearchResult: Identifiable {
+    let entry: Entry
+    let score: Double
+    let snippet: AttributedString
+    var id: String { entry.id }
+}
+
+enum SearchRanker {
+    static func terms(from query: String) -> [String] {
         query.lowercased()
             .split(whereSeparator: { !$0.isLetter })
             .map(String.init)
             .filter { $0.count > 2 }
     }
 
-    private var results: [SearchResult] {
+    static func fuzzy(_ hay: String, _ term: String) -> Bool {
+        guard term.count >= 4 else { return false }
+        return hay.split(whereSeparator: { !$0.isLetter }).contains { word in
+            let w = String(word)
+            return w.count >= 3 && (w.hasPrefix(term) || term.hasPrefix(w))
+        }
+    }
+
+    static func emotions(in text: String) -> Set<String> {
+        let map: [String: [String]] = [
+            "heavy": ["triste", "tristeza", "sad", "mal", "bajón", "bajon", "deprimido", "llorar", "solo", "sola"],
+            "bright": ["feliz", "contento", "alegre", "happy", "genial", "increíble", "increible", "bueno"],
+            "calm": ["tranquilo", "tranquila", "calma", "relajado", "paz", "calmado"],
+            "hopeful": ["esperanza", "ilusión", "ilusion", "motivado", "hope"],
+            "mixed": ["ansioso", "ansiosa", "nervioso", "estrés", "estres", "confundido", "raro"]
+        ]
+        var result: Set<String> = []
+        for (mood, words) in map where words.contains(where: { text.contains($0) }) {
+            result.insert(mood)
+        }
+        return result
+    }
+
+    static func results(for query: String, in entries: [Entry], highlight color: Color) -> [SearchResult] {
         let q = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         guard !q.isEmpty else { return [] }
-        let searchTerms = terms
+        let searchTerms = terms(from: query)
         let emotionMoods = emotions(in: q)
 
         var out: [SearchResult] = []
-        for entry in store.entries {
+        for entry in entries {
             let title = entry.title.lowercased()
             let desc = entry.description.lowercased()
             let category = entry.category.lowercased()
@@ -279,38 +319,13 @@ struct SearchView: View {
             if !emotionMoods.isEmpty && emotionMoods.contains(entry.mood) { score += 5 }
 
             if score > 0 {
-                out.append(SearchResult(entry: entry, score: score, snippet: snippet(for: entry, query: q, terms: searchTerms)))
+                out.append(SearchResult(entry: entry, score: score, snippet: snippet(for: entry, query: q, terms: searchTerms, color: color)))
             }
         }
         return out.sorted { $0.score > $1.score }.prefix(30).map { $0 }
     }
 
-    private func fuzzy(_ hay: String, _ term: String) -> Bool {
-        guard term.count >= 4 else { return false }
-        return hay.split(whereSeparator: { !$0.isLetter }).contains { word in
-            let w = String(word)
-            return w.count >= 3 && (w.hasPrefix(term) || term.hasPrefix(w))
-        }
-    }
-
-    private func emotions(in text: String) -> Set<String> {
-        let map: [String: [String]] = [
-            "heavy": ["triste", "tristeza", "sad", "mal", "bajón", "bajon", "deprimido", "llorar", "solo", "sola"],
-            "bright": ["feliz", "contento", "alegre", "happy", "genial", "increíble", "increible", "bueno"],
-            "calm": ["tranquilo", "tranquila", "calma", "relajado", "paz", "calmado"],
-            "hopeful": ["esperanza", "ilusión", "ilusion", "motivado", "hope"],
-            "mixed": ["ansioso", "ansiosa", "nervioso", "estrés", "estres", "confundido", "raro"]
-        ]
-        var result: Set<String> = []
-        for (mood, words) in map where words.contains(where: { text.contains($0) }) {
-            result.insert(mood)
-        }
-        return result
-    }
-
-    // MARK: - Snippet + highlight
-
-    private func snippet(for entry: Entry, query: String, terms: [String]) -> AttributedString {
+    static func snippet(for entry: Entry, query: String, terms: [String], color: Color) -> AttributedString {
         let source = entry.description.isEmpty ? entry.title : entry.description
         guard !source.isEmpty else { return AttributedString(entry.title) }
 
@@ -328,17 +343,16 @@ struct SearchView: View {
                 }
             }
         }
-        let start = anchor
-        let from = source.index(start, offsetBy: -70, limitedBy: source.startIndex) ?? source.startIndex
-        let to = source.index(start, offsetBy: 150, limitedBy: source.endIndex) ?? source.endIndex
+        let from = source.index(anchor, offsetBy: -70, limitedBy: source.startIndex) ?? source.startIndex
+        let to = source.index(anchor, offsetBy: 150, limitedBy: source.endIndex) ?? source.endIndex
 
         var text = String(source[from..<to])
         if from != source.startIndex { text = "…" + text }
         if to != source.endIndex { text += "…" }
-        return highlight(text, terms: terms)
+        return highlight(text, terms: terms, color: color)
     }
 
-    private func highlight(_ text: String, terms: [String]) -> AttributedString {
+    static func highlight(_ text: String, terms: [String], color: Color) -> AttributedString {
         var attr = AttributedString(text)
         for term in terms where term.count >= 2 {
             var searchStart = text.startIndex
@@ -346,22 +360,13 @@ struct SearchView: View {
                   let range = text.range(of: term, options: [.caseInsensitive, .diacriticInsensitive], range: searchStart..<text.endIndex) {
                 if let lower = AttributedString.Index(range.lowerBound, within: attr),
                    let upper = AttributedString.Index(range.upperBound, within: attr) {
-                    attr[lower..<upper].foregroundColor = theme.tintStrong
+                    attr[lower..<upper].foregroundColor = color
                     attr[lower..<upper].inlinePresentationIntent = .stronglyEmphasized
                 }
                 searchStart = range.upperBound
             }
         }
         return attr
-    }
-
-    private func remember(_ text: String) {
-        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard trimmed.count >= 2 else { return }
-        var list = recents.filter { $0.caseInsensitiveCompare(trimmed) != .orderedSame }
-        list.insert(trimmed, at: 0)
-        recents = Array(list.prefix(8))
-        UserDefaults.standard.set(recents, forKey: recentsKey)
     }
 }
 
