@@ -133,7 +133,7 @@ struct NotesView: View {
                 .lineLimit(6)
                 .multilineTextAlignment(.leading)
 
-            HStack {
+            AdaptiveStack(spacing: SafeDesign.s) {
                 Button {
                     keep(note)
                 } label: {
@@ -145,7 +145,7 @@ struct NotesView: View {
                     .fontWeight(.semibold)
                     .foregroundStyle(SafeDesign.onPrimary)
                     .padding(.horizontal, SafeDesign.l)
-                    .frame(height: 40)
+                    .frame(minHeight: 40)
                     .background(Capsule().fill(SafeDesign.accent))
                 }
                 .buttonStyle(.plain)
@@ -159,12 +159,10 @@ struct NotesView: View {
                         .font(SafeDesign.caption)
                         .foregroundStyle(SafeDesign.inkSecondary)
                         .padding(.horizontal, SafeDesign.l)
-                        .frame(height: 40)
+                        .frame(minHeight: 40)
                         .background(Capsule().strokeBorder(SafeDesign.hairline, lineWidth: 1))
                 }
                 .buttonStyle(.plain)
-
-                Spacer()
 
                 Button {
                     discard(note)

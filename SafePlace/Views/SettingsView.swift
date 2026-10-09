@@ -91,14 +91,17 @@ struct SettingsView: View {
 
     private var appearanceSection: some View {
         SettingsCard(title: "Appearance", icon: "paintbrush") {
-            HStack(spacing: SafeDesign.xs) {
-                ForEach(ThemeMode.allCases, id: \.self) { mode in
-                    SelectionPill(title: mode.label, icon: mode.icon, isSelected: theme == mode) {
-                        Haptics.selection()
-                        withAnimation(SafeDesign.spring) { themeRaw = mode.rawValue }
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: SafeDesign.xs) {
+                    ForEach(ThemeMode.allCases, id: \.self) { mode in
+                        SelectionPill(title: mode.label, icon: mode.icon, isSelected: theme == mode) {
+                            Haptics.selection()
+                            withAnimation(SafeDesign.spring) { themeRaw = mode.rawValue }
+                        }
                     }
                 }
             }
+            .scrollClipDisabled()
         }
     }
 

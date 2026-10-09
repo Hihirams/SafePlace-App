@@ -348,6 +348,7 @@ struct MindView: View {
                 Image(systemName: "circle.dashed")
                     .font(.system(size: 13))
                     .foregroundStyle(SafeDesign.muted)
+                    .accessibilityHidden(true)
                 Slider(
                     value: Binding(
                         get: { Double(sensitivity) },
@@ -356,9 +357,11 @@ struct MindView: View {
                     in: 0...1
                 )
                 .tint(SafeDesign.accentDeep)
+                .accessibilityLabel("Connection sensitivity")
                 Image(systemName: "circle.grid.cross.fill")
                     .font(.system(size: 13))
                     .foregroundStyle(SafeDesign.muted)
+                    .accessibilityHidden(true)
             }
 
             HStack(spacing: SafeDesign.s) {
@@ -476,7 +479,7 @@ struct MindView: View {
                         .font(SafeDesign.caption)
                         .foregroundStyle(SafeDesign.inkSecondary)
                         .padding(.horizontal, SafeDesign.m)
-                        .frame(height: 34)
+                        .frame(minHeight: 34)
                         .background(Capsule().strokeBorder(SafeDesign.hairline, lineWidth: 1))
                 }
                 .buttonStyle(.plain)
@@ -490,7 +493,7 @@ struct MindView: View {
                         .font(SafeDesign.caption)
                         .foregroundStyle(SafeDesign.onPrimary)
                         .padding(.horizontal, SafeDesign.m)
-                        .frame(height: 34)
+                        .frame(minHeight: 34)
                         .background(Capsule().fill(SafeDesign.accent))
                 }
                 .buttonStyle(.plain)

@@ -161,6 +161,7 @@ struct JournalView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .accessibilityValue(isCollapsed ? "Collapsed" : "Expanded")
     }
 
     private var emptyState: some View {

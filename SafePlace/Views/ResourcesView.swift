@@ -78,15 +78,17 @@ struct ResourcesView: View {
     }
 
     private var filterBar: some View {
-        HStack(spacing: SafeDesign.s) {
-            ForEach(Filter.allCases) { f in
-                SelectionPill(title: f.rawValue, isSelected: filter == f) {
-                    Haptics.selection()
-                    withAnimation(SafeDesign.spring) { filter = f }
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: SafeDesign.s) {
+                ForEach(Filter.allCases) { f in
+                    SelectionPill(title: f.rawValue, isSelected: filter == f) {
+                        Haptics.selection()
+                        withAnimation(SafeDesign.spring) { filter = f }
+                    }
                 }
             }
-            Spacer()
         }
+        .scrollClipDisabled()
     }
 
     private var emptyState: some View {

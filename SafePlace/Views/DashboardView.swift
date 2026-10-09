@@ -158,7 +158,7 @@ struct DashboardView: View {
 
     private var todayCard: some View {
         VStack(alignment: .leading, spacing: SafeDesign.m) {
-            HStack {
+            AdaptiveStack(spacing: SafeDesign.s) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("TODAY")
                         .font(.system(size: 11, weight: .semibold))
@@ -168,7 +168,7 @@ struct DashboardView: View {
                         .font(SafeDesign.headline)
                         .foregroundStyle(SafeDesign.ink)
                 }
-                Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
                 HStack(spacing: SafeDesign.xs) {
                     miniStat("\(daysThisWeek)", "this week")
                     miniStat("\(personalBest)", "best run")
@@ -493,7 +493,7 @@ private struct FlowMoodTags: View {
     let moods: [MoodCount]
 
     var body: some View {
-        HStack(spacing: SafeDesign.xs) {
+        FlowLayout(spacing: SafeDesign.xs) {
             ForEach(moods) { item in
                 HStack(spacing: 5) {
                     Image(systemName: item.mood.icon).font(.system(size: 12, weight: .semibold))

@@ -19,7 +19,8 @@ struct PrimaryButton: View {
             }
             .foregroundStyle(SafeDesign.canvas)
             .frame(maxWidth: .infinity)
-            .frame(height: 52)
+            .frame(minHeight: 52)
+            .padding(.vertical, 6)
             .background {
                 Capsule().fill(SafeDesign.ink)
             }
@@ -48,7 +49,8 @@ struct SecondaryButton: View {
             }
             .foregroundStyle(SafeDesign.ink)
             .frame(maxWidth: .infinity)
-            .frame(height: 52)
+            .frame(minHeight: 52)
+            .padding(.vertical, 6)
             .background {
                 Capsule().strokeBorder(SafeDesign.hairline, lineWidth: 1)
             }

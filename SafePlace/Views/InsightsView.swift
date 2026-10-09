@@ -136,6 +136,7 @@ struct InsightsView: View {
                 }
             }
             .frame(height: 150)
+            .accessibilityLabel("Notes per day over the last 14 days")
         }
         .padding(SafeDesign.l)
         .background(SafeDesign.surfaceSoft, in: RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous))
@@ -168,6 +169,7 @@ struct InsightsView: View {
                 }
             }
             .frame(height: CGFloat(max(moodCounts.count, 1)) * 34)
+            .accessibilityLabel("Notes by mood")
         }
         .padding(SafeDesign.l)
         .background(SafeDesign.surfaceSoft, in: RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous))

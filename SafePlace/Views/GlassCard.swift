@@ -75,6 +75,7 @@ struct BadgePill: View {
 struct GlassIconButton: View {
     let icon: String
     var size: CGFloat = 44
+    var label: String? = nil
     var action: () -> Void = {}
 
     var body: some View {
@@ -82,10 +83,11 @@ struct GlassIconButton: View {
             Image(systemName: icon)
                 .font(.system(size: 17, weight: .medium))
                 .foregroundStyle(SafeDesign.ink)
-                .frame(width: size, height: size)
+                .frame(width: max(size, minTouchTarget), height: max(size, minTouchTarget))
                 .glassPill()
         }
         .buttonStyle(.plain)
         .pressable()
+        .accessibilityLabel(label ?? icon)
     }
 }

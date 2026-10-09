@@ -52,7 +52,7 @@ struct EntryFormView: View {
 
                     field("Category") {
                         VStack(alignment: .leading, spacing: SafeDesign.s) {
-                            HStack(spacing: SafeDesign.s) {
+                            AdaptiveStack(spacing: SafeDesign.s) {
                                 Menu {
                                     ForEach(effectiveCategories, id: \.self) { c in
                                         Button(c) {
@@ -85,7 +85,7 @@ struct EntryFormView: View {
                                         .font(SafeDesign.caption)
                                         .foregroundStyle(SafeDesign.ink)
                                         .padding(.horizontal, SafeDesign.l)
-                                        .frame(height: 44)
+                                        .frame(minHeight: 44)
                                         .background(SafeDesign.surfaceCard, in: Capsule())
                                 }
                                 .buttonStyle(.plain)

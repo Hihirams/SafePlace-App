@@ -68,6 +68,7 @@ struct EntryCardView: View {
                 .frame(width: 110, height: 110)
                 .offset(x: 40, y: -50)
                 .allowsHitTesting(false)
+                .accessibilityHidden(true)
         }
         .clipShape(RoundedRectangle(cornerRadius: SafeDesign.radiusXL, style: .continuous))
         .contentShape(RoundedRectangle(cornerRadius: SafeDesign.radiusXL, style: .continuous))
