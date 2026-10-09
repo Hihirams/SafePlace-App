@@ -26,37 +26,11 @@ struct DashboardView: View {
         store.entries.filter { Calendar.current.isDateInToday($0.createdAt) }
     }
 
-    private var daysThisWeek: Int {
-        let cal = Calendar.current
-        let days = Set(store.entries.compactMap { entry -> Date? in
-            guard let interval = cal.dateInterval(of: .weekOfYear, for: Date()), interval.contains(entry.createdAt) else { return nil }
-            return cal.startOfDay(for: entry.createdAt)
-        })
-        return days.count
-    }
+    private var daysThisWeek: Int { NoteStats.daysThisWeek(store.entries) }
 
-    private var personalBest: Int {
-        let cal = Calendar.current
-        let days = Set(store.entries.map { cal.startOfDay(for: $0.createdAt) }).sorted()
-        guard !days.isEmpty else { return 0 }
-        var best = 0, current = 0
-        var previous: Date?
-        for day in days {
-            if let prev = previous, cal.date(byAdding: .day, value: 1, to: prev) == day { current += 1 } else { current = 1 }
-            best = max(best, current)
-            previous = day
-        }
-        return best
-    }
+    private var personalBest: Int { NoteStats.personalBest(store.entries) }
 
-    private var onThisDay: [Entry] {
-        let cal = Calendar.current
-        let comps = cal.dateComponents([.month, .day], from: Date())
-        return store.entries.filter { entry in
-            let c = cal.dateComponents([.month, .day], from: entry.createdAt)
-            return c.month == comps.month && c.day == comps.day && !cal.isDateInToday(entry.createdAt)
-        }
-    }
+    private var onThisDay: [Entry] { NoteStats.onThisDay(store.entries) }
 
     private var recentEntries: [Entry] {
         Array(store.entries.sorted { $0.createdAt > $1.createdAt }.prefix(6))
@@ -293,7 +267,7 @@ struct DashboardView: View {
                             .foregroundStyle(SafeDesign.muted)
                     } else {
                         VStack(spacing: SafeDesign.s) {
-                            ForEach(categoryCounts, id: \.name) { item in
+                            ForEach(categoryCounts) { item in
                                 HStack(spacing: SafeDesign.xs) {
                                     Text(item.name)
                                         .font(.system(size: 12, weight: .medium))
@@ -304,7 +278,7 @@ struct DashboardView: View {
                                         ZStack(alignment: .leading) {
                                             Capsule().fill(SafeDesign.surfaceStrong)
                                             Capsule().fill(theme.tintStrong)
-                                                .frame(width: geo.size.width * item.fraction)
+                                                .frame(width: geo.size.width * fraction(for: item.count))
                                         }
                                     }
                                     .frame(height: 8)
@@ -369,21 +343,12 @@ struct DashboardView: View {
             }
     }
 
-    private var categoryCounts: [CategoryCount] {
-        let total = store.entries.count
-        guard total > 0 else { return [] }
-        let names = Array(Set(store.categories).union(store.entries.map { $0.category }))
-        let counts = names
-            .map { name in (name, store.entries.filter { $0.category == name }.count) }
-            .filter { $0.1 > 0 }
-            .sorted { $0.1 > $1.1 }
-        return counts.map { CategoryCount(name: $0.0, count: $0.1, fraction: CGFloat($0.1) / CGFloat(total)) }
+    private var categoryCounts: [NoteStats.CategoryCount] {
+        NoteStats.categoryCounts(store.entries, categories: store.categories)
     }
 
-    private var moodCounts: [MoodCount] {
-        Mood.all
-            .map { m in MoodCount(mood: m, count: store.entries.filter { $0.mood == m.id }.count) }
-            .filter { $0.count > 0 }
+    private var moodCounts: [NoteStats.MoodCount] {
+        NoteStats.moodCounts(store.entries)
     }
 
     // MARK: - Recent
@@ -486,12 +451,17 @@ struct DashboardView: View {
         store.addEntry(copy)
         Haptics.success()
     }
+
+    private func fraction(for count: Int) -> CGFloat {
+        let total = max(store.entries.count, 1)
+        return CGFloat(count) / CGFloat(total)
+    }
 }
 
 // MARK: - Mood tag flow
 
 private struct FlowMoodTags: View {
-    let moods: [MoodCount]
+    let moods: [NoteStats.MoodCount]
 
     var body: some View {
         FlowLayout(spacing: SafeDesign.xs) {
@@ -514,19 +484,4 @@ private struct FlowMoodTags: View {
         BackgroundOrbs()
         DashboardView(store: Store(), selectedTab: .constant(.home))
     }
-}
-
-// MARK: - Stat data
-
-private struct CategoryCount: Identifiable {
-    let name: String
-    let count: Int
-    let fraction: CGFloat
-    var id: String { name }
-}
-
-private struct MoodCount: Identifiable {
-    let mood: Mood
-    let count: Int
-    var id: String { mood.id }
 }

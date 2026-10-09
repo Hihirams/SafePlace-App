@@ -8,71 +8,17 @@ struct InsightsView: View {
     @Environment(\.verticalSizeClass) private var v
     @Environment(\.appTheme) private var theme
 
-    private struct DayCount: Identifiable {
-        let date: Date
-        let count: Int
-        var id: Date { date }
+    private var last14Days: [NoteStats.DayCount] { NoteStats.last14Days(store.entries) }
+
+    private var moodCounts: [NoteStats.MoodCount] { NoteStats.moodCounts(store.entries) }
+
+    private var categoryCounts: [NoteStats.CategoryCount] {
+        Array(NoteStats.categoryCounts(store.entries, categories: store.categories).prefix(6))
     }
 
-    private var last14Days: [DayCount] {
-        let cal = Calendar.current
-        let today = cal.startOfDay(for: Date())
-        return (0..<14).reversed().map { offset -> DayCount in
-            let day = cal.date(byAdding: .day, value: -offset, to: today) ?? today
-            let count = store.entries.filter { cal.isDate($0.createdAt, inSameDayAs: day) }.count
-            return DayCount(date: day, count: count)
-        }
-    }
+    private var topKeywords: [String] { NoteStats.topKeywords(store.entries) }
 
-    private var moodCounts: [MoodSlice] {
-        Mood.all
-            .map { m in MoodSlice(mood: m, count: store.entries.filter { $0.mood == m.id }.count) }
-            .filter { $0.count > 0 }
-            .sorted { $0.count > $1.count }
-    }
-
-    private var categoryCounts: [CategorySlice] {
-        store.categories
-            .map { name in CategorySlice(name: name, count: store.entries.filter { $0.category == name }.count) }
-            .filter { $0.count > 0 }
-            .sorted { $0.count > $1.count }
-            .prefix(6)
-            .map { $0 }
-    }
-
-    private var topKeywords: [String] {
-        let stop: Set<String> = ["the", "and", "for", "with", "that", "this", "from", "have", "was", "are", "not", "but", "all", "about", "into", "out", "your", "you", "today", "really", "very", "just"]
-        var counts: [String: Int] = [:]
-        for entry in store.entries {
-            let words = "\(entry.title) \(entry.description)"
-                .lowercased()
-                .split(whereSeparator: { !$0.isLetter })
-                .map(String.init)
-                .filter { $0.count > 3 && !stop.contains($0) }
-            for w in Set(words) { counts[w, default: 0] += 1 }
-        }
-        return counts.sorted { $0.value > $1.value }.prefix(8).map { $0.key }
-    }
-
-    private var personalBest: Int {
-        let cal = Calendar.current
-        let days = Set(store.entries.map { cal.startOfDay(for: $0.createdAt) })
-        guard !days.isEmpty else { return 0 }
-        var best = 0
-        var current = 0
-        let sorted = days.sorted()
-        var previous: Date?
-        for day in sorted {
-            if let prev = previous, cal.date(byAdding: .day, value: 1, to: prev) == day {
-                current += 1
-            } else {
-                current = 1
-            }
-            best = max(best, current)
-            previous = day
-        }
-        return best
-    }
+    private var personalBest: Int { NoteStats.personalBest(store.entries) }
 
     var body: some View {
         VStack(alignment: .leading, spacing: SafeDesign.l) {
@@ -248,18 +194,6 @@ struct InsightsView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, SafeDesign.xxl)
     }
-}
-
-private struct MoodSlice: Identifiable {
-    let mood: Mood
-    let count: Int
-    var id: String { mood.id }
-}
-
-private struct CategorySlice: Identifiable {
-    let name: String
-    let count: Int
-    var id: String { name }
 }
 
 /// Simple wrapping layout for tags.

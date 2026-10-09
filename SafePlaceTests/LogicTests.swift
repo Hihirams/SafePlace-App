@@ -173,6 +173,50 @@ struct SearchRankerTests {
     }
 }
 
+// MARK: - NoteStats
+
+@Suite("NoteStats")
+struct NoteStatsTests {
+    private func daysAgo(_ days: Int) -> Date {
+        Calendar.current.date(byAdding: .day, value: -days, to: Date()) ?? Date()
+    }
+
+    @Test func personalBestCountsConsecutiveDays() {
+        let entries = [makeEntry("1"), makeEntry("2"), makeEntry("3")].enumerated().map { index, entry -> Entry in
+            var copy = entry
+            copy.createdAt = daysAgo(index)
+            return copy
+        }
+        #expect(NoteStats.personalBest(entries) == 3)
+    }
+
+    @Test func personalBestZeroWhenEmpty() {
+        #expect(NoteStats.personalBest([]) == 0)
+    }
+
+    @Test func categoryCountsAreSortedDescending() {
+        let entries = [
+            makeEntry("1", category: "Music"),
+            makeEntry("2", category: "Music"),
+            makeEntry("3", category: "Habits")
+        ]
+        let counts = NoteStats.categoryCounts(entries, categories: [])
+        #expect(counts.first?.name == "Music")
+        #expect(counts.first?.count == 2)
+    }
+
+    @Test func last14DaysAlwaysHas14Buckets() {
+        #expect(NoteStats.last14Days([]).count == 14)
+    }
+
+    @Test func topKeywordsFilterStopwords() {
+        let entries = [makeEntry("1", title: "playlist playlist", description: "the and songs")]
+        let keywords = NoteStats.topKeywords(entries)
+        #expect(keywords.contains("playlist"))
+        #expect(!keywords.contains("the"))
+    }
+}
+
 // MARK: - Date helpers
 
 @Suite("Date helpers")
