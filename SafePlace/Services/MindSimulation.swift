@@ -26,7 +26,7 @@ final class MindSimulation {
 
         var hubPositions: [String: CGPoint] = [:]
         for (index, hub) in hubs.enumerated() {
-            let angle = Double(index) / Double(hubCount) * 2 * .pi
+            let angle = CGFloat(index) / CGFloat(hubCount) * 2 * .pi
             let position = CGPoint(
                 x: worldCenter.x + cos(angle) * ringRadius,
                 y: worldCenter.y + sin(angle) * ringRadius
@@ -40,7 +40,7 @@ final class MindSimulation {
             let hubPosition = hubPositions[node.category] ?? worldCenter
             let index = counts[node.category, default: 0]
             counts[node.category] = index + 1
-            let angle = Double(index) * 2.399963  // golden angle for even spread
+            let angle = CGFloat(index) * 2.399963  // golden angle for even spread
             let radius = 42 + CGFloat(index % 5) * 15
             let position = CGPoint(
                 x: hubPosition.x + cos(angle) * radius,
