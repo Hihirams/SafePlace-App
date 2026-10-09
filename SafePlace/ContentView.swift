@@ -86,7 +86,12 @@ struct RootView: View {
         .preferredColorScheme(mode.colorScheme)
         .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
         .onAppear {
-            if hasSeenOnboarding { scheduleSplashDismiss() }
+            if ProcessInfo.processInfo.arguments.contains("-uitesting") {
+                hasSeenOnboarding = true
+                showSplash = false
+            } else if hasSeenOnboarding {
+                scheduleSplashDismiss()
+            }
         }
         .onChange(of: hasSeenOnboarding) { _, seen in
             if seen {

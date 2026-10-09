@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  test:
     runs-on: macos-15
 
     steps:
@@ -27,16 +27,22 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
 
-      - name: Build (no signing, no publish)
+      - name: Run tests
         run: |
-          xcodebuild \
+          set -euo pipefail
+          if xcrun simctl list devices available | grep -q "iPhone 16"; then DEVICE="iPhone 16"; else DEVICE="iPhone 15"; fi
+          echo "Using simulator: $DEVICE"
+          rm -rf TestResults.xcresult
+          xcodebuild test \
             -project SafePlace.xcodeproj \
             -scheme SafePlace \
-            -sdk iphoneos \
-            -configuration Debug \
-            -destination 'generic/platform=iOS' \
-            build \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            MARKETING_VERSION="1.0.0" \
-            CURRENT_PROJECT_VERSION="0"
+            -destination "platform=iOS Simulator,name=$DEVICE" \
+            -resultBundlePath TestResults.xcresult
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults.xcresult
+          if-no-files-found: ignore
