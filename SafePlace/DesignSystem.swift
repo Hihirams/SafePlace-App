@@ -45,7 +45,7 @@ enum SafeDesign {
     // MARK: - Ink (text)
     static let ink          = dyn("2B2320", "F5F0EC")
     static let inkSecondary = dyn("6B5E57", "B8AFA8")
-    static let muted        = dynWhiteInk(0.45, 0.42)
+    static let muted        = dynWhiteInk(0.66, 0.55)
 
     // MARK: - Accent (peach glow)
     static let accent    = peachGlow
@@ -75,16 +75,16 @@ enum SafeDesign {
     static let warning = Color(hex: "F59E0B")
     static let error   = Color(hex: "EF4444")
 
-    // MARK: - Typography (SF, rounded for figures)
-    static let heroFont    = Font.system(size: 30, weight: .bold, design: .rounded)
-    static let displayFont = Font.system(size: 28, weight: .bold, design: .rounded)
-    static let largeTitle  = Font.system(size: 26, weight: .bold)
-    static let title       = Font.system(size: 20, weight: .bold)
-    static let headline    = Font.system(size: 16, weight: .semibold)
-    static let body        = Font.system(size: 15, weight: .medium)
-    static let caption     = Font.system(size: 13, weight: .medium)
-    static let micro       = Font.system(size: 11, weight: .medium)
-    static let tabLabel    = Font.system(size: 9.5, weight: .semibold)
+    // MARK: - Typography (semantic so it scales with Dynamic Type)
+    static let heroFont    = Font.system(.title, design: .rounded).weight(.bold)
+    static let displayFont = Font.system(.title, design: .rounded).weight(.bold)
+    static let largeTitle  = Font.system(.title).weight(.bold)
+    static let title       = Font.system(.title3).weight(.bold)
+    static let headline    = Font.system(.headline)
+    static let body        = Font.system(.subheadline).weight(.medium)
+    static let caption     = Font.system(.footnote).weight(.medium)
+    static let micro       = Font.system(.caption2).weight(.medium)
+    static let tabLabel    = Font.system(.caption2).weight(.semibold)
 
     // MARK: - Spacing (multiples of 4)
     static let xxs: CGFloat = 4
@@ -147,6 +147,25 @@ extension View {
         frame(maxWidth: SafeLayout.contentMaxWidth)
             .frame(maxWidth: .infinity)
             .padding(.horizontal, SafeLayout.pageInset(horizontal, vertical))
+    }
+}
+
+/// Minimum tappable size (Apple HIG).
+let minTouchTarget: CGFloat = 44
+
+/// A stack that folds from horizontal to vertical at accessibility text sizes,
+/// so labels never truncate. Uses `AnyLayout` to keep identity/state across the swap.
+struct AdaptiveStack<Content: View>: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    var spacing: CGFloat = SafeDesign.s
+    var verticalAlignment: HorizontalAlignment = .leading
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        let layout = dynamicTypeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: verticalAlignment, spacing: spacing))
+            : AnyLayout(HStackLayout(alignment: .center, spacing: spacing))
+        layout { content }
     }
 }
 

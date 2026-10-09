@@ -18,21 +18,23 @@ enum CardColor: String, CaseIterable, Identifiable {
         }
     }
 
-    /// Foreground text color — dark cards get light text, light cards get ink.
+    /// Foreground text color — chosen for AA contrast on each card fill.
     var foreground: Color {
         switch self {
-        case .pink, .teal:
+        case .teal:
             return .white
-        case .lavender, .peach, .ochre, .mint, .coral, .cream:
+        default:
             return SafeDesign.ink
         }
     }
 
-    /// A softer version used for accents on light cards.
+    /// Accent used for secondary text on the card (mood, date).
     var accent: Color {
         switch self {
-        case .pink, .teal: return .white.opacity(0.85)
-        default: return SafeDesign.ink.opacity(0.55)
+        case .teal:
+            return .white.opacity(0.95)
+        default:
+            return SafeDesign.ink.opacity(0.9)
         }
     }
 }

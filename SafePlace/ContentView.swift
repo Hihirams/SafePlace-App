@@ -84,7 +84,6 @@ struct RootView: View {
         }
         .environment(\.appTheme, AppTheme(moodState: moodState))
         .preferredColorScheme(mode.colorScheme)
-        .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
         .onAppear {
             if ProcessInfo.processInfo.arguments.contains("-uitesting") {
                 hasSeenOnboarding = true
@@ -228,6 +227,7 @@ struct GlassTabBar: View {
         .glassCapsule()
         .padding(.horizontal, h == .regular ? SafeDesign.xxxl : SafeDesign.l)
         .padding(.bottom, SafeDesign.xs)
+        .dynamicTypeSize(...DynamicTypeSize.large)
         .sensoryFeedback(.selection, trigger: selectedIndex)
     }
 
@@ -252,6 +252,7 @@ struct GlassTabBar: View {
         .buttonStyle(.plain)
         .pressable(scale: 0.94)
         .accessibilityLabel("Create a note")
+        .accessibilityIdentifier("tab-create")
     }
 
     private func tabLabel(_ tab: Tab) -> some View {
@@ -262,14 +263,22 @@ struct GlassTabBar: View {
                 .foregroundStyle(sel ? SafeDesign.ink : SafeDesign.muted)
                 .bounceEffect(sel)
             Text(tab.title)
-                .font(.system(size: 10, weight: .semibold))
+                .font(SafeDesign.tabLabel)
                 .minimumScaleFactor(0.8)
                 .lineLimit(1)
                 .foregroundStyle(sel ? SafeDesign.ink : SafeDesign.muted)
         }
         .frame(maxWidth: .infinity)
+        .frame(minHeight: minTouchTarget)
         .contentShape(Rectangle())
+        .accessibilityElement(children: .ignore)
         .accessibilityLabel(tab.title)
+        .accessibilityAddTraits(sel ? [.isButton, .isSelected] : [.isButton])
+        .accessibilityIdentifier("tab-\(tab.title.lowercased())")
+        .accessibilityAction {
+            Haptics.selection()
+            withAnimation(selectorAnim) { selectedTab = tab }
+        }
     }
 }
 

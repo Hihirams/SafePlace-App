@@ -22,6 +22,8 @@ struct MindView: View {
     @State private var editingEntry: Entry?
     @State private var showForm = false
     @State private var contagionStart = Date()
+    @State private var isVisible = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var minWeight: CGFloat { 0.2 + (1 - sensitivity) * 1.6 }
 
@@ -109,13 +111,14 @@ struct MindView: View {
         GeometryReader { geo in
             TimelineView(.animation(minimumInterval: 1.0 / 30)) { timeline in
                 Canvas { context, size in
-                    if !paused, let simulation {
+                    if !paused, !reduceMotion, isVisible, let simulation {
                         simulation.step(iterations: 1, energy: energy)
                     }
                     drawGraph(in: &context, size: size, date: timeline.date)
                 }
             }
-            .onAppear { canvasSize = geo.size }
+            .onAppear { isVisible = true; canvasSize = geo.size }
+            .onDisappear { isVisible = false }
             .onChange(of: geo.size) { _, newSize in canvasSize = newSize }
             .contentShape(Rectangle())
             .gesture(

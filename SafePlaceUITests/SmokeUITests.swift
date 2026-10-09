@@ -22,8 +22,8 @@ final class SmokeUITests: XCTestCase {
     func testTabBarIsReachable() throws {
         let app = launchApp()
         XCTAssertTrue(app.staticTexts["SafePlace"].waitForExistence(timeout: 15))
-        for label in ["Journal", "Mind", "Saved", "Create"] {
-            XCTAssertTrue(app.staticTexts[label].exists, "Missing tab: \(label)")
+        for id in ["tab-journal", "tab-mind", "tab-saved", "tab-create"] {
+            XCTAssertTrue(app.buttons[id].exists, "Missing tab: \(id)")
         }
     }
 }
