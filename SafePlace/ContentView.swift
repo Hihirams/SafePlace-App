@@ -160,6 +160,7 @@ struct GlassTabBar: View {
     var onCreate: () -> Void
     @Environment(\.horizontalSizeClass) private var h
     @Environment(\.appTheme) private var theme
+    @State private var selectionCount = 0
 
     private enum Slot: Hashable {
         case tab(Tab)
@@ -222,6 +223,7 @@ struct GlassTabBar: View {
         .padding(.bottom, SafeDesign.xs)
         .dynamicTypeSize(...DynamicTypeSize.large)
         .sensoryFeedback(.selection, trigger: selectedIndex)
+        .onChange(of: selectedTab) { _, _ in selectionCount += 1 }
     }
 
     private var createSlot: some View {
@@ -254,7 +256,7 @@ struct GlassTabBar: View {
             Image(systemName: sel ? tab.selectedIcon : tab.icon)
                 .font(.system(size: 18, weight: sel ? .semibold : .regular))
                 .foregroundStyle(sel ? SafeDesign.ink : SafeDesign.muted)
-                .bounceEffect(sel)
+                .symbolEffect(.bounce, value: sel ? selectionCount : -1)
             Text(tab.title)
                 .font(SafeDesign.tabLabel)
                 .minimumScaleFactor(0.8)

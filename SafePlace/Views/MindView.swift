@@ -109,18 +109,12 @@ struct MindView: View {
 
     @State private var editingEntry: Entry?
     @State private var showEdit = false
+    @State private var showAll = false
+    @State private var dominantMood: Mood?
+    @State private var dominance: CGFloat = 0
+    @State private var energyValue: CGFloat = 0.5
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
-    private var dominant: (mood: Mood, dominance: CGFloat)? {
-        MindGraph.dominantMood(of: store.entries)
-    }
-
-    private var energy: CGFloat {
-        let mood = MindGraph.averageEnergy(of: store.entries)
-        let countFactor = min(1 + log2(CGFloat(store.entries.count) + 1) * 0.12, 1.7)
-        return mood * countFactor
-    }
 
     private var selectedEntry: Entry? {
         guard let selectedID else { return nil }
@@ -184,7 +178,7 @@ struct MindView: View {
                     } else if isVisible {
                         camera.advance(to: timeline.date)
                         if let simulation {
-                            simulation.step(iterations: 1, energy: energy)
+                            simulation.step(iterations: 1, energy: energyValue)
                         }
                     }
                     drawGraph(in: &context, size: size)
@@ -223,9 +217,9 @@ struct MindView: View {
     }
 
     private func color(base: Color) -> Color {
-        guard let dominant else { return base }
-        let amount = camera.contagion * Double(camera.waveMix) * (0.55 + 0.4 * Double(dominant.dominance))
-        return base.blended(with: dominant.mood.color, amount: CGFloat(amount))
+        guard let dominantMood else { return base }
+        let amount = camera.contagion * Double(camera.waveMix) * (0.55 + 0.4 * Double(dominance))
+        return base.blended(with: dominantMood.color, amount: CGFloat(amount))
     }
 
     private func drawGraph(in context: inout GraphicsContext, size: CGSize) {
@@ -235,70 +229,65 @@ struct MindView: View {
         let focused = focusCategory
         let focusAlpha = camera.focusProgress
         let zoom = camera.zoom
+        let showMembers = showAll || focused != nil
 
-        // Edges for the focused category's members.
-        if let focused, focusAlpha > 0.01 {
-            for edge in graph.edges where edge.to == focused {
+        // Edges.
+        if showMembers, focusAlpha > 0.01 {
+            for edge in graph.edges {
+                if !showAll, edge.to != focused { continue }
                 guard let a = simulation.position(for: edge.from),
                       let b = simulation.position(for: edge.to) else { continue }
                 var path = Path()
                 path.move(to: toScreen(a))
                 path.addLine(to: toScreen(b))
-                context.stroke(path, with: .color(SafeDesign.ink.opacity(0.22 * Double(focusAlpha))), lineWidth: 1)
+                context.stroke(path, with: .color(SafeDesign.ink.opacity(0.18 * Double(focusAlpha))), lineWidth: 1)
             }
         }
 
-        // Members of the focused category (fade + grow in).
-        if let focused, focusAlpha > 0.01 {
-            for node in graph.nodes where node.category == focused {
+        // Members (focused category, or all when Show all).
+        if showMembers, focusAlpha > 0.01 {
+            for node in graph.nodes {
+                if !showAll, node.category != focused { continue }
                 guard let position = simulation.position(for: node.id) else { continue }
                 let center = toScreen(position)
                 let radius = max(node.radius * baseScale * zoom * focusAlpha, 4)
-                let nodeColor = color(base: node.color)
-                let isSelected = node.id == selectedID
-
-                context.fill(Path(ellipseIn: CGRect(x: center.x - radius * 1.8, y: center.y - radius * 1.8, width: radius * 3.6, height: radius * 3.6)),
-                             with: .color(nodeColor.opacity(0.16 * Double(focusAlpha))))
-                let bodyRect = CGRect(x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)
-                context.fill(Path(ellipseIn: bodyRect), with: .color(nodeColor.opacity(Double(focusAlpha))))
-                context.fill(Path(ellipseIn: CGRect(x: center.x - radius * 0.5, y: center.y - radius * 0.7, width: radius, height: radius * 0.7)),
-                             with: .color(.white.opacity(0.3 * Double(focusAlpha))))
-                if isSelected {
-                    context.stroke(Path(ellipseIn: bodyRect.insetBy(dx: -3, dy: -3)), with: .color(SafeDesign.ink.opacity(0.85)), lineWidth: 2.5)
-                }
+                drawOrb(&context, center: center, radius: radius, color: color(base: node.color), alpha: focusAlpha,
+                        ring: node.id == selectedID ? SafeDesign.ink.opacity(0.85) : nil, ringWidth: 2.5)
             }
         }
 
-        // Hubs always.
+        // Hubs.
         for hub in graph.hubs {
             guard let position = simulation.position(for: hub.id) else { continue }
             let center = toScreen(position)
             let isFocused = hub.id == focusCategory
             let pop = isFocused ? (1 + camera.pulse * 0.18) : 1
             let radius = max(hub.radius * baseScale * zoom, 18) * pop
-            let hubColor = color(base: hub.color)
+            drawOrb(&context, center: center, radius: radius, color: color(base: hub.color), alpha: 1,
+                    ring: isFocused ? SafeDesign.ink.opacity(0.8) : .white.opacity(0.45),
+                    ringWidth: isFocused ? 2.5 : 1)
 
-            context.fill(Path(ellipseIn: CGRect(x: center.x - radius * 1.5, y: center.y - radius * 1.5, width: radius * 3, height: radius * 3)),
-                         with: .color(hubColor.opacity(0.16)))
-            let bodyRect = CGRect(x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)
-            context.fill(Path(ellipseIn: bodyRect), with: .color(hubColor))
-            context.fill(Path(ellipseIn: CGRect(x: center.x - radius * 0.5, y: center.y - radius * 0.72, width: radius, height: radius * 0.7)),
-                         with: .color(.white.opacity(0.28)))
-            context.stroke(Path(ellipseIn: bodyRect.insetBy(dx: isFocused ? -4 : -2, dy: isFocused ? -4 : -2)),
-                           with: .color(isFocused ? SafeDesign.ink.opacity(0.8) : .white.opacity(0.45)),
-                           lineWidth: isFocused ? 2.5 : 1)
-
-            let resolved = context.resolve(
-                Text("\(hub.category) · \(hub.count)")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(SafeDesign.ink)
-            )
-            let textSize = resolved.measure(in: CGSize(width: 240, height: 30))
-            let chipRect = CGRect(x: center.x - textSize.width / 2 - 8, y: center.y + radius + 8,
-                                  width: textSize.width + 16, height: textSize.height + 6)
-            context.fill(Path(roundedRect: chipRect, cornerRadius: 9), with: .color(SafeDesign.surfaceCard))
-            context.stroke(Path(roundedRect: chipRect, cornerRadius: 9), with: .color(SafeDesign.hairline), lineWidth: 0.75)
-            context.draw(resolved, at: CGPoint(x: chipRect.midX, y: chipRect.midY), anchor: .center)
+            if isFocused {
+                let resolved = context.resolve(
+                    Text("\(hub.category) · \(hub.count)")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(SafeDesign.ink)
+                )
+                let textSize = resolved.measure(in: CGSize(width: 240, height: 30))
+                let chipRect = CGRect(x: center.x - textSize.width / 2 - 8, y: center.y + radius + 8,
+                                      width: textSize.width + 16, height: textSize.height + 6)
+                context.fill(Path(roundedRect: chipRect, cornerRadius: 9), with: .color(SafeDesign.surfaceCard))
+                context.stroke(Path(roundedRect: chipRect, cornerRadius: 9), with: .color(SafeDesign.hairline), lineWidth: 0.75)
+                context.draw(resolved, at: CGPoint(x: chipRect.midX, y: chipRect.midY), anchor: .center)
+            } else {
+                context.draw(
+                    Text("\(hub.category) · \(hub.count)")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(SafeDesign.muted),
+                    at: CGPoint(x: center.x, y: center.y + radius + 12),
+                    anchor: .center
+                )
+            }
         }
 
         // Focused member label.
@@ -313,6 +302,22 @@ struct MindView: View {
             context.fill(Path(roundedRect: chipRect, cornerRadius: 10), with: .color(SafeDesign.surfaceCard))
             context.stroke(Path(roundedRect: chipRect, cornerRadius: 10), with: .color(SafeDesign.hairline), lineWidth: 0.75)
             context.draw(resolved, at: CGPoint(x: chipRect.midX, y: chipRect.midY), anchor: .center)
+        }
+    }
+
+    /// A single-pass orb with a soft drop shadow (no overlapping glow → no shimmer).
+    private func drawOrb(_ context: inout GraphicsContext, center: CGPoint, radius: CGFloat, color: Color, alpha: CGFloat, ring: Color?, ringWidth: CGFloat) {
+        let body = Path(ellipseIn: CGRect(x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2))
+        context.drawLayer { layer in
+            layer.addFilter(.shadow(color: .black.opacity(0.16 * Double(alpha)), radius: radius * 0.7, x: 0, y: radius * 0.35))
+            layer.fill(body, with: .color(color.opacity(Double(alpha))))
+        }
+        context.fill(
+            Path(ellipseIn: CGRect(x: center.x - radius * 0.5, y: center.y - radius * 0.7, width: radius, height: radius * 0.7)),
+            with: .color(.white.opacity(0.28 * Double(alpha)))
+        )
+        if let ring {
+            context.stroke(body, with: .color(ring), lineWidth: ringWidth)
         }
     }
 
@@ -334,7 +339,11 @@ struct MindView: View {
             }
         }
         if let bestHub {
-            focus(on: bestHub)
+            if bestHub.id == focusCategory {
+                clearFocus()
+            } else {
+                focus(on: bestHub)
+            }
             return
         }
 
@@ -375,6 +384,7 @@ struct MindView: View {
         camera.pulse = 1
         focusCategory = hub.id
         selectedID = nil
+        showAll = false
         zoomStart = targetZoom
         dragStartPan = newPan
     }
@@ -384,8 +394,29 @@ struct MindView: View {
         camera.focusTarget = 0
         focusCategory = nil
         selectedID = nil
+        showAll = false
         zoomStart = 1
         dragStartPan = .zero
+    }
+
+    private func toggleShowAll() {
+        Haptics.tap()
+        if showAll {
+            showAll = false
+            camera.focusTarget = 0
+            camera.setTarget(zoom: 1, pan: .zero)
+            zoomStart = 1
+            dragStartPan = .zero
+        } else {
+            showAll = true
+            focusCategory = nil
+            selectedID = nil
+            camera.focusTarget = 1
+            let fitZoom: CGFloat = 0.85
+            camera.setTarget(zoom: fitZoom, pan: .zero)
+            zoomStart = fitZoom
+            dragStartPan = .zero
+        }
     }
 
     // MARK: - Header
@@ -401,9 +432,9 @@ struct MindView: View {
     private var statusPill: some View {
         let text: String
         let icon: String
-        if colorMode == .wave, let dominant {
-            text = "mostly \(dominant.mood.label.lowercased()) · \(Int(dominant.dominance * 100))%"
-            icon = dominant.mood.icon
+        if colorMode == .wave, let dominantMood {
+            text = "mostly \(dominantMood.label.lowercased()) · \(Int(dominance * 100))%"
+            icon = dominantMood.icon
         } else {
             text = "\(graph.hubs.count) categories · \(store.entries.count) notes"
             icon = "tag.fill"
@@ -446,6 +477,25 @@ struct MindView: View {
             .accessibilityIdentifier("mind-view")
 
             Spacer()
+
+            Button {
+                toggleShowAll()
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: showAll ? "circle.grid.cross.fill" : "circle.grid.cross")
+                        .font(.system(size: 13, weight: .semibold))
+                    Text(showAll ? "Hide all" : "Show all")
+                        .font(SafeDesign.caption)
+                }
+                .foregroundStyle(showAll ? SafeDesign.canvas : SafeDesign.ink)
+                .padding(.horizontal, SafeDesign.m)
+                .frame(minHeight: 40)
+                .background { Capsule().fill(showAll ? SafeDesign.ink : SafeDesign.surfaceCard) }
+                .overlay { Capsule().strokeBorder(SafeDesign.hairline, lineWidth: 1) }
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(showAll ? "Hide all" : "Show all")
+            .accessibilityIdentifier("mind-show-all")
         }
     }
 
@@ -540,8 +590,14 @@ struct MindView: View {
     private func rebuild() {
         graph = MindGraph.build(from: store.entries)
         simulation = MindSimulation(hubs: graph.hubs, nodes: graph.nodes)
+        let dominant = MindGraph.dominantMood(of: store.entries)
+        dominantMood = dominant?.mood
+        dominance = dominant?.dominance ?? 0
+        let mood = MindGraph.averageEnergy(of: store.entries)
+        energyValue = mood * min(1 + log2(CGFloat(store.entries.count) + 1) * 0.12, 1.7)
         selectedID = nil
         focusCategory = nil
+        showAll = false
         camera.reset()
         camera.waveTarget = colorMode == .wave ? 1 : 0
         zoomStart = 1

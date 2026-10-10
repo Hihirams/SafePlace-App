@@ -19,6 +19,7 @@ final class MindSimulation {
 
     private(set) var bodies: [Body] = []
     private let worldCenter = CGPoint(x: worldSize / 2, y: worldSize / 2)
+    private var phase: CGFloat = 0
 
     init(hubs: [MindHub], nodes: [MindNode]) {
         let hubCount = max(hubs.count, 1)
@@ -96,6 +97,14 @@ final class MindSimulation {
             for i in 0..<count {
                 forces[i].dx += (worldCenter.x - bodies[i].position.x) * 0.003
                 forces[i].dy += (worldCenter.y - bodies[i].position.y) * 0.003
+            }
+
+            // Ambient drift so the graph always breathes gently.
+            phase += 0.03
+            for i in 0..<count {
+                let a = phase + CGFloat(i) * 0.7
+                forces[i].dx += cos(a) * 0.06
+                forces[i].dy += sin(a * 1.3) * 0.06
             }
 
             // Integrate + damp.
