@@ -1,6 +1,96 @@
 import SwiftUI
 import UIKit
 
+/// Per-frame animation state. Kept as a reference type so the TimelineView can
+/// advance it every frame without triggering SwiftUI state churn.
+private final class MindCamera {
+    var zoom: CGFloat = 1
+    var pan: CGSize = .zero
+    var targetZoom: CGFloat = 1
+    var targetPan: CGSize = .zero
+
+    var contagion: Double = 0        // 0...1 wave ramp
+    var waveMix: CGFloat = 1        // 0 = category, 1 = wave
+    var waveTarget: CGFloat = 1
+    var focusProgress: CGFloat = 0  // 0 = hubs only, 1 = members shown
+    var focusTarget: CGFloat = 0
+    var pulse: CGFloat = 0          // pop on the focused hub
+
+    private var zoomVel: CGFloat = 0
+    private var panVel: CGSize = .zero
+    private var lastDate: Date?
+
+    func setDirect(zoom: CGFloat, pan: CGSize) {
+        self.zoom = zoom
+        self.pan = pan
+        self.targetZoom = zoom
+        self.targetPan = pan
+        self.zoomVel = 0
+        self.panVel = .zero
+    }
+
+    func setTarget(zoom: CGFloat, pan: CGSize) {
+        self.targetZoom = zoom
+        self.targetPan = pan
+    }
+
+    func advance(to date: Date) {
+        let dt: CGFloat
+        if let last = lastDate {
+            dt = min(max(CGFloat(date.timeIntervalSince(last)), 0), 0.05)
+        } else {
+            dt = 0
+        }
+        lastDate = date
+        guard dt > 0 else { return }
+
+        // Slightly underdamped spring → smooth with a gentle settle.
+        spring(&zoom, &zoomVel, targetZoom, dt)
+        var px = pan.width, py = pan.height
+        var vx = panVel.width, vy = panVel.height
+        spring(&px, &vx, targetPan.width, dt)
+        spring(&py, &vy, targetPan.height, dt)
+        pan = CGSize(width: px, height: py)
+        panVel = CGSize(width: vx, height: vy)
+
+        contagion = min(contagion + Double(dt) / 4.0, 1)
+        waveMix += (waveTarget - waveMix) * min(1, dt * 6)
+        focusProgress += (focusTarget - focusProgress) * min(1, dt * 8)
+        pulse = max(pulse - dt * 3, 0)
+    }
+
+    /// Reduce Motion: jump straight to the resting values.
+    func snap() {
+        zoom = targetZoom
+        pan = targetPan
+        zoomVel = 0
+        panVel = .zero
+        contagion = 1
+        waveMix = waveTarget
+        focusProgress = focusTarget
+        pulse = 0
+    }
+
+    func reset() {
+        zoom = 1; pan = .zero
+        targetZoom = 1; targetPan = .zero
+        zoomVel = 0; panVel = .zero
+        contagion = 0
+        waveMix = 1; waveTarget = 1
+        focusProgress = 0; focusTarget = 0
+        pulse = 0
+        lastDate = nil
+    }
+
+    private func spring(_ value: inout CGFloat, _ velocity: inout CGFloat, _ target: CGFloat, _ dt: CGFloat) {
+        let stiffness: CGFloat = 130
+        let damping: CGFloat = 20
+        let force = (target - value) * stiffness - velocity * damping
+        velocity += force * dt
+        value += velocity * dt
+    }
+}
+
 struct MindView: View {
     @ObservedObject var store: Store
     @Environment(\.horizontalSizeClass) private var h
@@ -11,20 +101,16 @@ struct MindView: View {
     @State private var colorMode: MindColorMode = .wave
     @State private var focusCategory: String?
     @State private var selectedID: String?
-    @State private var zoom: CGFloat = 1
-    @State private var pan: CGSize = .zero
     @State private var canvasSize: CGSize = .zero
     @State private var dragStartPan: CGSize = .zero
     @State private var zoomStart: CGFloat = 1
-    @State private var contagionStart = Date()
     @State private var isVisible = false
+    @State private var camera = MindCamera()
 
     @State private var editingEntry: Entry?
     @State private var showEdit = false
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
-    // MARK: - Derived
 
     private var dominant: (mood: Mood, dominance: CGFloat)? {
         MindGraph.dominantMood(of: store.entries)
@@ -76,7 +162,9 @@ struct MindView: View {
         }
         .onAppear(perform: rebuild)
         .onChange(of: store.entries) { _, _ in rebuild() }
-        .onChange(of: colorMode) { _, _ in rebuild() }
+        .onChange(of: colorMode) { _, newMode in
+            camera.waveTarget = newMode == .wave ? 1 : 0
+        }
         .fullScreenCover(isPresented: $showEdit) {
             CreateView(store: store, editing: editingEntry) {
                 showEdit = false
@@ -89,12 +177,17 @@ struct MindView: View {
 
     private var graphArea: some View {
         GeometryReader { geo in
-            TimelineView(.animation(minimumInterval: 1.0 / 30)) { timeline in
+            TimelineView(.animation(minimumInterval: 1.0 / 60)) { timeline in
                 Canvas { context, size in
-                    if !reduceMotion, isVisible, let simulation {
-                        simulation.step(iterations: 1, energy: energy)
+                    if reduceMotion {
+                        camera.snap()
+                    } else if isVisible {
+                        camera.advance(to: timeline.date)
+                        if let simulation {
+                            simulation.step(iterations: 1, energy: energy)
+                        }
                     }
-                    drawGraph(in: &context, size: size, date: timeline.date)
+                    drawGraph(in: &context, size: size)
                 }
             }
             .onAppear { isVisible = true; canvasSize = geo.size }
@@ -105,72 +198,71 @@ struct MindView: View {
             .simultaneousGesture(
                 DragGesture()
                     .onChanged { value in
-                        pan = CGSize(width: dragStartPan.width + value.translation.width,
-                                     height: dragStartPan.height + value.translation.height)
+                        camera.setDirect(zoom: camera.zoom, pan: CGSize(
+                            width: dragStartPan.width + value.translation.width,
+                            height: dragStartPan.height + value.translation.height))
                     }
-                    .onEnded { _ in dragStartPan = pan }
+                    .onEnded { _ in dragStartPan = camera.pan }
             )
             .simultaneousGesture(
                 MagnifyGesture()
-                    .onChanged { value in zoom = min(max(zoomStart * value.magnification, 0.6), 3.0) }
-                    .onEnded { _ in zoomStart = zoom }
+                    .onChanged { value in
+                        camera.setDirect(zoom: min(max(zoomStart * value.magnification, 0.6), 3.0), pan: camera.pan)
+                    }
+                    .onEnded { _ in zoomStart = camera.zoom }
             )
         }
     }
 
     private func toScreen(_ world: CGPoint) -> CGPoint {
-        let s = baseScale * zoom
+        let s = baseScale * camera.zoom
         return CGPoint(
-            x: (world.x - MindSimulation.worldSize / 2) * s + canvasSize.width / 2 + pan.width,
-            y: (world.y - MindSimulation.worldSize / 2) * s + canvasSize.height / 2 + pan.height
+            x: (world.x - MindSimulation.worldSize / 2) * s + canvasSize.width / 2 + camera.pan.width,
+            y: (world.y - MindSimulation.worldSize / 2) * s + canvasSize.height / 2 + camera.pan.height
         )
     }
 
-    private func contagionAmount(_ date: Date) -> CGFloat {
-        guard let dominant else { return 0 }
-        let elapsed = date.timeIntervalSince(contagionStart)
-        let progress = min(max(elapsed / 4.0, 0), 1)
-        return CGFloat(progress) * (0.55 + 0.4 * dominant.dominance)
+    private func color(base: Color) -> Color {
+        guard let dominant else { return base }
+        let amount = camera.contagion * Double(camera.waveMix) * (0.55 + 0.4 * Double(dominant.dominance))
+        return base.blended(with: dominant.mood.color, amount: CGFloat(amount))
     }
 
-    private func color(base: Color, date: Date) -> Color {
-        guard colorMode == .wave, let dominant else { return base }
-        return base.blended(with: dominant.mood.color, amount: contagionAmount(date))
-    }
-
-    private func drawGraph(in context: inout GraphicsContext, size: CGSize, date: Date) {
+    private func drawGraph(in context: inout GraphicsContext, size: CGSize) {
         guard let simulation else { return }
         _ = size
 
         let focused = focusCategory
+        let focusAlpha = camera.focusProgress
+        let zoom = camera.zoom
 
-        // Edges: only for the focused category's members.
-        if let focused {
+        // Edges for the focused category's members.
+        if let focused, focusAlpha > 0.01 {
             for edge in graph.edges where edge.to == focused {
                 guard let a = simulation.position(for: edge.from),
                       let b = simulation.position(for: edge.to) else { continue }
                 var path = Path()
                 path.move(to: toScreen(a))
                 path.addLine(to: toScreen(b))
-                context.stroke(path, with: .color(SafeDesign.ink.opacity(0.22)), lineWidth: 1)
+                context.stroke(path, with: .color(SafeDesign.ink.opacity(0.22 * Double(focusAlpha))), lineWidth: 1)
             }
         }
 
-        // Members (only inside the focused category).
-        if let focused {
+        // Members of the focused category (fade + grow in).
+        if let focused, focusAlpha > 0.01 {
             for node in graph.nodes where node.category == focused {
                 guard let position = simulation.position(for: node.id) else { continue }
                 let center = toScreen(position)
-                let radius = max(node.radius * baseScale * zoom, 6)
-                let nodeColor = color(base: node.color, date: date)
+                let radius = max(node.radius * baseScale * zoom * focusAlpha, 4)
+                let nodeColor = color(base: node.color)
                 let isSelected = node.id == selectedID
 
                 context.fill(Path(ellipseIn: CGRect(x: center.x - radius * 1.8, y: center.y - radius * 1.8, width: radius * 3.6, height: radius * 3.6)),
-                             with: .color(nodeColor.opacity(0.16)))
+                             with: .color(nodeColor.opacity(0.16 * Double(focusAlpha))))
                 let bodyRect = CGRect(x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)
-                context.fill(Path(ellipseIn: bodyRect), with: .color(nodeColor))
+                context.fill(Path(ellipseIn: bodyRect), with: .color(nodeColor.opacity(Double(focusAlpha))))
                 context.fill(Path(ellipseIn: CGRect(x: center.x - radius * 0.5, y: center.y - radius * 0.7, width: radius, height: radius * 0.7)),
-                             with: .color(.white.opacity(0.3)))
+                             with: .color(.white.opacity(0.3 * Double(focusAlpha))))
                 if isSelected {
                     context.stroke(Path(ellipseIn: bodyRect.insetBy(dx: -3, dy: -3)), with: .color(SafeDesign.ink.opacity(0.85)), lineWidth: 2.5)
                 }
@@ -181,9 +273,10 @@ struct MindView: View {
         for hub in graph.hubs {
             guard let position = simulation.position(for: hub.id) else { continue }
             let center = toScreen(position)
-            let radius = max(hub.radius * baseScale * zoom, 18)
-            let hubColor = color(base: hub.color, date: date)
             let isFocused = hub.id == focusCategory
+            let pop = isFocused ? (1 + camera.pulse * 0.18) : 1
+            let radius = max(hub.radius * baseScale * zoom, 18) * pop
+            let hubColor = color(base: hub.color)
 
             context.fill(Path(ellipseIn: CGRect(x: center.x - radius * 1.5, y: center.y - radius * 1.5, width: radius * 3, height: radius * 3)),
                          with: .color(hubColor.opacity(0.16)))
@@ -195,10 +288,11 @@ struct MindView: View {
                            with: .color(isFocused ? SafeDesign.ink.opacity(0.8) : .white.opacity(0.45)),
                            lineWidth: isFocused ? 2.5 : 1)
 
-            let label = Text("\(hub.category) · \(hub.count)")
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundStyle(SafeDesign.ink)
-            let resolved = context.resolve(label)
+            let resolved = context.resolve(
+                Text("\(hub.category) · \(hub.count)")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(SafeDesign.ink)
+            )
             let textSize = resolved.measure(in: CGSize(width: 240, height: 30))
             let chipRect = CGRect(x: center.x - textSize.width / 2 - 8, y: center.y + radius + 8,
                                   width: textSize.width + 16, height: textSize.height + 6)
@@ -227,13 +321,12 @@ struct MindView: View {
     private func handleTap(at point: CGPoint) {
         guard let simulation else { return }
 
-        // Hub hit?
         var bestHub: MindHub?
         var bestHubDistance = CGFloat.infinity
         for hub in graph.hubs {
             guard let position = simulation.position(for: hub.id) else { continue }
             let center = toScreen(position)
-            let hitRadius = max(hub.radius * baseScale * zoom, 34)
+            let hitRadius = max(hub.radius * baseScale * camera.zoom, 34)
             let distance = hypot(center.x - point.x, center.y - point.y)
             if distance < hitRadius && distance < bestHubDistance {
                 bestHubDistance = distance
@@ -245,14 +338,13 @@ struct MindView: View {
             return
         }
 
-        // Member hit inside the focused category?
         if let focused = focusCategory {
             var bestID: String?
             var bestDistance = CGFloat.infinity
             for node in graph.nodes where node.category == focused {
                 guard let position = simulation.position(for: node.id) else { continue }
                 let center = toScreen(position)
-                let hitRadius = max(node.radius * baseScale * zoom, 26)
+                let hitRadius = max(node.radius * baseScale * camera.zoom, 26)
                 let distance = hypot(center.x - point.x, center.y - point.y)
                 if distance < hitRadius && distance < bestDistance {
                     bestDistance = distance
@@ -261,7 +353,7 @@ struct MindView: View {
             }
             if let bestID {
                 Haptics.selection()
-                withAnimation(SafeDesign.spring) { selectedID = bestID }
+                selectedID = bestID
                 return
             }
         }
@@ -278,23 +370,20 @@ struct MindView: View {
             width: -((position.x - MindSimulation.worldSize / 2) * s),
             height: -((position.y - MindSimulation.worldSize / 2) * s)
         )
-        withAnimation(SafeDesign.spring) {
-            focusCategory = hub.id
-            selectedID = nil
-            zoom = targetZoom
-            pan = newPan
-        }
+        camera.setTarget(zoom: targetZoom, pan: newPan)
+        camera.focusTarget = 1
+        camera.pulse = 1
+        focusCategory = hub.id
+        selectedID = nil
         zoomStart = targetZoom
         dragStartPan = newPan
     }
 
     private func clearFocus() {
-        withAnimation(SafeDesign.spring) {
-            focusCategory = nil
-            selectedID = nil
-            zoom = 1
-            pan = .zero
-        }
+        camera.setTarget(zoom: 1, pan: .zero)
+        camera.focusTarget = 0
+        focusCategory = nil
+        selectedID = nil
         zoomStart = 1
         dragStartPan = .zero
     }
@@ -453,11 +542,10 @@ struct MindView: View {
         simulation = MindSimulation(hubs: graph.hubs, nodes: graph.nodes)
         selectedID = nil
         focusCategory = nil
-        zoom = 1
-        pan = .zero
+        camera.reset()
+        camera.waveTarget = colorMode == .wave ? 1 : 0
         zoomStart = 1
         dragStartPan = .zero
-        contagionStart = Date()
     }
 }
 

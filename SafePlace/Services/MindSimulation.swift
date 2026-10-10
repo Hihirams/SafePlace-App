@@ -68,9 +68,9 @@ final class MindSimulation {
                     let distanceSq = max(dx * dx + dy * dy, 1)
                     let distance = sqrt(distanceSq)
                     let strength: CGFloat
-                    if bodies[i].isHub && bodies[j].isHub { strength = 9_000 }
-                    else if bodies[i].isHub || bodies[j].isHub { strength = 1_200 }
-                    else { strength = 320 }
+                    if bodies[i].isHub && bodies[j].isHub { strength = 7_000 }
+                    else if bodies[i].isHub || bodies[j].isHub { strength = 900 }
+                    else { strength = 220 }
                     var force = min(strength / distanceSq, 45) * e
                     if distance < 40 { force += (40 - distance) * 0.25 }
                     let fx = dx / distance * force
@@ -87,23 +87,23 @@ final class MindSimulation {
                 let dy = bodies[h].position.y - bodies[i].position.y
                 let distance = max(sqrt(dx * dx + dy * dy), 1)
                 let rest = bodies[h].radius + 30
-                let force = (distance - rest) * 0.02 * e
+                let force = (distance - rest) * 0.015 * e
                 forces[i].dx += dx / distance * force
                 forces[i].dy += dy / distance * force
             }
 
             // Gentle pull to center.
             for i in 0..<count {
-                forces[i].dx += (worldCenter.x - bodies[i].position.x) * 0.004
-                forces[i].dy += (worldCenter.y - bodies[i].position.y) * 0.004
+                forces[i].dx += (worldCenter.x - bodies[i].position.x) * 0.003
+                forces[i].dy += (worldCenter.y - bodies[i].position.y) * 0.003
             }
 
             // Integrate + damp.
             for i in 0..<count where !bodies[i].pinned {
-                bodies[i].velocity.dx = (bodies[i].velocity.dx + forces[i].dx) * 0.85
-                bodies[i].velocity.dy = (bodies[i].velocity.dy + forces[i].dy) * 0.85
+                bodies[i].velocity.dx = (bodies[i].velocity.dx + forces[i].dx) * 0.90
+                bodies[i].velocity.dy = (bodies[i].velocity.dy + forces[i].dy) * 0.90
                 let speed = hypot(bodies[i].velocity.dx, bodies[i].velocity.dy)
-                let maxSpeed: CGFloat = bodies[i].isHub ? 4 : 11
+                let maxSpeed: CGFloat = bodies[i].isHub ? 3 : 8
                 if speed > maxSpeed {
                     bodies[i].velocity.dx *= maxSpeed / speed
                     bodies[i].velocity.dy *= maxSpeed / speed
