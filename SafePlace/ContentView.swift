@@ -71,6 +71,10 @@ struct RootView: View {
     @StateObject private var profile = ProfilePhotoModel()
     @State private var showSplash = true
 
+    private let splashDuration: TimeInterval = 5.0
+    private let splashFade: TimeInterval = 0.55
+    private let splashTail: TimeInterval = 0.4
+
     private var mode: ThemeMode { ThemeMode(rawValue: themeRaw) ?? .system }
     private var moodState: MoodState { MoodState.derive(from: store.entries) }
 
@@ -80,7 +84,8 @@ struct RootView: View {
             if !hasSeenOnboarding {
                 OnboardingView().transition(.opacity).zIndex(1)
             } else if showSplash {
-                SplashView().transition(.opacity).zIndex(1)
+                SplashView(typingDuration: max(1.0, splashDuration - splashFade - splashTail))
+                    .transition(.opacity).zIndex(1)
             }
         }
         .environment(\.appTheme, AppTheme(moodState: moodState))
@@ -103,8 +108,9 @@ struct RootView: View {
 
     private func scheduleSplashDismiss() {
         Task {
-            try? await Task.sleep(nanoseconds: 1_600_000_000)
-            withAnimation(.easeInOut(duration: 0.55)) { showSplash = false }
+            let hold = max(0, splashDuration - splashFade)
+            try? await Task.sleep(nanoseconds: UInt64(hold * 1_000_000_000))
+            withAnimation(.easeInOut(duration: splashFade)) { showSplash = false }
         }
     }
 }
@@ -280,6 +286,7 @@ struct GlassTabBar: View {
 // MARK: - Splash
 
 struct SplashView: View {
+    var typingDuration: Double = 4.05
     @Environment(\.appTheme) private var theme
     @State private var fillIn = false
     @State private var revealed = 0
@@ -308,9 +315,11 @@ struct SplashView: View {
         .onAppear {
             withAnimation(.easeOut(duration: 0.6)) { fillIn = true }
             Task {
+                let steps = word.count + 1
+                let perStep = typingDuration / Double(steps)
                 for index in 0...word.count {
-                    try? await Task.sleep(nanoseconds: 85_000_000)
-                    withAnimation(.easeOut(duration: 0.12)) { revealed = index }
+                    try? await Task.sleep(nanoseconds: UInt64(perStep * 1_000_000_000))
+                    withAnimation(.easeOut(duration: 0.18)) { revealed = index }
                 }
             }
         }
