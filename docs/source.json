@@ -17,11 +17,11 @@
       "category": "lifestyle",
       "versions": [
         {
-          "version": "1.0.0",
-          "buildVersion": "0",
-          "date": "2026-01-01",
-          "localizedDescription": "Plantilla inicial: el workflow la regenera en cada release.",
-          "downloadURL": "https://github.com/Hihirams/SafePlace-App/releases/download/build-1/SafePlace.ipa",
+          "version": "1.23",
+          "buildVersion": "23",
+          "date": "2026-10-16",
+          "localizedDescription": "Build 23 (2026-10-16). El workflow regenera este archivo en cada release.",
+          "downloadURL": "https://github.com/Hihirams/SafePlace-App/releases/download/build-23/SafePlace.ipa",
           "size": 0,
           "minOSVersion": "17.0"
         }

@@ -1,81 +1,116 @@
 # SafePlace App
 
-App de iPhone para guardar las pequeñas cosas que te ayudan: hábitos, personas, lugares, música y autocuidado. El diseño replica la versión web de SafePlace (paleta "clay": canvas crema, tarjetas rosa/teal/lavanda/durazno/ocre) y toma la estructura de navegación con **liquid glass** del proyecto Luma.
+App de iPhone para guardar las pequeñas cosas que te ayudan: hábitos, personas, lugares, música y autocuidado. SwiftUI puro (iOS 17+), con una dirección de arte **warm editorial paper**: papel blanco cálido, títulos en serif, un único acento que se deriva de tu estado de ánimo y el contenido estructurado en secciones y listas con hairlines — no en una cuadrícula de tarjetas.
 
 ## Características
 
-- **Dashboard** con hero, estadísticas (cosas guardadas, categorías, barras por categoría, sentimientos) y cuadrícula de notas
-- **Notas de colores** estilo clay con estado de ánimo, categoría y color seleccionable
-- **Journal** — línea de tiempo agrupada por día
-- **Resources** — enlaces, citas y recordatorios
-- **Mind** — grafo tipo Obsidian: una red viva de tus pensamientos, temas y estados de ánimo. Los nodos se mueven, cambian de color (mood/categoría/card), de tamaño (conexiones + extensión del texto) y las conexiones se dibujan según lo que escribes. La energía del movimiento reacciona a cuántas notas tienes y a qué tan feliz te sientes
-- **Compatibilidad con NOTAS de iPhone** — extensión de compartir (Share Extension): comparte texto desde la app Notas de Apple (o cualquier app) directo a SafePlace
-- **Barra de navegación liquid glass** flotante (Luma) con selector que sigue tu dedo
-- **Responsive**: se adapta a iPhone pequeños y grandes, rotación horizontal/vertical, iPad (grids de 3-4 columnas, hero lado a lado, ancho máximo de contenido) y Dynamic Type
-- Onboarding de primera vez con splash animado
-- Tema claro/oscuro/sistema
+- **Home** sobria: header fijo con avatar + wordmark + buscador; personaje que toma el color de tu estado de ánimo; check-in de mood; "On this day"; segmentado **Overview / Insights**.
+- **Create** (centro de la navbar): editor a pantalla completa sin campos encajonados, con auto-categoría y color derivado del mood.
+- **Notas con color de tarjeta** (paleta viva) con estado de ánimo, categoría y color seleccionables.
+- **Journal** — línea de tiempo agrupada por día, con búsqueda y filtro por mood.
+- **Saved** — enlaces, citas y recordatorios.
+- **Búsqueda** — por palabra exacta, keyword, similitud difusa o emoción, con preview y términos resaltados.
+- **Insights** (Swift Charts) — notas por día, distribución por mood/categoría, palabras frecuentes y mejor racha. Observacional, sin culpa.
+- **Mind** — grafo tipo Obsidian: una red viva de tus notas agrupadas por categoría. Los nodos se mueven, cambian de color y de tamaño; la energía del movimiento reacciona a cuántas notas tienes y a qué tan feliz te sientes.
+- **Compatibilidad con NOTAS de iPhone** — extensión de compartir (Share Extension): comparte texto desde la app Notas de Apple (o cualquier app) directo a SafePlace.
+- **Barra de navegación liquid glass** flotante con 4 destinos y botón central **Create**, y un selector que sigue tu dedo.
+- **Responsive**: iPhone pequeños y grandes, rotación horizontal/vertical, iPad (grids de 3-4 columnas y ancho de lectura acotado) y Dynamic Type.
+- Onboarding de primera vez con splash animado.
+- Tema claro/oscuro/sistema.
 
 ## Diseño
 
-- **Base blanca y sobria** con la paleta solo en detalles; el color de acento es **dinámico**: se deriva del estado emocional (mood dominante) y tiñe acentos, el personaje, las gráficas y un glow de fondo muy leve
-- **Paleta**: powder-blush `#FEC5BB`, almond-silk `#FCD5CE`, soft-blush `#FAE1DD`, seashell `#F8EDEB`, alabaster `#E8E8E4`, alabaster-2 `#D8E2DC`, linen `#ECE4DB`, powder-petal `#FFE5D9`, peach-fuzz `#FFD7BA`, peach-glow `#FEC89A`; las tarjetas de nota conservan su paleta viva
-- **Modo oscuro**: negro puro `#000` (superficies casi negras, sin gris)
-- **Logo**: icono de app (escudo + corazón); wordmark "SafePlace" en serif
-- **Liquid glass**: efectos `.ultraThinMaterial` con bordes translúcidos (y Liquid Glass nativo de Apple en iOS 26)
-- **Tipografía**: serif para el wordmark, SF Rounded para cifras
+- **Base sobria**: papel blanco cálido (`#FAF8F4`) en claro y negro puro (`#000`) en oscuro; el color es acento, no fondo.
+- **Acento dinámico**: se deriva del estado emocional (mood dominante) y tiñe acciones, el personaje, las gráficas y un glow de fondo muy leve.
+- **Tipografía**: títulos en **serif del sistema**; cuerpo y UI en **SF**; fuentes semánticas que escalan con Dynamic Type.
+- **Layout editorial**: secciones y listas separadas por hairlines. Las tarjetas se reservan para interacciones (una nota que tocas), nunca anidadas.
+- **Liquid glass**: barra de pestañas flotante con `.ultraThinMaterial` (y Liquid Glass nativo en iOS 26) y bordes translúcidos.
+- **Mascota**: un personaje "dumpling" sin cara que flota y respira, teñido por tu estado de ánimo.
+- Reglas completas de tokens, tipografía y componentes en [`DESIGN.md`](DESIGN.md).
 
-## Funciones
+## Pantallas
 
-- **Home sobria**: header con avatar + wordmark centrado + buscador; personaje grande que cambia de color con tu estado de ánimo; check-in de mood; "on this day"; segmentado **Overview / Insights**
-- **Create (centro del navbar)**: botón central elevado que abre una pantalla dedicada de composición
-- **Búsqueda**: busca notas por palabras exactas, keywords, similitud difusa o emoción, con **preview** del texto y términos resaltados
-- **Insights** (Swift Charts): notas por día, distribución por mood/categoría, palabras frecuentes y mejor racha — observacional, sin culpa
-- **Ajustes** (desde el avatar): tema (único lugar), recordatorio diario, **importar notas compartidas**, export/import JSON, borrar datos, versión y feed de actualización
-- **Journal**: búsqueda, filtro por mood y secciones por día colapsables
-- **Saved**: copiar/compartir/convertir en nota/borrar
-- **Auto-categoría**: al escribir una nota se sugiere una categoría según el contenido (puedes cambiarla antes de guardar)
-- **Mind**: grafo force-directed responsive con nodos con degradado, glow, zoom, pan, pin y etiquetas; el **contagio** del mood dominante es siempre activo y la vista **Wave** lo hace más fuerte
-- **Notas de iPhone**: comparte desde Apple Notes; se revisan/importan desde **Ajustes → Shared notes**
+- **Home** (`DashboardView`) — header fijo (avatar → Ajustes, wordmark, buscador), mascota, check-in de mood, "On this day", segmentado Overview/Insights, estadísticas (cosas guardadas, categorías, barras por categoría, sentimientos) y notas recientes en filas editoriales.
+- **Create** (`CreateView`) — lienzo en blanco para crear o editar una nota; sugiere categoría según el contenido y deriva el color del mood.
+- **Quick capture** (`QuickCaptureView`) — captura exprés de un momento en segundos.
+- **Journal** (`JournalView`) — línea de tiempo por día (secciones colapsables), búsqueda y filtro por mood.
+- **Saved** (`ResourcesView`) — enlaces, citas y recordatorios; copiar, compartir, convertir en nota o borrar.
+- **Notes** (`NotesView`) — notas compartidas desde Apple Notes: leer, "Keep it" (guardar) o descartar.
+- **Search** (`SearchView`) — motor `SearchRanker`: coincidencia exacta, keywords, similitud difusa y emoción ("me siento triste"), con snippet y resaltado.
+- **Insights** (`InsightsView`) — Swift Charts (últimos 14 días, distribución por mood) y nube de palabras frecuentes.
+- **Mind** (`MindView`) — grafo interactivo (ver abajo).
+- **Settings** (`SettingsView`) — foto de perfil, tema, mascota, shared notes, recordatorio diario, export/import JSON, borrar datos, versión y feed de actualización.
+- **Onboarding** (`OnboardingView`) — 3 páginas la primera vez.
 
+## Versión y releases
+
+- **Esquema**: la versión se calcula en CI como `1.<run_number>` y el build es `<run_number>` (el número de ejecución de GitHub Actions). Es monótono creciente, así que LiveContainer/AltStore detectan correctamente cada update.
+- **Versión actual: `1.23` (build 23)** — último release publicado (tag `build-23`).
+- **Fuente de la verdad**: el `run_number` del workflow. Los valores en `SafePlace.xcodeproj` (`MARKETING_VERSION` / `CURRENT_PROJECT_VERSION`) y en `docs/source.json` son la **línea base / última publicada** y se sobrescriben en cada build de CI.
+- **Cómo se publica**: push a `main` (o **Run workflow**) → job de tests → archive sin firma → GitHub Release `build-<n>` → regenera `docs/source.json` (AltSource) → deploy a GitHub Pages.
+- Los cambios notables se registran en [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Estructura
 
 ```
-SafePlace - IOS/
+SafePlace-App/
 ├── SafePlace.xcodeproj/
 ├── SafePlace/
-│   ├── App.swift                    # Entry point
-│   ├── ContentView.swift            # Root + tab shell + glass tab bar + splash
-│   ├── DesignSystem.swift           # Tokens de diseño (paleta clay)
-│   ├── LiquidGlass.swift            # Modificadores liquid glass
-│   ├── BackgroundOrbs.swift         # Canvas con brillos suaves
-│   ├── SymbolEffects.swift          # Efectos de símbolos + botones pressable
+│   ├── App.swift                      # Entry point
+│   ├── ContentView.swift              # Root + shell de pestañas + GlassTabBar + splash
+│   ├── DesignSystem.swift             # Tokens (SafeDesign) + layout adaptativo (SafeLayout)
+│   ├── LiquidGlass.swift              # Modificadores liquid glass
+│   ├── BackgroundOrbs.swift           # Lienzo + glow del tinte emocional
+│   ├── SymbolEffects.swift            # Haptics, tema de interfaz, símbolos, botón "pressable"
 │   ├── Extensions/
-│   │   └── ColorExtension.swift     # Color(hex:)
+│   │   └── ColorExtension.swift       # Color(hex:), blended(with:)
 │   ├── Models/
-│   │   ├── Entry.swift              # Nota (título, descripción, categoría, mood, color)
-│   │   ├── Mood.swift               # Estados de ánimo
-│   │   ├── CardColor.swift          # Colores clay
-│   │   ├── Resource.swift           # Recurso (link/note)
-│   │   └── MindGraph.swift          # Nodos/aristas + heurísticas del grafo Mind
+│   │   ├── Entry.swift                # Nota (título, descripción, categoría, mood, color)
+│   │   ├── Mood.swift                 # Estados de ánimo (valence + energy)
+│   │   ├── MoodState.swift            # Mood dominante derivado + AppTheme
+│   │   ├── CardColor.swift            # Colores de tarjeta
+│   │   ├── Resource.swift             # Recurso (link / cita)
+│   │   ├── MindGraph.swift            # Hubs, nodos y aristas del grafo
+│   │   └── NoteStats.swift            # Agregaciones puras (Home / Insights)
 │   ├── Services/
-│   │   ├── Store.swift              # Persistencia + notas compartidas (app group)
-│   │   └── MindSimulation.swift     # Física force-directed del grafo Mind
+│   │   ├── Store.swift                # Persistencia + notas compartidas (app group)
+│   │   ├── Categorizer.swift          # Auto-categoría
+│   │   ├── MindSimulation.swift       # Física force-directed del grafo
+│   │   └── Reminders.swift            # Recordatorio diario
 │   └── Views/
-│       ├── DashboardView.swift      # Pantalla principal
-│       ├── JournalView.swift        # Línea de tiempo
-│       ├── ResourcesView.swift      # Enlaces y recordatorios
-│       ├── NotesView.swift          # Notas compartidas desde el iPhone
-│       ├── MindView.swift           # Grafo neural (Canvas + controles glass)
-│       ├── EntryCardView.swift      # Tarjeta de nota
-│       ├── EntryFormView.swift      # Formulario alta/edición
-│       ├── OnboardingView.swift     # Onboarding de primera vez
-│       ├── GlassCard.swift          # Bloques compartidos (hairline, badges)
-│       └── FormComponents.swift     # Campos, botones, buscador
-└── SafePlaceShare/
-    ├── ShareViewController.swift    # Extensión de compartir (Notas → SafePlace)
-    ├── Info.plist
-    └── SafePlaceShare.entitlements
+│       ├── DashboardView.swift        # Home
+│       ├── CreateView.swift           # Editor de nota (lienzo en blanco)
+│       ├── JournalView.swift          # Línea de tiempo
+│       ├── ResourcesView.swift        # Saved (enlaces y recordatorios)
+│       ├── NotesView.swift            # Notas compartidas desde el iPhone
+│       ├── MindView.swift             # Grafo interactivo
+│       ├── InsightsView.swift         # Swift Charts + FlowLayout
+│       ├── SearchView.swift           # Búsqueda + SearchRanker
+│       ├── SettingsView.swift         # Ajustes (versión, tema, datos, …)
+│       ├── OnboardingView.swift       # Onboarding de 3 páginas
+│       ├── QuickCaptureView.swift     # Captura rápida
+│       ├── MascotView.swift           # Personaje "dumpling"
+│       ├── EntryCardView.swift        # Tarjeta de nota (clásica)
+│       ├── EntryFormView.swift        # Formulario clásico de alta/edición
+│       ├── GlassCard.swift            # Hairline, SectionHeader, BrandMark, EditorialNoteRow,
+│       │                              #   ClayCard, BadgePill, GlassIconButton, ProfileAvatar
+│       └── FormComponents.swift       # Botones, campos, pills, SheetHeader
+├── SafePlaceShare/
+│   ├── ShareViewController.swift      # Extensión de compartir (Notas → SafePlace)
+│   ├── Info.plist
+│   └── SafePlaceShare.entitlements
+├── SafePlaceTests/
+│   └── LogicTests.swift               # Swift Testing (Categorizer, MindGraph, Store, SearchRanker, …)
+├── SafePlaceUITests/
+│   └── SmokeUITests.swift             # XCTest (arranque a Home + navbar alcanzable)
+├── docs/                              # GitHub Pages (feed AltSource)
+│   ├── source.json
+│   └── icon.png
+├── .github/workflows/
+│   ├── build-ios.yml                  # test → build → Release → AltSource → Pages
+│   └── build-check.yml                # build check en cada rama
+├── DESIGN.md · QA.md · CHANGELOG.md
+└── README.md
 ```
 
 ## Build
@@ -87,12 +122,13 @@ SafePlace - IOS/
 
 ### GitHub Actions
 
-El workflow `.github/workflows/build-ios.yml` compila y publica el IPA sin firma automáticamente. Se dispara en **cada push a `main`** (o manualmente con **Run workflow**). En cada build:
+El workflow `.github/workflows/build-ios.yml` corre tests y luego compila y publica el IPA sin firma automáticamente. Se dispara en **cada push a `main`** (o manualmente con **Run workflow**). En cada build:
 
-1. Compila el archive (`CODE_SIGNING_ALLOWED=NO`) bumpeando la versión a `1.0.<run_number>` / build `<run_number>`.
-2. Publica el IPA como **GitHub Release** (tag `build-<run_number>`) con URL estable y pública.
-3. Regenera `docs/source.json` (formato **AltSource**) apuntando a ese Release.
-4. Despliega `docs/` a **GitHub Pages**.
+1. Corre los tests (`xcodebuild test`); si fallan, el release se cancela.
+2. Compila el archive (`CODE_SIGNING_ALLOWED=NO`) con versión `1.<run_number>` / build `<run_number>`.
+3. Publica el IPA como **GitHub Release** (tag `build-<run_number>`) con URL estable y pública.
+4. Regenera `docs/source.json` (formato **AltSource**) apuntando a ese Release.
+5. Despliega `docs/` a **GitHub Pages**.
 
 > **Prerrequisito:** el repositorio debe ser **público** (los assets de Release y GitHub Pages no son alcanzables por LiveContainer sin token). Pages se habilita automáticamente en el primer run; si falla, actívalo en *Settings → Pages → Build and deployment → Source: GitHub Actions*.
 
@@ -133,11 +169,18 @@ La app Notas de Apple no expone una API pública para leer notas de terceros, as
 
 La pestaña **Mind** dibuja tus notas como una red viva:
 
-- **Conexiones**: dos notas se conectan si comparten categoría, mood, color de tarjeta o palabras clave. El slider ajusta la sensibilidad (cuántas conexiones se dibujan).
-- **Color**: por estado de ánimo, por categoría o por color de tarjeta.
-- **Tamaño**: los nodos crecen con más conexiones y con notas más extensas.
+- **Agrupación**: cada categoría es un *hub* y sus notas orbitan alrededor. El grafo se renderiza con `Canvas` + `TimelineView` sobre la física de `MindSimulation`.
+- **Color**: modo **Wave** (el mood dominante "contagia" el color) o **Category** (color por categoría).
+- **Tamaño**: los nodos crecen con notas más extensas; los hubs, con más miembros.
 - **Movimiento**: la física *force-directed* mantiene el grafo flotando; la energía depende del ánimo promedio y del número de notas (más "bright" y más notas = más vivo). Se puede pausar.
-- **Interacción**: toca un nodo para enfocarlo (resalta sus conexiones y muestra su tarjeta), arrastra para mover el grafo, pellizca para zoom, y usa **Pin** para fijar un nodo.
+- **Interacción**: toca un nodo/hub para enfocarlo y ver su tarjeta, arrastra para mover, pellizca para zoom (0.6–3.0) y usa **Pin** para fijar un nodo. **Show all / Hide all** despliega u oculta las etiquetas.
+- Respeta **Reduce Motion** (cámara sin animación).
+
+## Documentación
+
+- [`DESIGN.md`](DESIGN.md) — sistema de diseño (tokens, tipografía, motivos, componentes, reglas).
+- [`QA.md`](QA.md) — checklist de QA manual y tests automáticos.
+- [`CHANGELOG.md`](CHANGELOG.md) — historial de versiones.
 
 ## License
 
