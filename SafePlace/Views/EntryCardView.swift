@@ -53,10 +53,11 @@ struct EntryCardView: View {
                     Image(systemName: "ellipsis")
                         .font(SafeDesign.scaled(15, weight: .semibold))
                         .foregroundStyle(color.accent)
-                        .frame(width: 34, height: 34)
+                        .frame(width: 44, height: 44)
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel(String(localized: "Note options"))
             }
         }
         .padding(SafeDesign.l)

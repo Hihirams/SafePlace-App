@@ -173,10 +173,16 @@ struct NotesView: View {
                     Image(systemName: "xmark")
                         .font(SafeDesign.scaled(13, weight: .semibold))
                         .foregroundStyle(SafeDesign.inkSecondary)
-                        .frame(width: 40, height: 40)
-                        .background(Circle().strokeBorder(SafeDesign.hairline, lineWidth: 1))
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
+                        .background {
+                            Circle()
+                                .strokeBorder(SafeDesign.hairline, lineWidth: 1)
+                                .frame(width: 40, height: 40)
+                        }
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel(String(localized: "Dismiss"))
             }
             .padding(.top, SafeDesign.xs)
         }

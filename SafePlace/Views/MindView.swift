@@ -522,10 +522,16 @@ struct MindView: View {
                     Image(systemName: "xmark")
                         .font(SafeDesign.scaled(12, weight: .bold))
                         .foregroundStyle(SafeDesign.inkSecondary)
-                        .frame(width: 30, height: 30)
-                        .background(SafeDesign.surfaceStrong, in: Circle())
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
+                        .background {
+                            Circle()
+                                .fill(SafeDesign.surfaceStrong)
+                                .frame(width: 30, height: 30)
+                        }
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel(String(localized: "Close"))
             }
 
             Text(entry.title)

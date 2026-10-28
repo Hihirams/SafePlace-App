@@ -169,7 +169,7 @@ struct ResourcesView: View {
                 Image(systemName: "ellipsis")
                     .font(SafeDesign.scaled(15, weight: .semibold))
                     .foregroundStyle(SafeDesign.muted)
-                    .frame(width: 34, height: 44)
+                    .frame(width: 44, height: 44)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)

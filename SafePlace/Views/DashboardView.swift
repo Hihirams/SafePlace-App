@@ -117,7 +117,7 @@ struct DashboardView: View {
             Image(systemName: "magnifyingglass")
                 .font(SafeDesign.scaled(16, weight: .semibold))
                 .foregroundStyle(SafeDesign.ink)
-                .frame(width: 42, height: 42)
+                .frame(width: 44, height: 44)
                 .background(Circle().fill(SafeDesign.surfaceCard))
                 .overlay { Circle().strokeBorder(SafeDesign.hairline, lineWidth: 1) }
         }
