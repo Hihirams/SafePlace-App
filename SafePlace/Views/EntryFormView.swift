@@ -67,7 +67,7 @@ struct EntryFormView: View {
                                             .foregroundStyle(category.isEmpty ? SafeDesign.muted : SafeDesign.ink)
                                         Spacer()
                                         Image(systemName: "chevron.down")
-                                            .font(.system(size: 12, weight: .semibold))
+                                            .font(SafeDesign.scaled(12, weight: .semibold))
                                             .foregroundStyle(SafeDesign.muted)
                                     }
                                     .padding(.horizontal, SafeDesign.l)
@@ -157,7 +157,7 @@ struct EntryFormView: View {
                     } label: {
                         HStack(spacing: 6) {
                             Image(systemName: m.icon)
-                                .font(.system(size: 12, weight: .semibold))
+                                .font(SafeDesign.scaled(12, weight: .semibold))
                             Text(m.label)
                                 .font(SafeDesign.caption)
                         }
@@ -195,7 +195,7 @@ struct EntryFormView: View {
                         .overlay {
                             if color == c {
                                 Image(systemName: "checkmark")
-                                    .font(.system(size: 13, weight: .bold))
+                                    .font(SafeDesign.scaled(13, weight: .bold))
                                     .foregroundStyle(c.foreground)
                             }
                         }
@@ -208,7 +208,7 @@ struct EntryFormView: View {
     private func field(_ label: String, @ViewBuilder content: () -> some View) -> some View {
         VStack(alignment: .leading, spacing: SafeDesign.xs) {
             Text(label)
-                .font(.system(size: 13, weight: .medium))
+                .font(SafeDesign.scaled(13, weight: .medium))
                 .foregroundStyle(SafeDesign.inkSecondary)
             content()
         }

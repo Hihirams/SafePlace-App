@@ -51,7 +51,7 @@ struct CreateView: View {
                 onClose()
             } label: {
                 Image(systemName: "xmark")
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(SafeDesign.scaled(15, weight: .semibold))
                     .foregroundStyle(SafeDesign.ink)
                     .frame(width: 40, height: 40)
                     .background(Circle().fill(SafeDesign.surfaceSoft))
@@ -63,7 +63,7 @@ struct CreateView: View {
             Spacer()
 
             Text(editing == nil ? String(localized: "New thought") : "Edit")
-                .font(.system(size: 11, weight: .semibold))
+                .font(SafeDesign.scaled(11, weight: .semibold))
                 .tracking(1.5)
                 .foregroundStyle(SafeDesign.muted)
 
@@ -128,7 +128,7 @@ struct CreateView: View {
                         .frame(width: 34, height: 34)
                         .overlay {
                             Image(systemName: m.icon)
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(SafeDesign.scaled(14, weight: .semibold))
                                 .foregroundStyle(SafeDesign.ink)
                         }
                         .overlay {
@@ -151,7 +151,7 @@ struct CreateView: View {
             } label: {
                 HStack(spacing: 4) {
                     Image(systemName: "tag")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(SafeDesign.scaled(11, weight: .semibold))
                     Text(category.isEmpty ? String(localized: "Category") : category)
                         .font(SafeDesign.caption)
                         .lineLimit(1)

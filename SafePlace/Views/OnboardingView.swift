@@ -39,10 +39,10 @@ struct OnboardingView: View {
                 // Brand lockup
                 HStack(spacing: SafeDesign.s) {
                     Image(systemName: "leaf.fill")
-                        .font(.system(size: 18, weight: .semibold))
+                        .font(SafeDesign.scaled(18, weight: .semibold))
                         .foregroundStyle(SafeDesign.accentDeep)
                     Text("SafePlace")
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .font(SafeDesign.scaled(22, weight: .bold, design: .rounded))
                         .foregroundStyle(SafeDesign.ink)
                 }
                 .padding(.top, SafeDesign.xl)
@@ -105,7 +105,7 @@ struct OnboardingView: View {
                     .strokeBorder(SafeDesign.accentDeep.opacity(0.25), lineWidth: 1)
                     .frame(width: 132, height: 132)
                 Image(systemName: feature.icon)
-                    .font(.system(size: 48, weight: .medium))
+                    .font(SafeDesign.scaled(48, weight: .medium))
                     .foregroundStyle(SafeDesign.accentDeep)
             }
             .shadow(color: SafeDesign.accentDeep.opacity(0.2), radius: 26, y: 12)

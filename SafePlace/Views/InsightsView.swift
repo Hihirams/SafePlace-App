@@ -45,10 +45,10 @@ struct InsightsView: View {
     private func metricCard(number: String, label: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(number)
-                .font(.system(size: 24, weight: .bold, design: .rounded))
+                .font(SafeDesign.scaled(24, weight: .bold, design: .rounded))
                 .foregroundStyle(SafeDesign.ink)
             Text(label.uppercased())
-                .font(.system(size: 10, weight: .medium))
+                .font(SafeDesign.scaled(10, weight: .medium))
                 .tracking(1)
                 .foregroundStyle(SafeDesign.muted)
         }
@@ -103,7 +103,7 @@ struct InsightsView: View {
                     .cornerRadius(6)
                     .annotation(position: .trailing) {
                         Text("\(item.count)")
-                            .font(.system(size: 11, weight: .semibold))
+                            .font(SafeDesign.scaled(11, weight: .semibold))
                             .foregroundStyle(SafeDesign.muted)
                     }
                 }
@@ -129,7 +129,7 @@ struct InsightsView: View {
             ForEach(categoryCounts) { item in
                 HStack(spacing: SafeDesign.xs) {
                     Text(item.name)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(SafeDesign.scaled(12, weight: .medium))
                         .foregroundStyle(SafeDesign.inkSecondary)
                         .frame(width: 90, alignment: .leading)
                         .lineLimit(1)
@@ -142,7 +142,7 @@ struct InsightsView: View {
                     }
                     .frame(height: 8)
                     Text("\(item.count)")
-                        .font(.system(size: 12, weight: .medium))
+                        .font(SafeDesign.scaled(12, weight: .medium))
                         .foregroundStyle(SafeDesign.muted)
                         .frame(width: 22, alignment: .trailing)
                 }
@@ -180,7 +180,7 @@ struct InsightsView: View {
     private var emptyState: some View {
         VStack(spacing: SafeDesign.s) {
             Image(systemName: "chart.bar.xaxis")
-                .font(.system(size: 34, weight: .light))
+                .font(SafeDesign.scaled(34, weight: .light))
                 .foregroundStyle(SafeDesign.muted)
             Text("Insights appear as you save.")
                 .font(SafeDesign.headline)

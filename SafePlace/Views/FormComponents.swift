@@ -12,7 +12,7 @@ struct PrimaryButton: View {
             HStack(spacing: SafeDesign.s) {
                 if let icon {
                     Image(systemName: icon)
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(SafeDesign.scaled(15, weight: .semibold))
                 }
                 Text(title)
                     .font(SafeDesign.headline)
@@ -42,7 +42,7 @@ struct SecondaryButton: View {
             HStack(spacing: SafeDesign.s) {
                 if let icon {
                     Image(systemName: icon)
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(SafeDesign.scaled(15, weight: .semibold))
                 }
                 Text(title)
                     .font(SafeDesign.headline)
@@ -71,7 +71,7 @@ struct ClayTextField: View {
     var body: some View {
         HStack(spacing: SafeDesign.m) {
             Image(systemName: icon)
-                .font(.system(size: 15))
+                .font(SafeDesign.scaled(15))
                 .foregroundStyle(SafeDesign.muted)
                 .frame(width: 18)
             TextField(placeholder, text: $text)
@@ -130,7 +130,7 @@ struct SelectionPill: View {
             HStack(spacing: SafeDesign.xs) {
                 if let icon {
                     Image(systemName: icon)
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(SafeDesign.scaled(12, weight: .semibold))
                 }
                 Text(title)
                     .font(SafeDesign.caption)
@@ -193,7 +193,7 @@ struct ClaySearchBar: View {
     var body: some View {
         HStack(spacing: SafeDesign.m) {
             Image(systemName: "magnifyingglass")
-                .font(.system(size: 15))
+                .font(SafeDesign.scaled(15))
                 .foregroundStyle(SafeDesign.muted)
             TextField("Search", text: $text)
                 .font(SafeDesign.body)

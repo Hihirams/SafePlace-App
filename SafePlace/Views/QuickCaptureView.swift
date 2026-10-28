@@ -74,7 +74,7 @@ struct QuickCaptureView: View {
                                 .fill(sel ? m.color : SafeDesign.surfaceSoft)
                                 .frame(width: 52, height: 52)
                             Image(systemName: m.icon)
-                                .font(.system(size: 20, weight: .semibold))
+                                .font(SafeDesign.scaled(20, weight: .semibold))
                                 .foregroundStyle(sel ? SafeDesign.ink : SafeDesign.inkSecondary)
                         }
                         .overlay {
@@ -82,7 +82,7 @@ struct QuickCaptureView: View {
                         }
                         .scaleEffect(sel ? 1.08 : 1)
                         Text(m.label)
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(SafeDesign.scaled(10, weight: .semibold))
                             .foregroundStyle(sel ? SafeDesign.ink : SafeDesign.muted)
                             .lineLimit(1)
                     }
@@ -96,7 +96,7 @@ struct QuickCaptureView: View {
     private var categoryRow: some View {
         VStack(alignment: .leading, spacing: SafeDesign.xs) {
             Text("Category")
-                .font(.system(size: 13, weight: .medium))
+                .font(SafeDesign.scaled(13, weight: .medium))
                 .foregroundStyle(SafeDesign.inkSecondary)
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: SafeDesign.xs) {

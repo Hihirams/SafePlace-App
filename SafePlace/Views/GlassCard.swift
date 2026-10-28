@@ -76,12 +76,12 @@ struct EditorialNoteRow: View {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 6) {
                         Text(entry.moodValue.label.uppercased())
-                            .font(.system(size: 10, weight: .semibold))
+                            .font(SafeDesign.scaled(10, weight: .semibold))
                             .tracking(1.2)
                             .foregroundStyle(SafeDesign.muted)
-                        Text("·").font(.system(size: 10)).foregroundStyle(SafeDesign.muted)
+                        Text("·").font(SafeDesign.scaled(10)).foregroundStyle(SafeDesign.muted)
                         Text(entry.createdAt.formattedShort())
-                            .font(.system(size: 10, weight: .medium))
+                            .font(SafeDesign.scaled(10, weight: .medium))
                             .foregroundStyle(SafeDesign.muted)
                     }
 
@@ -108,7 +108,7 @@ struct EditorialNoteRow: View {
                     Button(role: .destructive) { onDelete() } label: { Label("Delete", systemImage: "trash") }
                 } label: {
                     Image(systemName: "ellipsis")
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(SafeDesign.scaled(15, weight: .semibold))
                         .foregroundStyle(SafeDesign.muted)
                         .frame(width: 34, height: 44)
                         .contentShape(Rectangle())
@@ -156,7 +156,7 @@ struct BadgePill: View {
 
     var body: some View {
         Text(text.uppercased())
-            .font(.system(size: 11, weight: .medium))
+            .font(SafeDesign.scaled(11, weight: .medium))
             .tracking(1.5)
             .foregroundStyle(SafeDesign.ink)
             .padding(.horizontal, SafeDesign.s)
@@ -175,7 +175,7 @@ struct GlassIconButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: icon)
-                .font(.system(size: 17, weight: .medium))
+                .font(SafeDesign.scaled(17, weight: .medium))
                 .foregroundStyle(SafeDesign.ink)
                 .frame(width: max(size, minTouchTarget), height: max(size, minTouchTarget))
                 .glassPill()
@@ -245,7 +245,7 @@ struct ProfileAvatar: View {
                                          center: .topLeading, startRadius: 2, endRadius: size))
                     .frame(width: size, height: size)
                 Image(systemName: "person.fill")
-                    .font(.system(size: size * 0.4, weight: .semibold))
+                    .font(SafeDesign.scaled(size * 0.4, weight: .semibold))
                     .foregroundStyle(SafeDesign.onPrimary.opacity(0.85))
             }
         }

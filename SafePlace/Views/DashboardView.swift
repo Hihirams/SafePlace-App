@@ -115,7 +115,7 @@ struct DashboardView: View {
             onOpenSearch()
         } label: {
             Image(systemName: "magnifyingglass")
-                .font(.system(size: 16, weight: .semibold))
+                .font(SafeDesign.scaled(16, weight: .semibold))
                 .foregroundStyle(SafeDesign.ink)
                 .frame(width: 42, height: 42)
                 .background(Circle().fill(SafeDesign.surfaceCard))
@@ -164,12 +164,12 @@ struct DashboardView: View {
                             ZStack {
                                 Circle().fill(m.color).frame(width: 52, height: 52)
                                 Image(systemName: m.icon)
-                                    .font(.system(size: 20, weight: .semibold))
+                                    .font(SafeDesign.scaled(20, weight: .semibold))
                                     .foregroundStyle(SafeDesign.ink)
                             }
                             .overlay { Circle().strokeBorder(SafeDesign.ink.opacity(0.08), lineWidth: 1) }
                             Text(m.label)
-                                .font(.system(size: 10, weight: .semibold))
+                                .font(SafeDesign.scaled(10, weight: .semibold))
                                 .foregroundStyle(SafeDesign.inkSecondary)
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.8)
@@ -212,7 +212,7 @@ struct DashboardView: View {
                             Text(entry.createdAt.formattedMedium()).font(SafeDesign.micro).foregroundStyle(SafeDesign.muted)
                         }
                         Spacer()
-                        Image(systemName: "chevron.right").font(.system(size: 12, weight: .semibold)).foregroundStyle(SafeDesign.muted)
+                        Image(systemName: "chevron.right").font(SafeDesign.scaled(12, weight: .semibold)).foregroundStyle(SafeDesign.muted)
                     }
                     .padding(SafeDesign.s)
                     .background(SafeDesign.surfaceSoft, in: RoundedRectangle(cornerRadius: SafeDesign.radiusM, style: .continuous))
@@ -247,7 +247,7 @@ struct DashboardView: View {
             statCardWide {
                 VStack(alignment: .leading, spacing: SafeDesign.s) {
                     Text("BY CATEGORY")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(SafeDesign.scaled(11, weight: .medium))
                         .tracking(1)
                         .foregroundStyle(SafeDesign.muted)
                     if categoryCounts.isEmpty {
@@ -259,7 +259,7 @@ struct DashboardView: View {
                             ForEach(categoryCounts) { item in
                                 HStack(spacing: SafeDesign.xs) {
                                     Text(item.name)
-                                        .font(.system(size: 12, weight: .medium))
+                                        .font(SafeDesign.scaled(12, weight: .medium))
                                         .foregroundStyle(SafeDesign.inkSecondary)
                                         .lineLimit(1)
                                         .frame(width: 84, alignment: .leading)
@@ -272,7 +272,7 @@ struct DashboardView: View {
                                     }
                                     .frame(height: 8)
                                     Text("\(item.count)")
-                                        .font(.system(size: 12, weight: .medium))
+                                        .font(SafeDesign.scaled(12, weight: .medium))
                                         .foregroundStyle(SafeDesign.muted)
                                         .frame(width: 22, alignment: .trailing)
                                 }
@@ -286,7 +286,7 @@ struct DashboardView: View {
             statCardWide {
                 VStack(alignment: .leading, spacing: SafeDesign.s) {
                     Text("FEELINGS")
-                        .font(.system(size: 11, weight: .medium))
+                        .font(SafeDesign.scaled(11, weight: .medium))
                         .tracking(1)
                         .foregroundStyle(SafeDesign.muted)
                     if moodCounts.isEmpty {
@@ -305,10 +305,10 @@ struct DashboardView: View {
     private func statCard(number: String, label: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(number)
-                .font(.system(size: 36, weight: .semibold, design: .serif))
+                .font(SafeDesign.scaled(36, weight: .semibold, design: .serif))
                 .foregroundStyle(SafeDesign.ink)
             Text(label.uppercased())
-                .font(.system(size: 10, weight: .medium))
+                .font(SafeDesign.scaled(10, weight: .medium))
                 .tracking(1.2)
                 .foregroundStyle(SafeDesign.muted)
         }
@@ -348,7 +348,7 @@ struct DashboardView: View {
                 } label: {
                     HStack(spacing: 4) {
                         Text("See all").font(SafeDesign.caption)
-                        Image(systemName: "arrow.right").font(.system(size: 11, weight: .semibold))
+                        Image(systemName: "arrow.right").font(SafeDesign.scaled(11, weight: .semibold))
                     }
                     .foregroundStyle(theme.tintStrong)
                 }
@@ -359,7 +359,7 @@ struct DashboardView: View {
             if recentEntries.isEmpty {
                 VStack(spacing: SafeDesign.s) {
                     Image(systemName: "leaf")
-                        .font(.system(size: 34, weight: .light))
+                        .font(SafeDesign.scaled(34, weight: .light))
                         .foregroundStyle(SafeDesign.muted)
                     Text("Your safe place is ready for its first note.")
                         .font(SafeDesign.body)
@@ -440,8 +440,8 @@ private struct FlowMoodTags: View {
         FlowLayout(spacing: SafeDesign.xs) {
             ForEach(moods) { item in
                 HStack(spacing: 5) {
-                    Image(systemName: item.mood.icon).font(.system(size: 12, weight: .semibold))
-                    Text("\(item.count)").font(.system(size: 12, weight: .semibold))
+                    Image(systemName: item.mood.icon).font(SafeDesign.scaled(12, weight: .semibold))
+                    Text("\(item.count)").font(SafeDesign.scaled(12, weight: .semibold))
                 }
                 .foregroundStyle(SafeDesign.ink)
                 .padding(.horizontal, SafeDesign.s)

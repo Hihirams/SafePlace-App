@@ -42,7 +42,7 @@ struct SearchView: View {
         HStack(spacing: SafeDesign.s) {
             HStack(spacing: SafeDesign.xs) {
                 Image(systemName: "magnifyingglass")
-                    .font(.system(size: 15))
+                    .font(SafeDesign.scaled(15))
                     .foregroundStyle(SafeDesign.muted)
                 TextField("Search your notes…", text: $query)
                     .font(SafeDesign.body)
@@ -56,7 +56,7 @@ struct SearchView: View {
                         query = ""
                     } label: {
                         Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 15))
+                            .font(SafeDesign.scaled(15))
                             .foregroundStyle(SafeDesign.muted)
                     }
                     .buttonStyle(.plain)
@@ -95,7 +95,7 @@ struct SearchView: View {
                     VStack(alignment: .leading, spacing: SafeDesign.s) {
                         HStack {
                             Text("RECENT")
-                                .font(.system(size: 11, weight: .semibold))
+                                .font(SafeDesign.scaled(11, weight: .semibold))
                                 .tracking(1.5)
                                 .foregroundStyle(SafeDesign.muted)
                             Spacer()
@@ -114,7 +114,7 @@ struct SearchView: View {
                             } label: {
                                 HStack(spacing: SafeDesign.s) {
                                     Image(systemName: "clock.arrow.circlepath")
-                                        .font(.system(size: 14))
+                                        .font(SafeDesign.scaled(14))
                                         .foregroundStyle(SafeDesign.muted)
                                     Text(term)
                                         .font(SafeDesign.body)
@@ -130,7 +130,7 @@ struct SearchView: View {
 
                 VStack(alignment: .leading, spacing: SafeDesign.s) {
                     Text("TRY")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(SafeDesign.scaled(11, weight: .semibold))
                         .tracking(1.5)
                         .foregroundStyle(SafeDesign.muted)
                     FlowLayout(spacing: SafeDesign.xs) {
@@ -186,7 +186,7 @@ struct SearchView: View {
             HStack(spacing: SafeDesign.xs) {
                 Circle().fill(result.entry.cardColor.fill).frame(width: 9, height: 9)
                 Text(SearchRanker.highlight(result.entry.title, terms: SearchRanker.terms(from: query), color: theme.tintStrong))
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(SafeDesign.scaled(16, weight: .semibold))
                     .foregroundStyle(SafeDesign.ink)
                     .lineLimit(1)
                 Spacer()
@@ -195,7 +195,7 @@ struct SearchView: View {
                     .foregroundStyle(SafeDesign.muted)
             }
             Text(result.snippet)
-                .font(.system(size: 14))
+                .font(SafeDesign.scaled(14))
                 .foregroundStyle(SafeDesign.inkSecondary)
                 .lineLimit(3)
                 .multilineTextAlignment(.leading)
@@ -221,7 +221,7 @@ struct SearchView: View {
     private func emptyResults(_ text: String) -> some View {
         VStack(spacing: SafeDesign.s) {
             Image(systemName: "magnifyingglass")
-                .font(.system(size: 34, weight: .light))
+                .font(SafeDesign.scaled(34, weight: .light))
                 .foregroundStyle(SafeDesign.muted)
             Text(String(localized: "No notes match “\(text)”."))
                 .font(SafeDesign.headline)

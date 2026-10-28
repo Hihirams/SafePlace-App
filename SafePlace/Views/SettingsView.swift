@@ -275,7 +275,7 @@ struct SettingsView: View {
                                 .foregroundStyle(appTheme.tintStrong)
                             Spacer()
                             Image(systemName: "arrow.up.right")
-                                .font(.system(size: 12, weight: .semibold))
+                                .font(SafeDesign.scaled(12, weight: .semibold))
                                 .foregroundStyle(appTheme.tintStrong)
                         }
                     }
@@ -292,7 +292,7 @@ struct SettingsView: View {
     private func settingsRowLabel(title: String, icon: String, tint: Color) -> some View {
         HStack(spacing: SafeDesign.m) {
             Image(systemName: icon)
-                .font(.system(size: 15, weight: .semibold))
+                .font(SafeDesign.scaled(15, weight: .semibold))
                 .foregroundStyle(tint)
                 .frame(width: 22)
             Text(title)

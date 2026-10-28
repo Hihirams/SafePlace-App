@@ -86,7 +86,7 @@ struct NotesView: View {
     private func step(_ n: Int, color: Color, text: String) -> some View {
         HStack(alignment: .top, spacing: SafeDesign.m) {
             Text("\(n)")
-                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .font(SafeDesign.scaled(13, weight: .bold, design: .rounded))
                 .foregroundStyle(SafeDesign.onPrimary)
                 .frame(width: 24, height: 24)
                 .background(color, in: Circle())
@@ -99,7 +99,7 @@ struct NotesView: View {
     private var emptyState: some View {
         VStack(spacing: SafeDesign.s) {
             Image(systemName: "note.text")
-                .font(.system(size: 34, weight: .light))
+                .font(SafeDesign.scaled(34, weight: .light))
                 .foregroundStyle(SafeDesign.muted)
             Text("No shared notes yet.")
                 .font(SafeDesign.headline)
@@ -118,7 +118,7 @@ struct NotesView: View {
         VStack(alignment: .leading, spacing: SafeDesign.s) {
             HStack {
                 Image(systemName: "note.text")
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(SafeDesign.scaled(15, weight: .semibold))
                     .foregroundStyle(theme.tintStrong)
                 Text(note.title.isEmpty ? String(localized: "Untitled note") : note.title)
                     .font(SafeDesign.serifHead)
@@ -126,7 +126,7 @@ struct NotesView: View {
                     .lineLimit(2)
                 Spacer()
                 Text(note.createdAt.formattedShort())
-                    .font(.system(size: 12, weight: .medium))
+                    .font(SafeDesign.scaled(12, weight: .medium))
                     .foregroundStyle(SafeDesign.muted)
             }
 
@@ -171,7 +171,7 @@ struct NotesView: View {
                     discard(note)
                 } label: {
                     Image(systemName: "xmark")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(SafeDesign.scaled(13, weight: .semibold))
                         .foregroundStyle(SafeDesign.inkSecondary)
                         .frame(width: 40, height: 40)
                         .background(Circle().strokeBorder(SafeDesign.hairline, lineWidth: 1))

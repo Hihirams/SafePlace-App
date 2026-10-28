@@ -90,6 +90,17 @@ enum SafeDesign {
     static let micro       = Font.system(.caption2).weight(.medium)
     static let tabLabel    = Font.system(.caption2).weight(.semibold)
 
+    /// Fuente del sistema que **sí** respeta Dynamic Type.
+    /// `.system(size:)` fija no escala nunca; este helper pasa el tamaño por
+    /// UIFontMetrics para que crezca con la preferencia de texto del sistema.
+    static func scaled(_ size: CGFloat,
+                       weight: Font.Weight = .regular,
+                       design: Font.Design = .default,
+                       relativeTo style: UIFont.TextStyle = .body) -> Font {
+        let scaledSize = UIFontMetrics(forTextStyle: style).scaledValue(for: size)
+        return .system(size: scaledSize, weight: weight, design: design)
+    }
+
     // MARK: - Spacing (multiples of 4)
     static let xxs: CGFloat = 4
     static let xs: CGFloat = 8

@@ -104,7 +104,7 @@ struct ResourcesView: View {
     private var emptyState: some View {
         VStack(spacing: SafeDesign.s) {
             Image(systemName: "bookmark")
-                .font(.system(size: 34, weight: .light))
+                .font(SafeDesign.scaled(34, weight: .light))
                 .foregroundStyle(SafeDesign.muted)
             Text("Nothing saved here yet.")
                 .font(SafeDesign.body)
@@ -117,7 +117,7 @@ struct ResourcesView: View {
     private func resourceRow(_ resource: Resource) -> some View {
         HStack(alignment: .top, spacing: SafeDesign.m) {
             Image(systemName: resource.isLink ? "link" : "text.quote")
-                .font(.system(size: 15, weight: .semibold))
+                .font(SafeDesign.scaled(15, weight: .semibold))
                 .foregroundStyle(theme.tintStrong)
                 .frame(width: 26, height: 26)
 
@@ -167,7 +167,7 @@ struct ResourcesView: View {
                 } label: { Label("Delete", systemImage: "trash") }
             } label: {
                 Image(systemName: "ellipsis")
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(SafeDesign.scaled(15, weight: .semibold))
                     .foregroundStyle(SafeDesign.muted)
                     .frame(width: 34, height: 44)
                     .contentShape(Rectangle())

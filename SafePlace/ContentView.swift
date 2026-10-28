@@ -250,10 +250,10 @@ struct GlassTabBar: View {
         } label: {
             VStack(spacing: 3) {
                 Image(systemName: "plus")
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(SafeDesign.scaled(18, weight: .semibold))
                     .foregroundStyle(theme.tintStrong)
                 Text("Create")
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(SafeDesign.scaled(10, weight: .semibold))
                     .minimumScaleFactor(0.8)
                     .lineLimit(1)
                     .foregroundStyle(SafeDesign.muted)
@@ -271,7 +271,7 @@ struct GlassTabBar: View {
         let sel = selectedTab == tab
         return VStack(spacing: 3) {
             Image(systemName: sel ? tab.selectedIcon : tab.icon)
-                .font(.system(size: 18, weight: sel ? .semibold : .regular))
+                .font(SafeDesign.scaled(18, weight: sel ? .semibold : .regular))
                 .foregroundStyle(sel ? SafeDesign.ink : SafeDesign.muted)
                 .symbolEffect(.bounce, value: sel ? selectionCount : -1)
             Text(tab.title)
@@ -319,7 +319,7 @@ struct SplashView: View {
             .opacity(fillIn ? 1 : 0)
 
             Text(String(word.prefix(revealed)))
-                .font(.system(size: 46, weight: .semibold, design: .serif))
+                .font(SafeDesign.scaled(46, weight: .semibold, design: .serif))
                 .tracking(2)
                 .foregroundStyle(SafeDesign.onPrimary)
         }

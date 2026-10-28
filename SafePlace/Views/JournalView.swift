@@ -132,16 +132,16 @@ struct JournalView: View {
         } label: {
             HStack(spacing: SafeDesign.xs) {
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 11, weight: .bold))
+                    .font(SafeDesign.scaled(11, weight: .bold))
                     .foregroundStyle(SafeDesign.muted)
                     .rotationEffect(.degrees(isCollapsed ? 0 : 90))
                 Text(group.day.formattedDay().uppercased())
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(SafeDesign.scaled(12, weight: .semibold))
                     .tracking(1.5)
                     .foregroundStyle(SafeDesign.inkSecondary)
                 Spacer()
                 Text("\(group.entries.count)")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(SafeDesign.scaled(11, weight: .semibold))
                     .foregroundStyle(SafeDesign.muted)
                     .padding(.horizontal, SafeDesign.xs)
                     .padding(.vertical, 2)
@@ -156,7 +156,7 @@ struct JournalView: View {
     private var emptyState: some View {
         VStack(spacing: SafeDesign.s) {
             Image(systemName: "book")
-                .font(.system(size: 34, weight: .light))
+                .font(SafeDesign.scaled(34, weight: .light))
                 .foregroundStyle(SafeDesign.muted)
             Text("Nothing to show yet.")
                 .font(SafeDesign.body)

@@ -270,7 +270,7 @@ struct MindView: View {
             if isFocused {
                 let resolved = context.resolve(
                     Text("\(hub.category) · \(hub.count)")
-                        .font(.system(size: 11, weight: .semibold))
+                        .font(SafeDesign.scaled(11, weight: .semibold))
                         .foregroundStyle(SafeDesign.ink)
                 )
                 let textSize = resolved.measure(in: CGSize(width: 240, height: 30))
@@ -282,7 +282,7 @@ struct MindView: View {
             } else {
                 context.draw(
                     Text("\(hub.category) · \(hub.count)")
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(SafeDesign.scaled(10, weight: .semibold))
                         .foregroundStyle(SafeDesign.muted),
                     at: CGPoint(x: center.x, y: center.y + radius + 12),
                     anchor: .center
@@ -296,7 +296,7 @@ struct MindView: View {
             let center = toScreen(position)
             let radius = max(node.radius * baseScale * zoom, 6)
             let title = node.entry.title.isEmpty ? String(localized: "Untitled") : node.entry.title
-            let resolved = context.resolve(Text(title).font(.system(size: 12, weight: .semibold)).foregroundStyle(SafeDesign.ink))
+            let resolved = context.resolve(Text(title).font(SafeDesign.scaled(12, weight: .semibold)).foregroundStyle(SafeDesign.ink))
             let textSize = resolved.measure(in: CGSize(width: 220, height: 40))
             let chipRect = CGRect(x: center.x - textSize.width / 2 - 8, y: center.y + radius + 10, width: textSize.width + 16, height: textSize.height + 8)
             context.fill(Path(roundedRect: chipRect, cornerRadius: 10), with: .color(SafeDesign.surfaceCard))
@@ -463,9 +463,9 @@ struct MindView: View {
                 }
             } label: {
                 HStack(spacing: 6) {
-                    Image(systemName: colorMode.icon).font(.system(size: 13, weight: .semibold))
+                    Image(systemName: colorMode.icon).font(SafeDesign.scaled(13, weight: .semibold))
                     Text(colorMode.label).font(SafeDesign.caption)
-                    Image(systemName: "chevron.up.chevron.down").font(.system(size: 9, weight: .semibold))
+                    Image(systemName: "chevron.up.chevron.down").font(SafeDesign.scaled(9, weight: .semibold))
                 }
                 .foregroundStyle(SafeDesign.ink)
                 .padding(.horizontal, SafeDesign.m)
@@ -483,7 +483,7 @@ struct MindView: View {
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: showAll ? "circle.grid.cross.fill" : "circle.grid.cross")
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(SafeDesign.scaled(13, weight: .semibold))
                     Text(showAll ? String(localized: "Hide all") : String(localized: "Show all"))
                         .font(SafeDesign.caption)
                 }
@@ -505,11 +505,11 @@ struct MindView: View {
         VStack(alignment: .leading, spacing: SafeDesign.s) {
             HStack(spacing: SafeDesign.xs) {
                 Text(entry.moodValue.label.uppercased())
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(SafeDesign.scaled(10, weight: .semibold))
                     .tracking(1.2)
                     .foregroundStyle(SafeDesign.muted)
                 Text(entry.category)
-                    .font(.system(size: 11, weight: .medium))
+                    .font(SafeDesign.scaled(11, weight: .medium))
                     .foregroundStyle(SafeDesign.ink)
                     .padding(.horizontal, SafeDesign.s)
                     .padding(.vertical, 4)
@@ -520,7 +520,7 @@ struct MindView: View {
                     withAnimation(SafeDesign.spring) { selectedID = nil }
                 } label: {
                     Image(systemName: "xmark")
-                        .font(.system(size: 12, weight: .bold))
+                        .font(SafeDesign.scaled(12, weight: .bold))
                         .foregroundStyle(SafeDesign.inkSecondary)
                         .frame(width: 30, height: 30)
                         .background(SafeDesign.surfaceStrong, in: Circle())
@@ -571,7 +571,7 @@ struct MindView: View {
     private var emptyState: some View {
         VStack(spacing: SafeDesign.s) {
             Image(systemName: "point.3.connected.trianglepath.dotted")
-                .font(.system(size: 40, weight: .light))
+                .font(SafeDesign.scaled(40, weight: .light))
                 .foregroundStyle(SafeDesign.muted)
             Text("Your mind, connected.")
                 .font(SafeDesign.serifTitle)

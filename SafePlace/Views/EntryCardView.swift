@@ -12,22 +12,22 @@ struct EntryCardView: View {
         VStack(alignment: .leading, spacing: SafeDesign.s) {
             HStack {
                 Label(entry.moodValue.label, systemImage: entry.moodValue.icon)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(SafeDesign.scaled(12, weight: .medium))
                     .foregroundStyle(color.accent)
                 Spacer()
                 Text(entry.createdAt.formattedShort())
-                    .font(.system(size: 12, weight: .medium))
+                    .font(SafeDesign.scaled(12, weight: .medium))
                     .foregroundStyle(color.accent)
             }
 
             Text(entry.title)
-                .font(.system(size: 18, weight: .semibold))
+                .font(SafeDesign.scaled(18, weight: .semibold))
                 .foregroundStyle(color.foreground)
                 .lineLimit(2)
 
             if !entry.description.isEmpty {
                 Text(entry.description)
-                    .font(.system(size: 14))
+                    .font(SafeDesign.scaled(14))
                     .foregroundStyle(color.foreground.opacity(0.92))
                     .lineLimit(4)
                     .multilineTextAlignment(.leading)
@@ -37,7 +37,7 @@ struct EntryCardView: View {
 
             HStack {
                 Text(entry.category)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(SafeDesign.scaled(12, weight: .medium))
                     .foregroundStyle(color.foreground)
                     .padding(.horizontal, SafeDesign.s)
                     .padding(.vertical, 5)
@@ -51,7 +51,7 @@ struct EntryCardView: View {
                     Button(role: .destructive) { onDelete() } label: { Label("Delete", systemImage: "trash") }
                 } label: {
                     Image(systemName: "ellipsis")
-                        .font(.system(size: 15, weight: .semibold))
+                        .font(SafeDesign.scaled(15, weight: .semibold))
                         .foregroundStyle(color.accent)
                         .frame(width: 34, height: 34)
                         .contentShape(Rectangle())
