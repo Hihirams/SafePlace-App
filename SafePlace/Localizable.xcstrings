@@ -1331,6 +1331,16 @@
         }
       }
     },
+    "Share as Markdown": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compartir como Markdown"
+          }
+        }
+      }
+    },
     "Share link": {
       "localizations": {
         "es": {

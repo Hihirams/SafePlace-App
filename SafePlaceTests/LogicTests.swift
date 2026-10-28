@@ -572,3 +572,48 @@ struct StoreOperationTests {
         #expect(store.resources.map(\.id) == ["r2"])
     }
 }
+
+// MARK: - Exportar a Markdown
+
+@Suite("Exportar Markdown")
+struct MarkdownExportTests {
+    private func store() -> Store {
+        Store(fileURL: FileManager.default.temporaryDirectory
+                .appendingPathComponent("safeplace-md-\(UUID().uuidString).json"), seed: false)
+    }
+
+    @Test func includesTitlesBodiesCategoriesAndMoods() {
+        let s = store()
+        s.addEntry(makeEntry("1", mood: "calm", category: "Música",
+                             title: "Mi playlist", description: "Lo-fi para ordenar"))
+        let md = s.exportMarkdown()
+        #expect(md.hasPrefix("# SafePlace"))
+        #expect(md.contains("### Mi playlist"))
+        #expect(md.contains("Lo-fi para ordenar"))
+        #expect(md.contains("Música"))
+        #expect(md.contains("Estado de ánimo") || md.contains("Mood"))
+    }
+
+    @Test func groupsByDayWithNewestFirst() throws {
+        let s = store()
+        var old = makeEntry("vieja", title: "Vieja")
+        old.createdAt = Calendar.current.date(byAdding: .day, value: -3, to: Date()) ?? Date()
+        s.addEntry(old)
+        s.addEntry(makeEntry("nueva", title: "Nueva"))
+        let md = s.exportMarkdown()
+        let nueva = try #require(md.range(of: "### Nueva"))
+        let vieja = try #require(md.range(of: "### Vieja"))
+        #expect(nueva.lowerBound < vieja.lowerBound)
+        #expect(md.components(separatedBy: "\n").contains { $0.hasPrefix("## ") })
+    }
+
+    @Test func includesSavedItems() {
+        let s = store()
+        s.addResource(Resource(id: "r1", text: "Un artículo", url: "https://ejemplo.com", type: "link", createdAt: Date()))
+        #expect(s.exportMarkdown().contains("Un artículo — https://ejemplo.com"))
+    }
+
+    @Test func emptyStoreStillProducesAHeader() {
+        #expect(store().exportMarkdown().hasPrefix("# SafePlace"))
+    }
+}

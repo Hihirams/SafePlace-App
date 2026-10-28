@@ -198,6 +198,46 @@ final class Store: ObservableObject {
         return try? encoder.encode(backup)
     }
 
+    /// Todas las notas en Markdown, agrupadas por día (más reciente primero).
+    /// Sirve para sacar el contenido de la app sin depender del respaldo JSON.
+    func exportMarkdown(calendar: Calendar = .current, locale: Locale = .current) -> String {
+        let dayFormatter = DateFormatter()
+        dayFormatter.calendar = calendar
+        dayFormatter.locale = locale
+        dayFormatter.setLocalizedDateFormatFromTemplate("MMMMd yyyy")
+
+        var out = ["# SafePlace", ""]
+        let grouped = Dictionary(grouping: entries) { calendar.startOfDay(for: $0.createdAt) }
+        for day in grouped.keys.sorted(by: >) {
+            let dayEntries = (grouped[day] ?? []).sorted { $0.createdAt > $1.createdAt }
+            out.append("## \(dayFormatter.string(from: day))")
+            out.append("")
+            for entry in dayEntries {
+                let title = entry.title.trimmingCharacters(in: .whitespacesAndNewlines)
+                out.append("### \(title.isEmpty ? String(localized: "Untitled") : title)")
+                out.append("")
+                let body = entry.description.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !body.isEmpty {
+                    out.append(body)
+                    out.append("")
+                }
+                out.append("- \(String(localized: "Category")): \(entry.category)")
+                out.append("- \(String(localized: "Mood")): \(entry.moodValue.label)")
+                out.append("")
+            }
+        }
+        if !resources.isEmpty {
+            out.append("## \(String(localized: "Saved"))")
+            out.append("")
+            for resource in resources {
+                let link = resource.url.isEmpty ? "" : " — \(resource.url)"
+                out.append("- \(resource.text)\(link)")
+            }
+            out.append("")
+        }
+        return out.joined(separator: "\n")
+    }
+
     @discardableResult
     func importJSON(_ data: Data) -> Bool {
         guard let backup = try? JSONDecoder().decode(Backup.self, from: data) else { return false }

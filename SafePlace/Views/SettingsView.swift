@@ -222,6 +222,12 @@ struct SettingsView: View {
                     }
                     .buttonStyle(.plain)
                 }
+                // Texto plano para llevarte las notas fuera de la app.
+                ShareLink(item: store.exportMarkdown()) {
+                    settingsRowLabel(title: String(localized: "Share as Markdown"), icon: "text.alignleft", tint: appTheme.tintStrong)
+                }
+                .buttonStyle(.plain)
+
                 Button {
                     showImporter = true
                 } label: {
