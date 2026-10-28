@@ -433,10 +433,10 @@ struct MindView: View {
         let text: String
         let icon: String
         if colorMode == .wave, let dominantMood {
-            text = "mostly \(dominantMood.label.lowercased()) · \(Int(dominance * 100))%"
+            text = String(localized: "mostly \(dominantMood.label.lowercased()) · \(Int(dominance * 100))%")
             icon = dominantMood.icon
         } else {
-            text = "\(graph.hubs.count) categories · \(store.entries.count) notes"
+            text = String(localized: "\(graph.hubs.count) categories · \(store.entries.count) notes")
             icon = "tag.fill"
         }
         return Label(text, systemImage: icon)

@@ -47,7 +47,7 @@ struct QuickCaptureView: View {
             .toolbar(.hidden, for: .navigationBar)
         }
         .onAppear {
-            if category.isEmpty { category = store.categories.first ?? "Self-care" }
+            if category.isEmpty { category = store.categories.first ?? "Autocuidado" }
         }
         .onChange(of: title) { _, _ in applySuggestion() }
         .onChange(of: note) { _, _ in applySuggestion() }
@@ -121,7 +121,7 @@ struct QuickCaptureView: View {
             id: "e-\(UUID().uuidString)",
             title: trimmedTitle.isEmpty ? Mood.mood(for: mood).label + " moment" : trimmedTitle,
             description: trimmedNote,
-            category: category.isEmpty ? "Self-care" : category,
+            category: category.isEmpty ? "Autocuidado" : category,
             mood: mood,
             color: (moodToColor[mood] ?? .cream).rawValue,
             createdAt: Date()

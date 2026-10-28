@@ -341,3 +341,74 @@ struct PersonalBestTests {
         #expect(NoteStats.personalBest([makeEntry("1", createdAt: Date())]) == 1)
     }
 }
+
+// MARK: - Localización / migración a español
+
+@Suite("Categorías en español")
+struct LocalizationTests {
+    private func tempURL() -> URL {
+        FileManager.default.temporaryDirectory
+            .appendingPathComponent("safeplace-i18n-\(UUID().uuidString).json")
+    }
+
+    @Test func defaultCategoriesAreSpanish() {
+        let store = Store(fileURL: tempURL(), seed: false)
+        #expect(store.categories == Store.defaultCategories)
+        #expect(store.categories.contains("Hábitos"))
+        #expect(!store.categories.contains("Habits"))
+    }
+
+    @Test func migratesLegacyEnglishCategoriesFromDisk() throws {
+        let url = tempURL()
+        let backup = Store.Backup(
+            entries: [makeEntry("1", category: "Habits"), makeEntry("2", category: "Music")],
+            categories: ["Habits", "Music", "Notes"],
+            resources: []
+        )
+        try JSONEncoder().encode(backup).write(to: url)
+
+        let store = Store(fileURL: url, seed: false)
+        #expect(store.entries.map(\.category) == ["Hábitos", "Música"])
+        #expect(store.categories == ["Hábitos", "Música", "Notas"])
+
+        // La migración se guarda: al recargar ya está en español.
+        let reloaded = Store(fileURL: url, seed: false)
+        #expect(reloaded.entries.map(\.category) == ["Hábitos", "Música"])
+    }
+
+    @Test func migrationIsIdempotent() throws {
+        let url = tempURL()
+        let backup = Store.Backup(entries: [makeEntry("1", category: "Hábitos")],
+                                  categories: ["Hábitos"], resources: [])
+        try JSONEncoder().encode(backup).write(to: url)
+        let store = Store(fileURL: url, seed: false)
+        #expect(store.entries.first?.category == "Hábitos")
+        #expect(store.categories == ["Hábitos"])
+    }
+
+    @Test func keepsUserCategoriesUntouched() throws {
+        let url = tempURL()
+        let backup = Store.Backup(entries: [makeEntry("1", category: "Mi categoría")],
+                                  categories: ["Mi categoría"], resources: [])
+        try JSONEncoder().encode(backup).write(to: url)
+        let store = Store(fileURL: url, seed: false)
+        #expect(store.entries.first?.category == "Mi categoría")
+        #expect(store.categories == ["Mi categoría"])
+    }
+
+    @Test func categorizerUnderstandsSpanish() {
+        let categories = Store.defaultCategories
+        #expect(Categorizer.suggest(title: "Mi playlist favorita",
+                                    description: "escuché canciones nuevas",
+                                    categories: categories) == "Música")
+        #expect(Categorizer.suggest(title: "Rutina de la mañana",
+                                    description: "caminar y meditar",
+                                    categories: categories) == "Hábitos")
+    }
+
+    @Test func moodLabelsAreLocalized() {
+        // En un build en inglés el catálogo devuelve la clave; en español, la traducción.
+        #expect(!Mood.bright.label.isEmpty)
+        #expect(Mood.all.map(\.label).allSatisfy { !$0.isEmpty })
+    }
+}

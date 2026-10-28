@@ -90,11 +90,11 @@ struct EntryCardView: View {
     VStack(spacing: 16) {
         EntryCardView(entry: Entry(
             id: "1", title: "Morning walk", description: "A slow reset before work.",
-            category: "Habits", mood: "calm", color: "mint", createdAt: Date()
+            category: "Hábitos", mood: "calm", color: "mint", createdAt: Date()
         ))
         EntryCardView(entry: Entry(
             id: "2", title: "Calling my sister", description: "Feels lighter.",
-            category: "People", mood: "bright", color: "pink", createdAt: Date()
+            category: "Personas", mood: "bright", color: "pink", createdAt: Date()
         ))
     }
     .padding()

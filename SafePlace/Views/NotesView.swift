@@ -18,7 +18,7 @@ struct NotesView: View {
                     emptyState
                 } else {
                     HStack {
-                        Text("\(notes.count) waiting")
+                        Text(notes.count == 1 ? String(localized: "1 note waiting") : String(localized: "\(notes.count) notes waiting"))
                             .font(SafeDesign.caption)
                             .foregroundStyle(SafeDesign.inkSecondary)
                         Spacer()

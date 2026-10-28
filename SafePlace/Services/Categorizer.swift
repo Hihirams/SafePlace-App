@@ -20,6 +20,24 @@ enum Categorizer {
         "emotions": ["feel", "feeling", "felt", "happy", "sad", "angry", "anxious", "worried", "stressed", "grateful", "love", "hope", "hopeful", "fear", "afraid", "excited", "lonely", "proud", "overwhelmed"]
     ]
 
+    /// Mismas categorías en español (las que usa la app desde 1.26) con vocabulario
+    /// en español. Se conservan las claves en inglés para no romper notas antiguas.
+    private static let spanishKeywords: [String: [String]] = [
+        "hábitos": ["rutina", "hábito", "habito", "diario", "diaria", "cada", "día", "manana", "mañana", "dormir", "caminar", "correr", "meditar", "leer", "agua", "constante", "constancia", "disciplina"],
+        "personas": ["amigo", "amiga", "amigos", "familia", "mamá", "mama", "papá", "papa", "hermana", "hermano", "pareja", "novio", "novia", "esposa", "esposo", "llamar", "llamé", "llame", "platicar", "platicamos", "hablar", "hablamos", "juntos", "juntas", "gente", "persona", "alguien", "abuela", "abuelo", "primo", "prima", "bebé", "bebe"],
+        "lugares": ["parque", "playa", "casa", "café", "cafe", "restaurante", "ciudad", "pueblo", "montaña", "montana", "bosque", "viaje", "afuera", "naturaleza", "jardín", "jardin", "calle", "colonia", "cuarto", "cocina", "balcón", "balcon"],
+        "actividades": ["trabajo", "proyecto", "pasatiempo", "juego", "jugar", "cocinar", "horno", "dibujar", "dibujo", "pintar", "limpiar", "ordenar", "planear", "estudiar", "aprender", "practicar", "escribir", "crear"],
+        "música": ["canción", "cancion", "canciones", "música", "musica", "playlist", "álbum", "album", "banda", "concierto", "escuchar", "melodía", "melodia", "cantar", "guitarra", "piano", "spotify", "letra"],
+        "autocuidado": ["descanso", "descansar", "relajarme", "respirar", "calma", "baño", "bano", "siesta", "cuidarme", "amable", "suave", "mindfulness", "consentir", "té", "te", "silencio", "lento", "lenta", "diario"],
+        "salud": ["salud", "doctor", "doctora", "medicina", "medicamento", "enfermo", "enferma", "dolor", "cabeza", "hospital", "terapia", "terapeuta", "gym", "gimnasio", "ejercicio", "cuerpo", "energía", "energia", "cansado", "cansada", "recuperación", "recuperacion"],
+        "trabajo": ["jefe", "jefa", "compañero", "companero", "compañera", "oficina", "junta", "reunión", "reunion", "cliente", "correo", "carrera", "ascenso", "entrevista", "sueldo", "equipo", "entrega"],
+        "dinero": ["presupuesto", "gasto", "gastar", "ahorro", "ahorrar", "cuenta", "renta", "deuda", "pagar", "pago", "banco"],
+        "comida": ["comer", "comida", "platillo", "desayuno", "almuerzo", "cena", "receta", "snack", "fruta", "verdura", "pizza", "pastel", "hambre", "rico", "antojito"],
+        "naturaleza": ["sol", "solcito", "lluvia", "llover", "cielo", "nube", "nubes", "árbol", "arbol", "árboles", "flor", "flores", "mar", "océano", "oceano", "viento", "estrellas", "luna", "nieve", "hojas"],
+        "aprendizaje": ["libro", "libros", "leer", "curso", "clase", "lección", "leccion", "aprender", "estudio", "escuela", "universidad", "idioma", "habilidad"],
+        "emociones": ["siento", "sentí", "sentir", "feliz", "triste", "enojado", "enojada", "ansioso", "ansiosa", "preocupado", "preocupada", "estresado", "estresada", "agradecido", "agradecida", "amor", "esperanza", "miedo", "emocionado", "emocionada", "solo", "sola", "orgulloso", "orgullosa", "abrumado", "abrumada"]
+    ]
+
     /// Returns the best matching category from `categories`, or nil if nothing fits.
     static func suggest(title: String, description: String, categories: [String]) -> String? {
         let normalized = " " + title.lowercased() + " " + description.lowercased() + " "
@@ -34,7 +52,7 @@ enum Categorizer {
             if normalized.contains(key) { score += 3 }
             if key.contains("-"), normalized.contains(key.replacingOccurrences(of: "-", with: " ")) { score += 3 }
 
-            if let list = keywords[key] {
+            if let list = keywords[key] ?? spanishKeywords[key] {
                 score += list.filter { words.contains($0) }.count * 2
             }
 

@@ -143,7 +143,7 @@ struct DashboardView: View {
                     .font(SafeDesign.serifTitle)
                     .foregroundStyle(SafeDesign.ink)
                 Spacer()
-                Text("\(daysThisWeek) this week · best \(personalBest)")
+                Text(String(localized: "\(daysThisWeek) this week · best \(personalBest)"))
                     .font(SafeDesign.micro)
                     .foregroundStyle(SafeDesign.muted)
             }
@@ -379,7 +379,7 @@ struct DashboardView: View {
     private func checkIn(_ mood: Mood) {
         let entry = Entry(
             id: "checkin-\(UUID().uuidString)",
-            title: "Feeling \(mood.label.lowercased())",
+            title: String(localized: "Feeling \(mood.label.lowercased())"),
             description: "",
             category: "Check-in",
             mood: mood.id,

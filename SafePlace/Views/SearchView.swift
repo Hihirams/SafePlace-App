@@ -159,7 +159,7 @@ struct SearchView: View {
     private var resultsList: some View {
         ScrollView(showsIndicators: false) {
             LazyVStack(alignment: .leading, spacing: SafeDesign.s) {
-                Text("\(results.count) \(results.count == 1 ? "match" : "matches")")
+                Text(results.count == 1 ? String(localized: "1 match") : String(localized: "\(results.count) matches"))
                     .font(SafeDesign.micro)
                     .foregroundStyle(SafeDesign.muted)
                     .padding(.horizontal, SafeDesign.l)
@@ -223,7 +223,7 @@ struct SearchView: View {
             Image(systemName: "magnifyingglass")
                 .font(.system(size: 34, weight: .light))
                 .foregroundStyle(SafeDesign.muted)
-            Text("No notes match “\(text)”.")
+            Text(String(localized: "No notes match “\(text)”."))
                 .font(SafeDesign.headline)
                 .foregroundStyle(SafeDesign.ink)
             Text("Try different words, or search by how you felt.")

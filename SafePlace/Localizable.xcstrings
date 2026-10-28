@@ -1,0 +1,926 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "%lld categories · %lld notes": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld categorías · %2$lld notas"
+          }
+        }
+      }
+    },
+    "%lld matches": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld resultados"
+          }
+        }
+      }
+    },
+    "%lld notes waiting": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld notas esperando"
+          }
+        }
+      }
+    },
+    "%lld this week · best %lld": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld esta semana · mejor %2$lld"
+          }
+        }
+      }
+    },
+    "1 match": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 resultado"
+          }
+        }
+      }
+    },
+    "1 note waiting": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 nota esperando"
+          }
+        }
+      }
+    },
+    "A gentle nudge to check in": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un recordatorio amable para verte"
+          }
+        }
+      }
+    },
+    "A gentle timeline.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una línea de tiempo tranquila."
+          }
+        }
+      }
+    },
+    "Add a few notes and this space turns into a living map of your thoughts, grouped by what matters.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agrega algunas notas y este espacio se vuelve un mapa vivo de tus pensamientos, agrupados por lo que importa."
+          }
+        }
+      }
+    },
+    "Add a few notes and this space will quietly show your patterns.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agrega algunas notas y este espacio te mostrará tus patrones con calma."
+          }
+        }
+      }
+    },
+    "BY CATEGORY": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "POR CATEGORÍA"
+          }
+        }
+      }
+    },
+    "Bright": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con energía"
+          }
+        }
+      }
+    },
+    "Built with care. Your notes stay on your device.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hecho con cuidado. Tus notas se quedan en tu dispositivo."
+          }
+        }
+      }
+    },
+    "Calm": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En calma"
+          }
+        }
+      }
+    },
+    "Cancel": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancelar"
+          }
+        }
+      }
+    },
+    "Category": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Categoría"
+          }
+        }
+      }
+    },
+    "Clear": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Borrar"
+          }
+        }
+      }
+    },
+    "Close": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cerrar"
+          }
+        }
+      }
+    },
+    "Copied": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copiado"
+          }
+        }
+      }
+    },
+    "Copy": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copiar"
+          }
+        }
+      }
+    },
+    "Create": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crear"
+          }
+        }
+      }
+    },
+    "Create a note": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crear una nota"
+          }
+        }
+      }
+    },
+    "Delete": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eliminar"
+          }
+        }
+      }
+    },
+    "Done": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listo"
+          }
+        }
+      }
+    },
+    "Double tap to edit": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toca dos veces para editar"
+          }
+        }
+      }
+    },
+    "Duplicate": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duplicar"
+          }
+        }
+      }
+    },
+    "Edit": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Editar"
+          }
+        }
+      }
+    },
+    "Erase": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Borrar"
+          }
+        }
+      }
+    },
+    "Erase all data?": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Borrar todos los datos?"
+          }
+        }
+      }
+    },
+    "Everything you've saved, one step at a time.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todo lo que has guardado, paso a paso."
+          }
+        }
+      }
+    },
+    "FEELINGS": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SENTIMIENTOS"
+          }
+        }
+      }
+    },
+    "Feeling %@": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Me siento %@"
+          }
+        }
+      }
+    },
+    "Heavy": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pesado"
+          }
+        }
+      }
+    },
+    "Hopeful": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con esperanza"
+          }
+        }
+      }
+    },
+    "How are you feeling?": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Cómo te sientes?"
+          }
+        }
+      }
+    },
+    "How it works": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cómo funciona"
+          }
+        }
+      }
+    },
+    "How you've been feeling": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cómo te has sentido"
+          }
+        }
+      }
+    },
+    "I'm here with you.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estoy aquí contigo."
+          }
+        }
+      }
+    },
+    "Insights appear as you save.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los insights aparecen conforme guardas."
+          }
+        }
+      }
+    },
+    "It changes color with how you've been feeling.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cambia de color según cómo te has sentido."
+          }
+        }
+      }
+    },
+    "Keep": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar"
+          }
+        }
+      }
+    },
+    "Keep all": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar todas"
+          }
+        }
+      }
+    },
+    "Keep it": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardarla"
+          }
+        }
+      }
+    },
+    "Keep the things worth keeping close — a playlist, an article, a line that made sense at the right time.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guarda cerca lo que vale la pena: una playlist, un artículo, una frase que llegó en el momento justo."
+          }
+        }
+      }
+    },
+    "Last 14 days": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Últimos 14 días"
+          }
+        }
+      }
+    },
+    "Links, quotes & reminders.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enlaces, frases y recordatorios."
+          }
+        }
+      }
+    },
+    "Mind view": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vista Mind"
+          }
+        }
+      }
+    },
+    "Mixed": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mezclado"
+          }
+        }
+      }
+    },
+    "No moods yet.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no hay estados de ánimo."
+          }
+        }
+      }
+    },
+    "No notes match “%@”.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ninguna nota coincide con «%@»."
+          }
+        }
+      }
+    },
+    "No shared notes yet.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no hay notas compartidas."
+          }
+        }
+      }
+    },
+    "Note options": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opciones de la nota"
+          }
+        }
+      }
+    },
+    "Notes by mood": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notas por estado de ánimo"
+          }
+        }
+      }
+    },
+    "Notes from your iPhone.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notas desde tu iPhone."
+          }
+        }
+      }
+    },
+    "Notes per day over the last 14 days": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notas por día en los últimos 14 días"
+          }
+        }
+      }
+    },
+    "Notes you share from Apple Notes (or any app) wait here until you keep them.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las notas que compartes desde Notas de Apple (o cualquier app) esperan aquí hasta que las guardes."
+          }
+        }
+      }
+    },
+    "Nothing here yet.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no hay nada aquí."
+          }
+        }
+      }
+    },
+    "Nothing saved here yet.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no has guardado nada aquí."
+          }
+        }
+      }
+    },
+    "Nothing to show yet.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no hay nada que mostrar."
+          }
+        }
+      }
+    },
+    "On this day": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En este día"
+          }
+        }
+      }
+    },
+    "Open": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir"
+          }
+        }
+      }
+    },
+    "Profile and settings": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perfil y ajustes"
+          }
+        }
+      }
+    },
+    "RECENT": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "RECIENTES"
+          }
+        }
+      }
+    },
+    "Recent": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recientes"
+          }
+        }
+      }
+    },
+    "Remove": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitar"
+          }
+        }
+      }
+    },
+    "Save as note": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar como nota"
+          }
+        }
+      }
+    },
+    "Saved item options": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opciones del elemento guardado"
+          }
+        }
+      }
+    },
+    "Saved. Nice check-in.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardado. Buen check-in."
+          }
+        }
+      }
+    },
+    "Search": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscar"
+          }
+        }
+      }
+    },
+    "Search notes": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscar notas"
+          }
+        }
+      }
+    },
+    "Search your notes…": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Busca en tus notas…"
+          }
+        }
+      }
+    },
+    "See all": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ver todo"
+          }
+        }
+      }
+    },
+    "Share": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compartir"
+          }
+        }
+      }
+    },
+    "Share a note from the Apple Notes app (or any app) straight into SafePlace. It arrives here, ready to keep.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comparte una nota desde la app Notas de Apple (o cualquier app) directo a SafePlace. Llega aquí, lista para guardar."
+          }
+        }
+      }
+    },
+    "Share link": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compartir enlace"
+          }
+        }
+      }
+    },
+    "Share text from Apple Notes using the iOS share sheet and it will show up here.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comparte texto desde Notas de Apple con el menú de compartir de iOS y aparecerá aquí."
+          }
+        }
+      }
+    },
+    "Skip": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saltar"
+          }
+        }
+      }
+    },
+    "Suggested from your note": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sugerido por tu nota"
+          }
+        }
+      }
+    },
+    "TRY": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PRUEBA"
+          }
+        }
+      }
+    },
+    "This removes every note and saved item from this device. It can't be undone.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esto elimina todas las notas y elementos guardados de este dispositivo. No se puede deshacer."
+          }
+        }
+      }
+    },
+    "Time": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hora"
+          }
+        }
+      }
+    },
+    "Try different words, or search by how you felt.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prueba con otras palabras, o busca por cómo te sentiste."
+          }
+        }
+      }
+    },
+    "Update feed (LiveContainer)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizar fuente (LiveContainer)"
+          }
+        }
+      }
+    },
+    "Version": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versión"
+          }
+        }
+      }
+    },
+    "Wave": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Onda"
+          }
+        }
+      }
+    },
+    "What's on your mind?": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Qué tienes en mente?"
+          }
+        }
+      }
+    },
+    "Where your notes live": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dónde viven tus notas"
+          }
+        }
+      }
+    },
+    "Words that show up often": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palabras que se repiten"
+          }
+        }
+      }
+    },
+    "Your mind, connected.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu mente, conectada."
+          }
+        }
+      }
+    },
+    "Your safe place is ready for its first note.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu lugar seguro está listo para su primera nota."
+          }
+        }
+      }
+    },
+    "Your thought": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu pensamiento"
+          }
+        }
+      }
+    },
+    "mostly %@ · %lld%%": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "más que nada %@ · %lld%%"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

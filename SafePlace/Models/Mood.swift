@@ -10,23 +10,23 @@ struct Mood: Identifiable, Hashable {
     let valence: CGFloat
 
     static let bright = Mood(
-        id: "bright", label: "Bright",
+        id: "bright", label: String(localized: "Bright"),
         color: SafeDesign.moodBright, deepColor: Color(hex: "E8A85F"),
         icon: "sun.max.fill", valence: 1.0)
     static let calm = Mood(
-        id: "calm", label: "Calm",
+        id: "calm", label: String(localized: "Calm"),
         color: SafeDesign.moodCalm, deepColor: Color(hex: "9DB8B0"),
         icon: "leaf.fill", valence: 0.2)
     static let hopeful = Mood(
-        id: "hopeful", label: "Hopeful",
+        id: "hopeful", label: String(localized: "Hopeful"),
         color: SafeDesign.moodHopeful, deepColor: Color(hex: "E79A8C"),
         icon: "camera.macro", valence: 0.6)
     static let mixed = Mood(
-        id: "mixed", label: "Mixed",
+        id: "mixed", label: String(localized: "Mixed"),
         color: SafeDesign.moodMixed, deepColor: Color(hex: "E8B183"),
         icon: "cloud.sun.fill", valence: -0.2)
     static let heavy = Mood(
-        id: "heavy", label: "Heavy",
+        id: "heavy", label: String(localized: "Heavy"),
         color: SafeDesign.moodHeavy, deepColor: Color(hex: "7E97B3"),
         icon: "cloud.rain.fill", valence: -0.8)
 

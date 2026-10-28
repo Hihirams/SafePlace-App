@@ -187,7 +187,7 @@ struct CreateView: View {
         let firstLine = body.split(separator: "\n").first.map(String.init) ?? body
         let title = firstLine.trimmingCharacters(in: .whitespaces)
         let resolvedCategory = category.isEmpty
-            ? (Categorizer.suggest(title: body, description: "", categories: store.categories) ?? "Self-care")
+            ? (Categorizer.suggest(title: body, description: "", categories: store.categories) ?? "Autocuidado")
             : category
 
         if let editing {

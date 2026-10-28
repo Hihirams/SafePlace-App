@@ -50,7 +50,7 @@ final class Store: ObservableObject {
     private let fileURL: URL
 
     static let defaultCategories = [
-        "Habits", "People", "Places", "Activities", "Music", "Self-care"
+        "Hábitos", "Personas", "Lugares", "Actividades", "Música", "Autocuidado"
     ]
 
     init(fileURL: URL? = nil, seed: Bool = true) {
@@ -65,6 +65,9 @@ final class Store: ObservableObject {
             entries = saved.entries
             categories = saved.categories
             resources = saved.resources
+            if CategoryMigration.apply(entries: &entries, categories: &categories) {
+                Store.save(entries: entries, categories: categories, resources: resources, to: resolved)
+            }
         } else if seed {
             entries = Self.seedEntries
             categories = Self.defaultCategories
@@ -75,6 +78,43 @@ final class Store: ObservableObject {
             categories = Self.defaultCategories
             resources = []
             Store.save(entries: entries, categories: categories, resources: resources, to: resolved)
+        }
+    }
+
+    // MARK: - Migración de categorías heredadas
+
+    /// La app se escribió primero en inglés. Estas categorías eran nuestras, no del
+    /// usuario, así que se renombran una sola vez al cargar (la operación es idempotente:
+    /// después de migrar ya no queda ningún nombre legacy).
+    enum CategoryMigration {
+        static let legacyNames: [String: String] = [
+            "Habits": "Hábitos",
+            "People": "Personas",
+            "Places": "Lugares",
+            "Activities": "Actividades",
+            "Music": "Música",
+            "Self-care": "Autocuidado",
+            "Notes": "Notas"
+        ]
+
+        @discardableResult
+        static func apply(entries: inout [Entry], categories: inout [String]) -> Bool {
+            var changed = false
+            entries = entries.map { entry in
+                guard let migrated = legacyNames[entry.category] else { return entry }
+                var copy = entry
+                copy.category = migrated
+                changed = true
+                return copy
+            }
+            let mapped = categories.map { legacyNames[$0] ?? $0 }
+            if mapped != categories {
+                var seen: [String] = []
+                for name in mapped where !seen.contains(name) { seen.append(name) }
+                categories = seen
+                changed = true
+            }
+            return changed
         }
     }
 
@@ -155,6 +195,7 @@ final class Store: ObservableObject {
         entries = backup.entries
         categories = backup.categories.isEmpty ? Self.defaultCategories : backup.categories
         resources = backup.resources
+        CategoryMigration.apply(entries: &entries, categories: &categories)
         persist()
         return true
     }
@@ -175,13 +216,13 @@ final class Store: ObservableObject {
             id: "shared-\(UUID().uuidString)",
             title: title,
             description: note.text,
-            category: "Notes",
+            category: "Notas",
             mood: "calm",
             color: CardColor.cream.rawValue,
             createdAt: note.createdAt
         ))
-        if !categories.contains("Notes") {
-            categories.append("Notes")
+        if !categories.contains("Notas") {
+            categories.append("Notas")
             persist()
         }
     }
@@ -203,36 +244,36 @@ final class Store: ObservableObject {
         [
             Entry(
                 id: "seed-1",
-                title: "Morning walk by the park",
-                description: "A slow 20-minute walk before work resets my head. No headphones, just the sounds around me.",
-                category: "Habits",
+                title: "Caminata por el parque",
+                description: "Veinte minutos de caminata lenta antes del trabajo me reinician la cabeza. Sin audífonos, solo los sonidos de alrededor.",
+                category: "Hábitos",
                 mood: "calm",
                 color: CardColor.mint.rawValue,
                 createdAt: daysAgo(2)
             ),
             Entry(
                 id: "seed-2",
-                title: "Calling my sister",
-                description: "Talking to her on the phone always makes the day feel lighter. We laugh a lot together.",
-                category: "People",
+                title: "Llamar a mi hermana",
+                description: "Hablar con ella por teléfono siempre hace que el día se sienta más ligero. Nos reímos mucho juntas.",
+                category: "Personas",
                 mood: "bright",
                 color: CardColor.peach.rawValue,
                 createdAt: daysAgo(4)
             ),
             Entry(
                 id: "seed-3",
-                title: "My favorite playlist",
-                description: "Putting on lo-fi while tidying my room turns a chore into something calm and pleasant.",
-                category: "Music",
+                title: "Mi playlist favorita",
+                description: "Poner lo-fi mientras ordeno mi cuarto convierte un pendiente en algo tranquilo y agradable.",
+                category: "Música",
                 mood: "hopeful",
                 color: CardColor.lavender.rawValue,
                 createdAt: daysAgo(6)
             ),
             Entry(
                 id: "seed-4",
-                title: "Writing things down",
-                description: "Naming what I feel instead of keeping it inside. A few sentences are enough to feel lighter.",
-                category: "Self-care",
+                title: "Escribir las cosas",
+                description: "Nombrar lo que siento en vez de guardármelo. Unas cuantas frases bastan para sentirme más ligera.",
+                category: "Autocuidado",
                 mood: "mixed",
                 color: CardColor.pink.rawValue,
                 createdAt: daysAgo(9)

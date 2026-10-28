@@ -28,6 +28,7 @@
 		AA0100000000000000000113 /* GlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000001014 /* GlassCard.swift */; };
 		AA0100000000000000000114 /* FormComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000001015 /* FormComponents.swift */; };
 		AA0100000000000000000115 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000001016 /* Assets.xcassets */; };
+		AA0100000000000000000500 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000005001 /* Localizable.xcstrings */; };
 		AA0100000000000000000116 /* MindGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000001019 /* MindGraph.swift */; };
 		AA0100000000000000000117 /* MindSimulation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB010000000000000000101A /* MindSimulation.swift */; };
 		AA0100000000000000000118 /* MindView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB010000000000000000101B /* MindView.swift */; };
@@ -108,6 +109,7 @@
 		BB0100000000000000001014 /* GlassCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassCard.swift; sourceTree = "<group>"; };
 		BB0100000000000000001015 /* FormComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormComponents.swift; sourceTree = "<group>"; };
 		BB0100000000000000001016 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BB0100000000000000005001 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		BB0100000000000000001017 /* SafePlace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SafePlace.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB0100000000000000001018 /* SafePlace.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SafePlace.entitlements; sourceTree = "<group>"; };
 		BB0100000000000000001019 /* MindGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindGraph.swift; sourceTree = "<group>"; };
@@ -201,6 +203,7 @@
 				CC0100000000000000000007 /* Services */,
 				CC0100000000000000000008 /* Views */,
 				BB0100000000000000001016 /* Assets.xcassets */,
+				BB0100000000000000005001 /* Localizable.xcstrings */,
 				BB0100000000000000001018 /* SafePlace.entitlements */,
 			);
 			path = SafePlace;
@@ -413,6 +416,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA0100000000000000000115 /* Assets.xcassets in Resources */,
+				AA0100000000000000000500 /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
