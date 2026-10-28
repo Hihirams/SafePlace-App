@@ -235,6 +235,14 @@ struct SettingsView: View {
                         .foregroundStyle(SafeDesign.inkSecondary)
                 }
 
+                // Si el disco falló, el usuario se entera aquí en vez de creer que guardó.
+                if let saveError = store.lastSaveError {
+                    Label(saveError, systemImage: "exclamationmark.triangle.fill")
+                        .font(SafeDesign.caption)
+                        .foregroundStyle(SafeDesign.error)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
                 Divider().overlay(SafeDesign.hairline)
 
                 Button {

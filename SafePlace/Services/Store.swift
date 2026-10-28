@@ -49,6 +49,10 @@ final class Store: ObservableObject {
 
     private let fileURL: URL
 
+    /// Último fallo al escribir en disco. `nil` cuando todo se guardó bien.
+    /// Antes los errores se descartaban con `try?` y la UI seguía como si nada.
+    @Published private(set) var lastSaveError: String?
+
     static let defaultCategories = [
         "Hábitos", "Personas", "Lugares", "Actividades", "Música", "Autocuidado"
     ]
@@ -66,18 +70,18 @@ final class Store: ObservableObject {
             categories = saved.categories
             resources = saved.resources
             if CategoryMigration.apply(entries: &entries, categories: &categories) {
-                Store.save(entries: entries, categories: categories, resources: resources, to: resolved)
+                persist()
             }
         } else if seed {
             entries = Self.seedEntries
             categories = Self.defaultCategories
             resources = []
-            Store.save(entries: entries, categories: categories, resources: resources, to: resolved)
+            persist()
         } else {
             entries = []
             categories = Self.defaultCategories
             resources = []
-            Store.save(entries: entries, categories: categories, resources: resources, to: resolved)
+            persist()
         }
     }
 
@@ -120,14 +124,19 @@ final class Store: ObservableObject {
 
     // MARK: - Persistence
 
-    private static func save(entries: [Entry], categories: [String], resources: [Resource], to url: URL) {
+    private static func write(entries: [Entry], categories: [String], resources: [Resource], to url: URL) throws {
         let data = PersistedData(entries: entries, categories: categories, resources: resources)
-        guard let encoded = try? JSONEncoder().encode(data) else { return }
-        try? encoded.write(to: url, options: .atomic)
+        let encoded = try JSONEncoder().encode(data)
+        try encoded.write(to: url, options: .atomic)
     }
 
     private func persist() {
-        Store.save(entries: entries, categories: categories, resources: resources, to: fileURL)
+        do {
+            try Store.write(entries: entries, categories: categories, resources: resources, to: fileURL)
+            lastSaveError = nil
+        } catch {
+            lastSaveError = String(localized: "Your changes couldn't be saved to this device.")
+        }
     }
 
     // MARK: - Entries

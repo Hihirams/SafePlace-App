@@ -412,3 +412,26 @@ struct LocalizationTests {
         #expect(Mood.all.map(\.label).allSatisfy { !$0.isEmpty })
     }
 }
+// MARK: - Persistencia (regresión: errores silenciosos)
+
+@Suite("Guardado en disco")
+struct PersistenceErrorTests {
+    @Test func reportsFailureInsteadOfSwallowingIt() {
+        // El directorio padre no existe: la escritura falla de verdad.
+        let bad = FileManager.default.temporaryDirectory
+            .appendingPathComponent("safeplace-missing-\(UUID().uuidString)")
+            .appendingPathComponent("data.json")
+        let store = Store(fileURL: bad, seed: false)
+        #expect(store.lastSaveError != nil)
+    }
+
+    @Test func clearsErrorAfterASuccessfulSave() throws {
+        let good = FileManager.default.temporaryDirectory
+            .appendingPathComponent("safeplace-ok-\(UUID().uuidString).json")
+        let store = Store(fileURL: good, seed: false)
+        #expect(store.lastSaveError == nil)
+        store.addEntry(makeEntry("1"))
+        #expect(store.lastSaveError == nil)
+        #expect(FileManager.default.fileExists(atPath: good.path))
+    }
+}
