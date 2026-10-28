@@ -17,6 +17,14 @@ struct ResourcesView: View {
         case link = "Links"
         case note = "Notes"
         var id: String { rawValue }
+
+        var title: String {
+            switch self {
+            case .all: return String(localized: "All")
+            case .link: return String(localized: "Links")
+            case .note: return String(localized: "Notes")
+            }
+        }
     }
 
     private var filtered: [Resource] {
@@ -57,7 +65,7 @@ struct ResourcesView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: SafeDesign.xxs) {
-            BadgePill(text: "saved")
+            BadgePill(text: String(localized: "saved"))
             Text("Links, quotes & reminders.")
                 .font(SafeDesign.largeTitle)
                 .foregroundStyle(SafeDesign.ink)
@@ -69,9 +77,9 @@ struct ResourcesView: View {
 
     private var addForm: some View {
         VStack(spacing: SafeDesign.s) {
-            ClayTextField(icon: "textformat", placeholder: "What do you want to keep?", text: $text)
-            ClayTextField(icon: "link", placeholder: "Paste a link (optional)", text: $url)
-            PrimaryButton(title: "Save", icon: "plus") {
+            ClayTextField(icon: "textformat", placeholder: String(localized: "What do you want to keep?"), text: $text)
+            ClayTextField(icon: "link", placeholder: String(localized: "Paste a link (optional)"), text: $url)
+            PrimaryButton(title: String(localized: "Save"), icon: "plus") {
                 saveResource()
             }
         }
@@ -83,7 +91,7 @@ struct ResourcesView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: SafeDesign.s) {
                 ForEach(Filter.allCases) { f in
-                    SelectionPill(title: f.rawValue, isSelected: filter == f) {
+                    SelectionPill(title: f.title, isSelected: filter == f) {
                         Haptics.selection()
                         withAnimation(SafeDesign.spring) { filter = f }
                     }
@@ -204,7 +212,7 @@ struct ResourcesView: View {
             id: "e-\(UUID().uuidString)",
             title: String(resource.text.prefix(40)),
             description: resource.isLink ? "\(resource.text)\n\(resource.url)" : resource.text,
-            category: "Saved",
+            category: String(localized: "Saved"),
             mood: "calm",
             color: CardColor.cream.rawValue,
             createdAt: Date()

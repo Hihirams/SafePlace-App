@@ -14,18 +14,18 @@ struct OnboardingView: View {
     private let features: [OnboardingFeature] = [
         OnboardingFeature(
             icon: "leaf.fill",
-            title: "Collect what helped",
-            subtitle: "A quiet home for the small wins, habits, people and places that gently carried you forward."
+            title: String(localized: "Collect what helped"),
+            subtitle: String(localized: "A quiet home for the small wins, habits, people and places that gently carried you forward.")
         ),
         OnboardingFeature(
             icon: "book.fill",
-            title: "Remember gently",
-            subtitle: "Your safe place turns the notes you keep into a soft timeline you can revisit any time you need it."
+            title: String(localized: "Remember gently"),
+            subtitle: String(localized: "Your safe place turns the notes you keep into a soft timeline you can revisit any time you need it.")
         ),
         OnboardingFeature(
             icon: "note.text",
-            title: "Notes from your iPhone",
-            subtitle: "Share text from Apple Notes straight into SafePlace with the iOS share sheet. It lands safely here, ready to keep."
+            title: String(localized: "Notes from your iPhone"),
+            subtitle: String(localized: "Share text from Apple Notes straight into SafePlace with the iOS share sheet. It lands safely here, ready to keep.")
         )
     ]
 
@@ -72,7 +72,7 @@ struct OnboardingView: View {
 
                 // Actions
                 VStack(spacing: SafeDesign.l) {
-                    PrimaryButton(title: isLast ? "Get started" : "Continue", icon: isLast ? nil : "arrow.right") {
+                    PrimaryButton(title: isLast ? String(localized: "Get started") : String(localized: "Continue"), icon: isLast ? nil : "arrow.right") {
                         if isLast {
                             withAnimation(.easeInOut(duration: 0.4)) { hasSeenOnboarding = true }
                         } else {

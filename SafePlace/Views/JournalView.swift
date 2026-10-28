@@ -83,7 +83,7 @@ struct JournalView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: SafeDesign.xxs) {
-            BadgePill(text: "journal")
+            BadgePill(text: String(localized: "journal"))
             Text("A gentle timeline.")
                 .font(SafeDesign.largeTitle)
                 .foregroundStyle(SafeDesign.ink)
@@ -96,7 +96,7 @@ struct JournalView: View {
     private var moodFilterBar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: SafeDesign.xs) {
-                moodChip("all", label: "All", icon: "circle.grid.2x2", color: SafeDesign.surfaceCard)
+                moodChip("all", label: String(localized: "All"), icon: "circle.grid.2x2", color: SafeDesign.surfaceCard)
                 ForEach(Mood.all) { m in
                     moodChip(m.id, label: m.label, icon: m.icon, color: m.color)
                 }
@@ -150,7 +150,7 @@ struct JournalView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityValue(isCollapsed ? "Collapsed" : "Expanded")
+        .accessibilityValue(isCollapsed ? String(localized: "Collapsed") : String(localized: "Expanded"))
     }
 
     private var emptyState: some View {

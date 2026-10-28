@@ -48,7 +48,7 @@ struct SettingsView: View {
         NavigationStack {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: SafeDesign.xl) {
-                    SheetHeader(title: "Settings", subtitle: "Make SafePlace feel like yours.", onClose: { dismiss() })
+                    SheetHeader(title: String(localized: "Settings"), subtitle: String(localized: "Make SafePlace feel like yours."), onClose: { dismiss() })
 
                     profileSection
                     appearanceSection
@@ -96,12 +96,12 @@ struct SettingsView: View {
     // MARK: - Sections
 
     private var profileSection: some View {
-        SettingsCard(title: "Profile photo", icon: "person.crop.circle") {
+        SettingsCard(title: String(localized: "Profile photo"), icon: "person.crop.circle") {
             HStack(spacing: SafeDesign.m) {
                 ProfileAvatar(size: 56, image: profile.image)
                 VStack(alignment: .leading, spacing: SafeDesign.xs) {
                     PhotosPicker(selection: $photoItem, matching: .images) {
-                        Text(profile.image == nil ? "Choose photo" : "Change photo")
+                        Text(profile.image == nil ? String(localized: "Choose photo") : String(localized: "Change photo"))
                             .font(SafeDesign.body)
                             .foregroundStyle(appTheme.tintStrong)
                     }
@@ -132,7 +132,7 @@ struct SettingsView: View {
     }
 
     private var appearanceSection: some View {
-        SettingsCard(title: "Appearance", icon: "paintbrush") {
+        SettingsCard(title: String(localized: "Appearance"), icon: "paintbrush") {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: SafeDesign.xs) {
                     ForEach(ThemeMode.allCases, id: \.self) { mode in
@@ -148,7 +148,7 @@ struct SettingsView: View {
     }
 
     private var characterSection: some View {
-        SettingsCard(title: "Your character", icon: "face.smiling") {
+        SettingsCard(title: String(localized: "Your character"), icon: "face.smiling") {
             VStack(spacing: SafeDesign.s) {
                 MascotView(size: 120, animate: true)
                     .frame(height: 130)
@@ -162,7 +162,7 @@ struct SettingsView: View {
     }
 
     private var sharedNotesSection: some View {
-        SettingsCard(title: "Shared notes", icon: "note.text") {
+        SettingsCard(title: String(localized: "Shared notes"), icon: "note.text") {
             VStack(alignment: .leading, spacing: SafeDesign.s) {
                 Text("Notes you share from Apple Notes (or any app) wait here until you keep them.")
                     .font(SafeDesign.caption)
@@ -171,7 +171,7 @@ struct SettingsView: View {
                     Haptics.tap()
                     showSharedNotes = true
                 } label: {
-                    settingsRowLabel(title: "Review shared notes", icon: "tray.and.arrow.down", tint: appTheme.tintStrong)
+                    settingsRowLabel(title: String(localized: "Review shared notes"), icon: "tray.and.arrow.down", tint: appTheme.tintStrong)
                 }
                 .buttonStyle(.plain)
             }
@@ -179,7 +179,7 @@ struct SettingsView: View {
     }
 
     private var remindersSection: some View {
-        SettingsCard(title: "Daily reminder", icon: "bell") {
+        SettingsCard(title: String(localized: "Daily reminder"), icon: "bell") {
             VStack(alignment: .leading, spacing: SafeDesign.m) {
                 Toggle(isOn: Binding(
                     get: { reminderEnabled },
@@ -214,18 +214,18 @@ struct SettingsView: View {
     }
 
     private var dataSection: some View {
-        SettingsCard(title: "Your data", icon: "externaldrive") {
+        SettingsCard(title: String(localized: "Your data"), icon: "externaldrive") {
             VStack(spacing: SafeDesign.s) {
                 if let exportURL {
                     ShareLink(item: exportURL) {
-                        settingsRowLabel(title: "Export backup", icon: "square.and.arrow.up", tint: appTheme.tintStrong)
+                        settingsRowLabel(title: String(localized: "Export backup"), icon: "square.and.arrow.up", tint: appTheme.tintStrong)
                     }
                     .buttonStyle(.plain)
                 }
                 Button {
                     showImporter = true
                 } label: {
-                    settingsRowLabel(title: "Import backup", icon: "square.and.arrow.down", tint: appTheme.tintStrong)
+                    settingsRowLabel(title: String(localized: "Import backup"), icon: "square.and.arrow.down", tint: appTheme.tintStrong)
                 }
                 .buttonStyle(.plain)
 
@@ -240,7 +240,7 @@ struct SettingsView: View {
                 Button {
                     showEraseConfirm = true
                 } label: {
-                    settingsRowLabel(title: "Erase all data", icon: "trash", tint: SafeDesign.error)
+                    settingsRowLabel(title: String(localized: "Erase all data"), icon: "trash", tint: SafeDesign.error)
                 }
                 .buttonStyle(.plain)
             }
@@ -248,7 +248,7 @@ struct SettingsView: View {
     }
 
     private var aboutSection: some View {
-        SettingsCard(title: "About", icon: "info.circle") {
+        SettingsCard(title: String(localized: "About"), icon: "info.circle") {
             VStack(alignment: .leading, spacing: SafeDesign.s) {
                 HStack {
                     Text("Version")
@@ -312,15 +312,15 @@ struct SettingsView: View {
             let scoped = url.startAccessingSecurityScopedResource()
             defer { if scoped { url.stopAccessingSecurityScopedResource() } }
             if let data = try? Data(contentsOf: url), store.importJSON(data) {
-                importMessage = "Backup restored."
+                importMessage = String(localized: "Backup restored.")
                 Haptics.success()
                 exportURL = makeExportFile()
             } else {
-                importMessage = "That file couldn't be read."
+                importMessage = String(localized: "That file couldn't be read.")
                 Haptics.warning()
             }
         case .failure:
-            importMessage = "Import cancelled."
+            importMessage = String(localized: "Import cancelled.")
         }
     }
 }

@@ -211,7 +211,7 @@ final class Store: ObservableObject {
 
     /// Move a shared note into the safe place as a regular entry.
     func importSharedNote(_ note: SharedNote) {
-        let title = note.title.isEmpty ? "From my notes" : note.title
+        let title = note.title.isEmpty ? String(localized: "From my notes") : note.title
         addEntry(Entry(
             id: "shared-\(UUID().uuidString)",
             title: title,

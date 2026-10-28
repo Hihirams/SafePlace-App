@@ -22,20 +22,20 @@ struct QuickCaptureView: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: SafeDesign.xl) {
                     SheetHeader(
-                        title: "How are you, really?",
-                        subtitle: "Tap a feeling and save it in seconds.",
+                        title: String(localized: "How are you, really?"),
+                        subtitle: String(localized: "Tap a feeling and save it in seconds."),
                         onClose: { dismiss() }
                     )
 
                     moodRow
 
-                    ClayTextField(icon: "textformat", placeholder: "What's this about? (optional)", text: $title)
+                    ClayTextField(icon: "textformat", placeholder: String(localized: "What's this about? (optional)"), text: $title)
 
-                    ClayTextArea(placeholder: "A line or two, if you feel like it…", text: $note)
+                    ClayTextArea(placeholder: String(localized: "A line or two, if you feel like it…"), text: $note)
 
                     categoryRow
 
-                    PrimaryButton(title: "Save to SafePlace", icon: "checkmark") {
+                    PrimaryButton(title: String(localized: "Save to SafePlace"), icon: "checkmark") {
                         save()
                     }
                     .padding(.top, SafeDesign.xs)
@@ -119,7 +119,7 @@ struct QuickCaptureView: View {
         let trimmedNote = note.trimmingCharacters(in: .whitespacesAndNewlines)
         let entry = Entry(
             id: "e-\(UUID().uuidString)",
-            title: trimmedTitle.isEmpty ? Mood.mood(for: mood).label + " moment" : trimmedTitle,
+            title: trimmedTitle.isEmpty ? String(localized: "\(Mood.mood(for: mood).label) moment") : trimmedTitle,
             description: trimmedNote,
             category: category.isEmpty ? "Autocuidado" : category,
             mood: mood,

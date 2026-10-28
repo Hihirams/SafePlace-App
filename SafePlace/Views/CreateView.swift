@@ -62,7 +62,7 @@ struct CreateView: View {
 
             Spacer()
 
-            Text(editing == nil ? "New thought" : "Edit")
+            Text(editing == nil ? String(localized: "New thought") : "Edit")
                 .font(.system(size: 11, weight: .semibold))
                 .tracking(1.5)
                 .foregroundStyle(SafeDesign.muted)
@@ -152,7 +152,7 @@ struct CreateView: View {
                 HStack(spacing: 4) {
                     Image(systemName: "tag")
                         .font(.system(size: 11, weight: .semibold))
-                    Text(category.isEmpty ? "Category" : category)
+                    Text(category.isEmpty ? String(localized: "Category") : category)
                         .font(SafeDesign.caption)
                         .lineLimit(1)
                 }
@@ -192,7 +192,7 @@ struct CreateView: View {
 
         if let editing {
             var updated = editing
-            updated.title = title.isEmpty ? "Untitled" : String(title.prefix(80))
+            updated.title = title.isEmpty ? String(localized: "Untitled") : String(title.prefix(80))
             updated.description = body
             updated.category = resolvedCategory
             updated.mood = mood
@@ -201,7 +201,7 @@ struct CreateView: View {
         } else {
             store.addEntry(Entry(
                 id: "e-\(UUID().uuidString)",
-                title: title.isEmpty ? "Untitled" : String(title.prefix(80)),
+                title: title.isEmpty ? String(localized: "Untitled") : String(title.prefix(80)),
                 description: body,
                 category: resolvedCategory,
                 mood: mood,

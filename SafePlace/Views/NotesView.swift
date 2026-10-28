@@ -59,7 +59,7 @@ struct NotesView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: SafeDesign.xxs) {
-            BadgePill(text: "notes")
+            BadgePill(text: String(localized: "notes"))
             Text("Notes from your iPhone.")
                 .font(SafeDesign.largeTitle)
                 .foregroundStyle(SafeDesign.ink)
@@ -74,9 +74,9 @@ struct NotesView: View {
             Label("How it works", systemImage: "square.and.arrow.up")
                 .font(SafeDesign.headline)
                 .foregroundStyle(SafeDesign.ink)
-            step(1, color: SafeDesign.pink, text: "Open a note in Apple Notes, tap the Share button, then choose SafePlace.")
-            step(2, color: SafeDesign.mint, text: "The note lands in this tab, where you can read it and decide what to keep.")
-            step(3, color: SafeDesign.accentDeep, text: "Tap Keep it to move it into your safe place as a note card.")
+            step(1, color: SafeDesign.pink, text: String(localized: "Open a note in Apple Notes, tap the Share button, then choose SafePlace."))
+            step(2, color: SafeDesign.mint, text: String(localized: "The note lands in this tab, where you can read it and decide what to keep."))
+            step(3, color: SafeDesign.accentDeep, text: String(localized: "Tap Keep it to move it into your safe place as a note card."))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(SafeDesign.l)
@@ -120,7 +120,7 @@ struct NotesView: View {
                 Image(systemName: "note.text")
                     .font(.system(size: 15, weight: .semibold))
                     .foregroundStyle(theme.tintStrong)
-                Text(note.title.isEmpty ? "Untitled note" : note.title)
+                Text(note.title.isEmpty ? String(localized: "Untitled note") : note.title)
                     .font(SafeDesign.serifHead)
                     .foregroundStyle(SafeDesign.ink)
                     .lineLimit(2)
@@ -232,16 +232,16 @@ private struct NotePreviewSheet: View {
         NavigationStack {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: SafeDesign.l) {
-                    SheetHeader(title: "Shared note", subtitle: "Edit before keeping it.", onClose: { dismiss(); onDone() })
-                    ClayTextField(icon: "textformat", placeholder: "Title", text: $title)
-                    ClayTextArea(placeholder: "Note text", text: $text)
+                    SheetHeader(title: String(localized: "Shared note"), subtitle: String(localized: "Edit before keeping it."), onClose: { dismiss(); onDone() })
+                    ClayTextField(icon: "textformat", placeholder: String(localized: "Title"), text: $title)
+                    ClayTextArea(placeholder: String(localized: "Note text"), text: $text)
                     HStack(spacing: SafeDesign.s) {
-                        SecondaryButton(title: "Dismiss", icon: "xmark") {
+                        SecondaryButton(title: String(localized: "Dismiss"), icon: "xmark") {
                             store.discardSharedNote(note)
                             dismiss()
                             onDone()
                         }
-                        PrimaryButton(title: "Keep it", icon: "checkmark") {
+                        PrimaryButton(title: String(localized: "Keep it"), icon: "checkmark") {
                             save()
                         }
                     }

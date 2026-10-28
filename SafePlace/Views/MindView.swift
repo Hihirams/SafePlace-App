@@ -295,7 +295,7 @@ struct MindView: View {
            let position = simulation.position(for: node.id) {
             let center = toScreen(position)
             let radius = max(node.radius * baseScale * zoom, 6)
-            let title = node.entry.title.isEmpty ? "Untitled" : node.entry.title
+            let title = node.entry.title.isEmpty ? String(localized: "Untitled") : node.entry.title
             let resolved = context.resolve(Text(title).font(.system(size: 12, weight: .semibold)).foregroundStyle(SafeDesign.ink))
             let textSize = resolved.measure(in: CGSize(width: 220, height: 40))
             let chipRect = CGRect(x: center.x - textSize.width / 2 - 8, y: center.y + radius + 10, width: textSize.width + 16, height: textSize.height + 8)
@@ -423,7 +423,7 @@ struct MindView: View {
 
     private var header: some View {
         HStack {
-            BadgePill(text: "mind")
+            BadgePill(text: String(localized: "mind"))
             Spacer()
             statusPill
         }
@@ -484,7 +484,7 @@ struct MindView: View {
                 HStack(spacing: 6) {
                     Image(systemName: showAll ? "circle.grid.cross.fill" : "circle.grid.cross")
                         .font(.system(size: 13, weight: .semibold))
-                    Text(showAll ? "Hide all" : "Show all")
+                    Text(showAll ? String(localized: "Hide all") : String(localized: "Show all"))
                         .font(SafeDesign.caption)
                 }
                 .foregroundStyle(showAll ? SafeDesign.canvas : SafeDesign.ink)
@@ -494,7 +494,7 @@ struct MindView: View {
                 .overlay { Capsule().strokeBorder(SafeDesign.hairline, lineWidth: 1) }
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(showAll ? "Hide all" : "Show all")
+            .accessibilityLabel(showAll ? String(localized: "Hide all") : String(localized: "Show all"))
             .accessibilityIdentifier("mind-show-all")
         }
     }

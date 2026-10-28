@@ -36,9 +36,9 @@ struct InsightsView: View {
 
     private var summaryRow: some View {
         HStack(spacing: SafeDesign.m) {
-            metricCard(number: "\(store.entries.count)", label: "notes")
-            metricCard(number: "\(store.categories.count)", label: "categories")
-            metricCard(number: "\(personalBest)", label: "best run")
+            metricCard(number: "\(store.entries.count)", label: String(localized: "notes"))
+            metricCard(number: "\(store.categories.count)", label: String(localized: "categories"))
+            metricCard(number: "\(personalBest)", label: String(localized: "best run"))
         }
     }
 
@@ -64,7 +64,7 @@ struct InsightsView: View {
                 .foregroundStyle(SafeDesign.ink)
             Chart(last14Days) { item in
                 BarMark(
-                    x: .value("Day", item.date, unit: .day),
+                    x: .value(String(localized: "Day"), item.date, unit: .day),
                     y: .value("Notes", item.count)
                 )
                 .foregroundStyle(theme.tintStrong.gradient)
@@ -96,8 +96,8 @@ struct InsightsView: View {
             Chart {
                 ForEach(moodCounts) { item in
                     BarMark(
-                        x: .value("Count", item.count),
-                        y: .value("Mood", item.mood.label)
+                        x: .value(String(localized: "Count"), item.count),
+                        y: .value(String(localized: "Mood"), item.mood.label)
                     )
                     .foregroundStyle(item.mood.color)
                     .cornerRadius(6)

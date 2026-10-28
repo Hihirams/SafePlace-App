@@ -37,17 +37,17 @@ struct EntryFormView: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: SafeDesign.xl) {
                     SheetHeader(
-                        title: isEditing ? "Edit this note" : "What helped you?",
-                        subtitle: isEditing ? "Tweak what you saved." : "Add something that gently carried you.",
+                        title: isEditing ? String(localized: "Edit this note") : String(localized: "What helped you?"),
+                        subtitle: isEditing ? String(localized: "Tweak what you saved.") : String(localized: "Add something that gently carried you."),
                         onClose: onClose
                     )
 
-                    field("Title") {
-                        ClayTextField(icon: "textformat", placeholder: "e.g. A slow morning coffee", text: $title)
+                    field(String(localized: "Title")) {
+                        ClayTextField(icon: "textformat", placeholder: String(localized: "e.g. A slow morning coffee"), text: $title)
                     }
 
-                    field("What happened") {
-                        ClayTextArea(placeholder: "Write a little about why it helped...", text: $description)
+                    field(String(localized: "What happened")) {
+                        ClayTextArea(placeholder: String(localized: "Write a little about why it helped..."), text: $description)
                     }
 
                     field("Category") {
@@ -62,7 +62,7 @@ struct EntryFormView: View {
                                     }
                                 } label: {
                                     HStack {
-                                        Text(category.isEmpty ? "Choose a category" : category)
+                                        Text(category.isEmpty ? String(localized: "Choose a category") : category)
                                             .font(SafeDesign.body)
                                             .foregroundStyle(category.isEmpty ? SafeDesign.muted : SafeDesign.ink)
                                         Spacer()
@@ -81,7 +81,7 @@ struct EntryFormView: View {
                                     userChoseCategory = true
                                     withAnimation(SafeDesign.spring) { showNewCategory.toggle() }
                                 } label: {
-                                    Text(showNewCategory ? "Cancel" : "+ New")
+                                    Text(showNewCategory ? String(localized: "Cancel") : String(localized: "+ New"))
                                         .font(SafeDesign.caption)
                                         .foregroundStyle(SafeDesign.ink)
                                         .padding(.horizontal, SafeDesign.l)
@@ -93,7 +93,7 @@ struct EntryFormView: View {
                             }
 
                             if showNewCategory {
-                                ClayTextField(icon: "plus", placeholder: "New category name...", text: $newCategory)
+                                ClayTextField(icon: "plus", placeholder: String(localized: "New category name..."), text: $newCategory)
                             }
 
                             if initial == nil, let suggested = autoSuggested, category == suggested, !userChoseCategory {
@@ -104,17 +104,17 @@ struct EntryFormView: View {
                         }
                     }
 
-                    field("How did it make you feel?") {
+                    field(String(localized: "How did it make you feel?")) {
                         moodPicker
                     }
 
-                    field("Card color") {
+                    field(String(localized: "Card color")) {
                         colorSwatches
                     }
 
                     HStack(spacing: SafeDesign.s) {
-                        SecondaryButton(title: "Cancel", icon: "xmark") { onClose() }
-                        PrimaryButton(title: isEditing ? "Save changes" : "Save note", icon: "checkmark") {
+                        SecondaryButton(title: String(localized: "Cancel"), icon: "xmark") { onClose() }
+                        PrimaryButton(title: isEditing ? String(localized: "Save changes") : String(localized: "Save note"), icon: "checkmark") {
                             save()
                         }
                     }
@@ -219,9 +219,9 @@ struct EntryFormView: View {
         let chosenCategory = finalCategory.isEmpty ? category : finalCategory
         let entry = Entry(
             id: initial?.id ?? "e-\(UUID().uuidString)",
-            title: title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "Untitled" : title.trimmingCharacters(in: .whitespacesAndNewlines),
+            title: title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? String(localized: "Untitled") : title.trimmingCharacters(in: .whitespacesAndNewlines),
             description: description.trimmingCharacters(in: .whitespacesAndNewlines),
-            category: chosenCategory.isEmpty ? "Uncategorized" : chosenCategory,
+            category: chosenCategory.isEmpty ? String(localized: "Uncategorized") : chosenCategory,
             mood: mood,
             color: color.rawValue,
             createdAt: initial?.createdAt ?? Date()

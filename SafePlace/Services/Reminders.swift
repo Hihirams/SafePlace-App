@@ -19,8 +19,8 @@ enum Reminders {
         center.removePendingNotificationRequests(withIdentifiers: [dailyID])
 
         let content = UNMutableNotificationContent()
-        content.title = "A quiet moment"
-        content.body = "What helped you today? Add it to your SafePlace."
+        content.title = String(localized: "A quiet moment")
+        content.body = String(localized: "What helped you today? Add it to your SafePlace.")
         content.sound = .default
 
         var comps = DateComponents()

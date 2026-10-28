@@ -1,6 +1,16 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "%@ moment": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "momento de %@"
+          }
+        }
+      }
+    },
     "%lld categories · %lld notes": {
       "localizations": {
         "es": {
@@ -37,6 +47,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$lld esta semana · mejor %2$lld"
+          }
+        }
+      }
+    },
+    "+ New": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+ Nueva"
           }
         }
       }
@@ -81,6 +101,46 @@
         }
       }
     },
+    "A line or two, if you feel like it…": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una línea o dos, si te apetece…"
+          }
+        }
+      }
+    },
+    "A quiet home for the small wins, habits, people and places that gently carried you forward.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un lugar tranquilo para las pequeñas victorias, los hábitos, las personas y los lugares que te llevaron un poco más lejos."
+          }
+        }
+      }
+    },
+    "A quiet moment": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un momento tranquilo"
+          }
+        }
+      }
+    },
+    "About": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acerca de"
+          }
+        }
+      }
+    },
     "Add a few notes and this space turns into a living map of your thoughts, grouped by what matters.": {
       "localizations": {
         "es": {
@@ -101,12 +161,52 @@
         }
       }
     },
+    "Add something that gently carried you.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agrega algo que te haya hecho bien."
+          }
+        }
+      }
+    },
+    "All": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todo"
+          }
+        }
+      }
+    },
+    "Appearance": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apariencia"
+          }
+        }
+      }
+    },
     "BY CATEGORY": {
       "localizations": {
         "es": {
           "stringUnit": {
             "state": "translated",
             "value": "POR CATEGORÍA"
+          }
+        }
+      }
+    },
+    "Backup restored.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Respaldo restaurado."
           }
         }
       }
@@ -151,12 +251,52 @@
         }
       }
     },
+    "Card color": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Color de la tarjeta"
+          }
+        }
+      }
+    },
     "Category": {
       "localizations": {
         "es": {
           "stringUnit": {
             "state": "translated",
             "value": "Categoría"
+          }
+        }
+      }
+    },
+    "Change photo": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cambiar foto"
+          }
+        }
+      }
+    },
+    "Choose a category": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elige una categoría"
+          }
+        }
+      }
+    },
+    "Choose photo": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elegir foto"
           }
         }
       }
@@ -181,6 +321,36 @@
         }
       }
     },
+    "Collapsed": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contraído"
+          }
+        }
+      }
+    },
+    "Collect what helped": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guarda lo que te ayudó"
+          }
+        }
+      }
+    },
+    "Continue": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuar"
+          }
+        }
+      }
+    },
     "Copied": {
       "localizations": {
         "es": {
@@ -197,6 +367,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Copiar"
+          }
+        }
+      }
+    },
+    "Count": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cantidad"
           }
         }
       }
@@ -221,12 +401,52 @@
         }
       }
     },
+    "Daily reminder": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recordatorio diario"
+          }
+        }
+      }
+    },
+    "Dark": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oscuro"
+          }
+        }
+      }
+    },
+    "Day": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Día"
+          }
+        }
+      }
+    },
     "Delete": {
       "localizations": {
         "es": {
           "stringUnit": {
             "state": "translated",
             "value": "Eliminar"
+          }
+        }
+      }
+    },
+    "Dismiss": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descartar"
           }
         }
       }
@@ -271,12 +491,42 @@
         }
       }
     },
+    "Edit before keeping it.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edítala antes de guardarla."
+          }
+        }
+      }
+    },
+    "Edit this note": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Editar esta nota"
+          }
+        }
+      }
+    },
     "Erase": {
       "localizations": {
         "es": {
           "stringUnit": {
             "state": "translated",
             "value": "Borrar"
+          }
+        }
+      }
+    },
+    "Erase all data": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Borrar todos los datos"
           }
         }
       }
@@ -301,6 +551,26 @@
         }
       }
     },
+    "Expanded": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expandido"
+          }
+        }
+      }
+    },
+    "Export backup": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exportar respaldo"
+          }
+        }
+      }
+    },
     "FEELINGS": {
       "localizations": {
         "es": {
@@ -321,12 +591,52 @@
         }
       }
     },
+    "From my notes": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desde mis notas"
+          }
+        }
+      }
+    },
+    "Get started": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empezar"
+          }
+        }
+      }
+    },
     "Heavy": {
       "localizations": {
         "es": {
           "stringUnit": {
             "state": "translated",
             "value": "Pesado"
+          }
+        }
+      }
+    },
+    "Hide all": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ocultar todo"
+          }
+        }
+      }
+    },
+    "Home": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inicio"
           }
         }
       }
@@ -347,6 +657,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "¿Cómo te sientes?"
+          }
+        }
+      }
+    },
+    "How are you, really?": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Cómo estás, de verdad?"
+          }
+        }
+      }
+    },
+    "How did it make you feel?": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Cómo te hizo sentir?"
           }
         }
       }
@@ -381,6 +711,36 @@
         }
       }
     },
+    "Import backup": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importar respaldo"
+          }
+        }
+      }
+    },
+    "Import cancelled.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importación cancelada."
+          }
+        }
+      }
+    },
+    "Insights": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Análisis"
+          }
+        }
+      }
+    },
     "Insights appear as you save.": {
       "localizations": {
         "es": {
@@ -397,6 +757,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cambia de color según cómo te has sentido."
+          }
+        }
+      }
+    },
+    "Journal": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diario"
           }
         }
       }
@@ -451,12 +821,52 @@
         }
       }
     },
+    "Light": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claro"
+          }
+        }
+      }
+    },
+    "Links": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enlaces"
+          }
+        }
+      }
+    },
     "Links, quotes & reminders.": {
       "localizations": {
         "es": {
           "stringUnit": {
             "state": "translated",
             "value": "Enlaces, frases y recordatorios."
+          }
+        }
+      }
+    },
+    "Make SafePlace feel like yours.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Haz que SafePlace se sienta tuyo."
+          }
+        }
+      }
+    },
+    "Mind": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mente"
           }
         }
       }
@@ -477,6 +887,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mezclado"
+          }
+        }
+      }
+    },
+    "Mood": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estado de ánimo"
+          }
+        }
+      }
+    },
+    "New category name...": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nombre de la nueva categoría…"
+          }
+        }
+      }
+    },
+    "New thought": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nuevo pensamiento"
           }
         }
       }
@@ -521,12 +961,42 @@
         }
       }
     },
+    "Note text": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Texto de la nota"
+          }
+        }
+      }
+    },
+    "Notes": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notas"
+          }
+        }
+      }
+    },
     "Notes by mood": {
       "localizations": {
         "es": {
           "stringUnit": {
             "state": "translated",
             "value": "Notas por estado de ánimo"
+          }
+        }
+      }
+    },
+    "Notes from your iPhone": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notas desde tu iPhone"
           }
         }
       }
@@ -611,12 +1081,52 @@
         }
       }
     },
+    "Open a note in Apple Notes, tap the Share button, then choose SafePlace.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abre una nota en Notas de Apple, toca Compartir y elige SafePlace."
+          }
+        }
+      }
+    },
+    "Overview": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resumen"
+          }
+        }
+      }
+    },
+    "Paste a link (optional)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pega un enlace (opcional)"
+          }
+        }
+      }
+    },
     "Profile and settings": {
       "localizations": {
         "es": {
           "stringUnit": {
             "state": "translated",
             "value": "Perfil y ajustes"
+          }
+        }
+      }
+    },
+    "Profile photo": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Foto de perfil"
           }
         }
       }
@@ -641,6 +1151,16 @@
         }
       }
     },
+    "Remember gently": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recuerda con calma"
+          }
+        }
+      }
+    },
     "Remove": {
       "localizations": {
         "es": {
@@ -651,12 +1171,72 @@
         }
       }
     },
+    "Review shared notes": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revisar notas compartidas"
+          }
+        }
+      }
+    },
+    "Save": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar"
+          }
+        }
+      }
+    },
     "Save as note": {
       "localizations": {
         "es": {
           "stringUnit": {
             "state": "translated",
             "value": "Guardar como nota"
+          }
+        }
+      }
+    },
+    "Save changes": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar cambios"
+          }
+        }
+      }
+    },
+    "Save note": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar nota"
+          }
+        }
+      }
+    },
+    "Save to SafePlace": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar en SafePlace"
+          }
+        }
+      }
+    },
+    "Saved": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardado"
           }
         }
       }
@@ -721,6 +1301,16 @@
         }
       }
     },
+    "Settings": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajustes"
+          }
+        }
+      }
+    },
     "Share": {
       "localizations": {
         "es": {
@@ -751,12 +1341,52 @@
         }
       }
     },
+    "Share text from Apple Notes straight into SafePlace with the iOS share sheet. It lands safely here, ready to keep.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comparte texto desde Notas de Apple directo a SafePlace con el menú de compartir de iOS. Llega aquí, lista para guardar."
+          }
+        }
+      }
+    },
     "Share text from Apple Notes using the iOS share sheet and it will show up here.": {
       "localizations": {
         "es": {
           "stringUnit": {
             "state": "translated",
             "value": "Comparte texto desde Notas de Apple con el menú de compartir de iOS y aparecerá aquí."
+          }
+        }
+      }
+    },
+    "Shared note": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nota compartida"
+          }
+        }
+      }
+    },
+    "Shared notes": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notas compartidas"
+          }
+        }
+      }
+    },
+    "Show all": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar todo"
           }
         }
       }
@@ -781,12 +1411,62 @@
         }
       }
     },
+    "System": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sistema"
+          }
+        }
+      }
+    },
     "TRY": {
       "localizations": {
         "es": {
           "stringUnit": {
             "state": "translated",
             "value": "PRUEBA"
+          }
+        }
+      }
+    },
+    "Tap Keep it to move it into your safe place as a note card.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toca «Guardarla» para moverla a tu lugar seguro como tarjeta."
+          }
+        }
+      }
+    },
+    "Tap a feeling and save it in seconds.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toca un sentimiento y guárdalo en segundos."
+          }
+        }
+      }
+    },
+    "That file couldn't be read.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo leer ese archivo."
+          }
+        }
+      }
+    },
+    "The note lands in this tab, where you can read it and decide what to keep.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La nota llega a esta pestaña, donde puedes leerla y decidir qué guardar."
           }
         }
       }
@@ -811,12 +1491,62 @@
         }
       }
     },
+    "Title": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Título"
+          }
+        }
+      }
+    },
     "Try different words, or search by how you felt.": {
       "localizations": {
         "es": {
           "stringUnit": {
             "state": "translated",
             "value": "Prueba con otras palabras, o busca por cómo te sentiste."
+          }
+        }
+      }
+    },
+    "Tweak what you saved.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajusta lo que guardaste."
+          }
+        }
+      }
+    },
+    "Uncategorized": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sin categoría"
+          }
+        }
+      }
+    },
+    "Untitled": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sin título"
+          }
+        }
+      }
+    },
+    "Untitled note": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nota sin título"
           }
         }
       }
@@ -851,12 +1581,62 @@
         }
       }
     },
+    "What do you want to keep?": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Qué quieres guardar?"
+          }
+        }
+      }
+    },
+    "What happened": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qué pasó"
+          }
+        }
+      }
+    },
+    "What helped you today? Add it to your SafePlace.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Qué te ayudó hoy? Agrégalo a tu SafePlace."
+          }
+        }
+      }
+    },
+    "What helped you?": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Qué te ayudó?"
+          }
+        }
+      }
+    },
     "What's on your mind?": {
       "localizations": {
         "es": {
           "stringUnit": {
             "state": "translated",
             "value": "¿Qué tienes en mente?"
+          }
+        }
+      }
+    },
+    "What's this about? (optional)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿De qué se trata? (opcional)"
           }
         }
       }
@@ -881,6 +1661,36 @@
         }
       }
     },
+    "Write a little about why it helped...": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escribe un poco sobre por qué te ayudó…"
+          }
+        }
+      }
+    },
+    "Your character": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu personaje"
+          }
+        }
+      }
+    },
+    "Your data": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tus datos"
+          }
+        }
+      }
+    },
     "Your mind, connected.": {
       "localizations": {
         "es": {
@@ -901,6 +1711,16 @@
         }
       }
     },
+    "Your safe place turns the notes you keep into a soft timeline you can revisit any time you need it.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu lugar seguro convierte las notas que guardas en una línea de tiempo suave que puedes visitar cuando la necesites."
+          }
+        }
+      }
+    },
     "Your thought": {
       "localizations": {
         "es": {
@@ -911,12 +1731,102 @@
         }
       }
     },
+    "best run": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mejor racha"
+          }
+        }
+      }
+    },
+    "categories": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "categorías"
+          }
+        }
+      }
+    },
+    "e.g. A slow morning coffee": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "p. ej. Un café tranquilo por la mañana"
+          }
+        }
+      }
+    },
+    "journal": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "diario"
+          }
+        }
+      }
+    },
+    "mind": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mente"
+          }
+        }
+      }
+    },
     "mostly %@ · %lld%%": {
       "localizations": {
         "es": {
           "stringUnit": {
             "state": "translated",
             "value": "más que nada %@ · %lld%%"
+          }
+        }
+      }
+    },
+    "notes": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "notas"
+          }
+        }
+      }
+    },
+    "saved": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "guardado"
+          }
+        }
+      }
+    },
+    "thing saved": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cosa guardada"
+          }
+        }
+      }
+    },
+    "things saved": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cosas guardadas"
           }
         }
       }

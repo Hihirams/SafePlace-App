@@ -21,6 +21,13 @@ struct DashboardView: View {
         case overview = "Overview"
         case insights = "Insights"
         var id: String { rawValue }
+
+        var title: String {
+            switch self {
+            case .overview: return String(localized: "Overview")
+            case .insights: return String(localized: "Insights")
+            }
+        }
     }
 
     private var todayEntries: [Entry] {
@@ -220,7 +227,7 @@ struct DashboardView: View {
     private var modePicker: some View {
         HStack(spacing: SafeDesign.xs) {
             ForEach(DashboardMode.allCases) { m in
-                SelectionPill(title: m.rawValue, isSelected: mode == m) {
+                SelectionPill(title: m.title, isSelected: mode == m) {
                     Haptics.selection()
                     withAnimation(SafeDesign.spring) { mode = m }
                 }
@@ -234,8 +241,8 @@ struct DashboardView: View {
     private var statsPanel: some View {
         let columns = SafeLayout.columns(forWidth: contentWidth)
         return LazyVGrid(columns: columns, spacing: SafeDesign.m) {
-            statCard(number: "\(store.entries.count)", label: store.entries.count == 1 ? "thing saved" : "things saved")
-            statCard(number: "\(store.categories.count)", label: "categories")
+            statCard(number: "\(store.entries.count)", label: store.entries.count == 1 ? String(localized: "thing saved") : String(localized: "things saved"))
+            statCard(number: "\(store.categories.count)", label: String(localized: "categories"))
 
             statCardWide {
                 VStack(alignment: .leading, spacing: SafeDesign.s) {

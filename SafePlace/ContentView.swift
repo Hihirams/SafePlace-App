@@ -5,10 +5,10 @@ enum Tab: Int, CaseIterable {
 
     var title: String {
         switch self {
-        case .home: return "Home"
-        case .journal: return "Journal"
-        case .mind: return "Mind"
-        case .saved: return "Saved"
+        case .home: return String(localized: "Home")
+        case .journal: return String(localized: "Journal")
+        case .mind: return String(localized: "Mind")
+        case .saved: return String(localized: "Saved")
         }
     }
     var icon: String {
@@ -43,9 +43,9 @@ enum ThemeMode: String, CaseIterable {
     }
     var label: String {
         switch self {
-        case .system: return "System"
-        case .light: return "Light"
-        case .dark: return "Dark"
+        case .system: return String(localized: "System")
+        case .light: return String(localized: "Light")
+        case .dark: return String(localized: "Dark")
         }
     }
     var icon: String {
