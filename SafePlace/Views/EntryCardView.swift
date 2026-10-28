@@ -89,11 +89,11 @@ struct EntryCardView: View {
 #Preview {
     VStack(spacing: 16) {
         EntryCardView(entry: Entry(
-            id: "1", title: "Morning walk", description: "A slow reset before work.",
+            id: "1", title: "Caminata por la mañana", description: "A slow reset before work.",
             category: "Hábitos", mood: "calm", color: "mint", createdAt: Date()
         ))
         EntryCardView(entry: Entry(
-            id: "2", title: "Calling my sister", description: "Feels lighter.",
+            id: "2", title: "Llamar a mi hermana", description: "Feels lighter.",
             category: "Personas", mood: "bright", color: "pink", createdAt: Date()
         ))
     }
