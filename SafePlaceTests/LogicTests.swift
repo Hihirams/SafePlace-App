@@ -509,7 +509,9 @@ struct MindGraphBuildTests {
 
     @Test func hubRadiusGrowsWithCountAndStops() {
         #expect(MindGraph.hubRadius(1) < MindGraph.hubRadius(10))
-        #expect(MindGraph.hubRadius(10) == MindGraph.hubRadius(40))
+        // El radio deja de crecer a partir de 14 notas.
+        #expect(MindGraph.hubRadius(14) == MindGraph.hubRadius(40))
+        #expect(MindGraph.hubRadius(10) < MindGraph.hubRadius(40))
     }
 
     @Test func emptyGraphHasNoElements() {
