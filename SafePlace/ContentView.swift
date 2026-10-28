@@ -11,6 +11,17 @@ enum Tab: Int, CaseIterable {
         case .saved: return String(localized: "Saved")
         }
     }
+    /// Identificador estable para accessibilityIdentifier y UI tests.
+    /// Nunca se deriva de ``title``: eso hacía que traducir la app rompiera los tests.
+    var slug: String {
+        switch self {
+        case .home: return "home"
+        case .journal: return "journal"
+        case .mind: return "mind"
+        case .saved: return "saved"
+        }
+    }
+
     var icon: String {
         switch self {
         case .home: return "house"
@@ -275,7 +286,7 @@ struct GlassTabBar: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(tab.title)
         .accessibilityAddTraits(sel ? [.isButton, .isSelected] : [.isButton])
-        .accessibilityIdentifier("tab-\(tab.title.lowercased())")
+        .accessibilityIdentifier("tab-\(tab.slug)")
         .accessibilityAction {
             Haptics.selection()
             withAnimation(selectorAnim) { selectedTab = tab }
