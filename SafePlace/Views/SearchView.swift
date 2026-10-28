@@ -317,7 +317,14 @@ enum SearchRanker {
                 out.append(SearchResult(entry: entry, score: score, snippet: snippet(for: entry, query: q, terms: searchTerms, color: color)))
             }
         }
-        return out.sorted { $0.score > $1.score }.prefix(30).map { $0 }
+        return out
+            .sorted { lhs, rhs in
+                if lhs.score != rhs.score { return lhs.score > rhs.score }
+                // Equal relevance: newest first, so the order never reshuffles between launches.
+                return lhs.entry.createdAt > rhs.entry.createdAt
+            }
+            .prefix(30)
+            .map { $0 }
     }
 
     static func snippet(for entry: Entry, query: String, terms: [String], color: Color) -> AttributedString {

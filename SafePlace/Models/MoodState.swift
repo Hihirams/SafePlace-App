@@ -12,19 +12,18 @@ struct MoodState {
 
     static func derive(from entries: [Entry]) -> MoodState {
         guard !entries.isEmpty else { return .neutral }
-        var counts: [String: Int] = [:]
+        // Delegate the dominant mood to MindGraph so both agree on ties.
+        guard let dominant = MindGraph.dominantMood(of: entries) else { return .neutral }
         var valenceSum: CGFloat = 0
         var energySum: CGFloat = 0
         for entry in entries {
-            counts[entry.mood, default: 0] += 1
             let mood = Mood.mood(for: entry.mood)
             valenceSum += mood.valence
             energySum += mood.energy
         }
-        guard let top = counts.max(by: { $0.value < $1.value }) else { return .neutral }
         return MoodState(
-            dominant: Mood.mood(for: top.key),
-            dominance: CGFloat(top.value) / CGFloat(entries.count),
+            dominant: dominant.mood,
+            dominance: dominant.dominance,
             valence: valenceSum / CGFloat(entries.count),
             energy: energySum / CGFloat(entries.count)
         )

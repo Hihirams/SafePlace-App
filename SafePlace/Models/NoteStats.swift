@@ -43,7 +43,9 @@ enum NoteStats {
         var current = 0
         var previous: Date?
         for day in days {
-            if let prev = previous, cal.date(byAdding: .day, value: 1, to: prev) == day {
+            // Compare calendar days, not `+86_400s`: adding one day across a DST change
+            // lands on a different hour and used to break the streak.
+            if let prev = previous, cal.dateComponents([.day], from: prev, to: day).day == 1 {
                 current += 1
             } else {
                 current = 1
@@ -69,14 +71,21 @@ enum NoteStats {
         return names
             .map { name in CategoryCount(name: name, count: entries.filter { $0.category == name }.count) }
             .filter { $0.count > 0 }
-            .sorted { $0.count > $1.count }
+            .sorted { lhs, rhs in
+                // Ties break by name so the list order is stable between launches.
+                lhs.count == rhs.count
+                    ? lhs.name.localizedStandardCompare(rhs.name) == .orderedAscending
+                    : lhs.count > rhs.count
+            }
     }
 
     static func moodCounts(_ entries: [Entry]) -> [MoodCount] {
         Mood.all
             .map { mood in MoodCount(mood: mood, count: entries.filter { $0.mood == mood.id }.count) }
             .filter { $0.count > 0 }
-            .sorted { $0.count > $1.count }
+            .sorted { lhs, rhs in
+                lhs.count == rhs.count ? lhs.mood.rank < rhs.mood.rank : lhs.count > rhs.count
+            }
     }
 
     static func last14Days(_ entries: [Entry], now: Date = Date()) -> [DayCount] {
@@ -106,6 +115,11 @@ enum NoteStats {
                 .filter { $0.count > 3 && !stopwords.contains($0) }
             for word in Set(words) { counts[word, default: 0] += 1 }
         }
-        return counts.sorted { $0.value > $1.value }.prefix(limit).map { $0.key }
+        return counts
+            .sorted { lhs, rhs in
+                lhs.value == rhs.value ? lhs.key < rhs.key : lhs.value > rhs.value
+            }
+            .prefix(limit)
+            .map(\.key)
     }
 }

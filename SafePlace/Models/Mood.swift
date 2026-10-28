@@ -32,6 +32,9 @@ struct Mood: Identifiable, Hashable {
 
     static let all: [Mood] = [.bright, .calm, .hopeful, .mixed, .heavy]
 
+    /// Stable position in ``all`` — ordering aid for deterministic tie-breaks.
+    var rank: Int { Mood.all.firstIndex(of: self) ?? Mood.all.count }
+
     static func mood(for id: String?) -> Mood {
         all.first { $0.id == id } ?? .calm
     }

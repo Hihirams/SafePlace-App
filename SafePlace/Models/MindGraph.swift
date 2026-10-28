@@ -109,11 +109,24 @@ struct MindGraph {
     // MARK: - Mood energy / dominance
 
     /// The mood that shows up most across the notes, with how dominant it is.
+    ///
+    /// Ties resolve deterministically so the app tint never flickers between launches:
+    /// first the mood whose most recent note is newer, then ``Mood/rank`` order.
     static func dominantMood(of entries: [Entry]) -> (mood: Mood, dominance: CGFloat)? {
         guard !entries.isEmpty else { return nil }
         var counts: [String: Int] = [:]
-        for entry in entries { counts[entry.mood, default: 0] += 1 }
-        guard let top = counts.max(by: { $0.value < $1.value }) else { return nil }
+        var latest: [String: Date] = [:]
+        for entry in entries {
+            counts[entry.mood, default: 0] += 1
+            latest[entry.mood] = max(latest[entry.mood] ?? .distantPast, entry.createdAt)
+        }
+        guard let top = counts.max(by: { lhs, rhs in
+            if lhs.value != rhs.value { return lhs.value < rhs.value }
+            let lhsDate = latest[lhs.key] ?? .distantPast
+            let rhsDate = latest[rhs.key] ?? .distantPast
+            if lhsDate != rhsDate { return lhsDate < rhsDate }
+            return Mood.mood(for: lhs.key).rank > Mood.mood(for: rhs.key).rank
+        }) else { return nil }
         let mood = Mood.mood(for: top.key)
         let dominance = CGFloat(top.value) / CGFloat(entries.count)
         return (mood, dominance)

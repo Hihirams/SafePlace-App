@@ -10,10 +10,11 @@ private func makeEntry(
     mood: String = "calm",
     category: String = "Habits",
     title: String = "title",
-    description: String = "description"
+    description: String = "description",
+    createdAt: Date = Date()
 ) -> Entry {
     Entry(id: id, title: title, description: description, category: category,
-          mood: mood, color: "mint", createdAt: Date())
+          mood: mood, color: "mint", createdAt: createdAt)
 }
 
 // MARK: - Categorizer
@@ -225,5 +226,118 @@ struct DateHelperTests {
         let date = Date(timeIntervalSince1970: 1_700_000_000)
         #expect(!date.formattedShort().isEmpty)
         #expect(!date.formattedMedium().isEmpty)
+    }
+}
+
+// MARK: - Determinismo (regresiones)
+
+/// Dictionary ordering in Swift is seeded per process, so any `.max(by:)` or `.sorted`
+/// that only compares counts used to return a different winner on every launch — the
+/// app tint changed color by itself. These tests pin the tie-breaks.
+@Suite("Determinismo")
+struct DeterminismTests {
+    private let base = Date(timeIntervalSince1970: 1_700_000_000)
+
+    @Test func dominantMoodTieGoesToMostRecentNote() {
+        let entries = [
+            makeEntry("1", mood: "heavy", createdAt: base),
+            makeEntry("2", mood: "bright", createdAt: base.addingTimeInterval(60))
+        ]
+        #expect(MindGraph.dominantMood(of: entries)?.mood.id == "bright")
+    }
+
+    @Test func dominantMoodTieWithSameDateUsesMoodOrder() {
+        let entries = [
+            makeEntry("1", mood: "heavy", createdAt: base),
+            makeEntry("2", mood: "bright", createdAt: base)
+        ]
+        #expect(MindGraph.dominantMood(of: entries)?.mood.id == "bright")
+    }
+
+    @Test func dominantMoodStillCountsFirst() {
+        let entries = [
+            makeEntry("1", mood: "heavy", createdAt: base),
+            makeEntry("2", mood: "heavy", createdAt: base),
+            makeEntry("3", mood: "bright", createdAt: base.addingTimeInterval(600))
+        ]
+        #expect(MindGraph.dominantMood(of: entries)?.mood.id == "heavy")
+    }
+
+    @Test func moodStateAgreesWithDominantMood() {
+        let entries = [
+            makeEntry("1", mood: "mixed", createdAt: base),
+            makeEntry("2", mood: "calm", createdAt: base.addingTimeInterval(30))
+        ]
+        let state = MoodState.derive(from: entries)
+        #expect(state.dominant.id == MindGraph.dominantMood(of: entries)?.mood.id)
+        #expect(state.dominant.id == "calm")
+    }
+
+    @Test func categoryCountsTieBreakAlphabetically() {
+        let entries = [
+            makeEntry("1", category: "Music"),
+            makeEntry("2", category: "Habits")
+        ]
+        let counts = NoteStats.categoryCounts(entries, categories: [])
+        #expect(counts.map(\.name) == ["Habits", "Music"])
+    }
+
+    @Test func moodCountsTieBreakInMoodOrder() {
+        let entries = [
+            makeEntry("1", mood: "heavy"),
+            makeEntry("2", mood: "hopeful")
+        ]
+        let counts = NoteStats.moodCounts(entries)
+        #expect(counts.map(\.mood.id) == ["hopeful", "heavy"])
+    }
+
+    @Test func topKeywordsTieBreakAlphabetically() {
+        let entries = [makeEntry("1", title: "zebra apple", description: "mango")]
+        #expect(NoteStats.topKeywords(entries) == ["apple", "mango", "zebra"])
+    }
+
+    @Test func searchResultsTieBreakNewestFirst() {
+        let entries = [
+            makeEntry("old", title: "playlist", createdAt: base),
+            makeEntry("new", title: "playlist", createdAt: base.addingTimeInterval(3_600))
+        ]
+        let results = SearchRanker.results(for: "playlist", in: entries, highlight: .black)
+        #expect(results.map(\.entry.id) == ["new", "old"])
+    }
+}
+
+// MARK: - Rachas (regresiones)
+
+@Suite("Personal best")
+struct PersonalBestTests {
+    private func day(_ offset: Int) -> Date {
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
+        return cal.date(byAdding: .day, value: offset, to: today) ?? today
+    }
+
+    @Test func ignoresGapsAndDuplicateDays() {
+        let entries = [
+            makeEntry("1", createdAt: day(-10)),
+            makeEntry("2", createdAt: day(-9)),
+            makeEntry("3", createdAt: day(-9)),
+            makeEntry("4", createdAt: day(-2))
+        ]
+        #expect(NoteStats.personalBest(entries) == 2)
+    }
+
+    @Test func spansMonthBoundary() {
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
+        let entries = [
+            makeEntry("1", createdAt: today),
+            makeEntry("2", createdAt: cal.date(byAdding: .day, value: -1, to: today) ?? today),
+            makeEntry("3", createdAt: cal.date(byAdding: .day, value: -2, to: today) ?? today)
+        ]
+        #expect(NoteStats.personalBest(entries) == 3)
+    }
+
+    @Test func singleDayIsOne() {
+        #expect(NoteStats.personalBest([makeEntry("1", createdAt: Date())]) == 1)
     }
 }
