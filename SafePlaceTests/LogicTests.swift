@@ -435,3 +435,138 @@ struct PersistenceErrorTests {
         #expect(FileManager.default.fileExists(atPath: good.path))
     }
 }
+
+// MARK: - Cobertura: stats, grafo y store
+
+@Suite("Stats diarias")
+struct DailyStatsTests {
+    private let cal = Calendar.current
+
+    private func day(_ offset: Int, hour: Int = 9) -> Date {
+        let base = cal.startOfDay(for: Date())
+        let shifted = cal.date(byAdding: .day, value: offset, to: base) ?? base
+        return cal.date(bySettingHour: hour, minute: 0, second: 0, of: shifted) ?? shifted
+    }
+
+    @Test func todayCountOnlyCountsToday() {
+        let entries = [
+            makeEntry("1", createdAt: day(0, hour: 1)),
+            makeEntry("2", createdAt: day(0, hour: 23)),
+            makeEntry("3", createdAt: day(-1))
+        ]
+        #expect(NoteStats.todayCount(entries) == 2)
+    }
+
+    @Test func daysThisWeekCountsDistinctDays() {
+        let entries = [
+            makeEntry("1", createdAt: day(0)),
+            makeEntry("2", createdAt: day(0, hour: 18))
+        ]
+        #expect(NoteStats.daysThisWeek(entries) == 1)
+    }
+
+    @Test func last14DaysBucketsInChronologicalOrder() {
+        let buckets = NoteStats.last14Days([makeEntry("1", createdAt: Date())])
+        #expect(buckets.count == 14)
+        #expect(buckets.map(\.date) == buckets.map(\.date).sorted())
+        #expect(buckets.last?.count == 1)
+        #expect(buckets.first?.count == 0)
+    }
+
+    @Test func onThisDayExcludesTodayAndOtherDates() {
+        let now = Date()
+        let lastYearSameDay = cal.date(byAdding: .year, value: -1, to: now) ?? now
+        let entries = [
+            makeEntry("hoy", createdAt: now),
+            makeEntry("hace-un-ano", createdAt: lastYearSameDay),
+            makeEntry("otro-dia", createdAt: cal.date(byAdding: .day, value: -40, to: now) ?? now)
+        ]
+        let ids = NoteStats.onThisDay(entries, now: now).map(\.id)
+        #expect(ids.contains("hace-un-ano"))
+        #expect(!ids.contains("hoy"))
+    }
+}
+
+@Suite("Grafo de Mind")
+struct MindGraphBuildTests {
+    @Test func buildsHubsNodesAndEdgesPerCategory() {
+        let graph = MindGraph.build(from: [
+            makeEntry("1", category: "Música"),
+            makeEntry("2", category: "Música"),
+            makeEntry("3", category: "Hábitos")
+        ])
+        #expect(graph.hubs.count == 2)
+        #expect(graph.hubs.map(\.category) == ["Hábitos", "Música"])  // ordenadas
+        #expect(graph.nodes.count == 3)
+        #expect(graph.edges.count == 3)
+        #expect(graph.hubs.first { $0.category == "Música" }?.count == 2)
+    }
+
+    @Test func capsTheNumberOfNodes() {
+        let many = (0..<(MindGraph.maxNodes + 40)).map { makeEntry("e\($0)") }
+        #expect(MindGraph.build(from: many).nodes.count == MindGraph.maxNodes)
+    }
+
+    @Test func hubRadiusGrowsWithCountAndStops() {
+        #expect(MindGraph.hubRadius(1) < MindGraph.hubRadius(10))
+        #expect(MindGraph.hubRadius(10) == MindGraph.hubRadius(40))
+    }
+
+    @Test func emptyGraphHasNoElements() {
+        let graph = MindGraph.build(from: [])
+        #expect(graph.hubs.isEmpty && graph.nodes.isEmpty && graph.edges.isEmpty)
+    }
+}
+
+@Suite("Store: operaciones")
+struct StoreOperationTests {
+    private func newStore() -> Store {
+        Store(fileURL: FileManager.default.temporaryDirectory
+                .appendingPathComponent("safeplace-ops-\(UUID().uuidString).json"), seed: false)
+    }
+
+    @Test func newestEntryGoesFirst() {
+        let store = newStore()
+        store.addEntry(makeEntry("vieja"))
+        store.addEntry(makeEntry("nueva"))
+        #expect(store.entries.map(\.id) == ["nueva", "vieja"])
+    }
+
+    @Test func updateEntryReplacesInPlace() {
+        let store = newStore()
+        store.addEntry(makeEntry("a", title: "antes"))
+        store.addEntry(makeEntry("b"))
+        var edited = store.entries[1]
+        edited.title = "después"
+        store.updateEntry(edited)
+        #expect(store.entries[1].title == "después")
+        #expect(store.entries.count == 2)
+    }
+
+    @Test func addCategoryTrimsAndIgnoresDuplicates() {
+        let store = newStore()
+        store.addCategory("  Viajes  ")
+        store.addCategory("Viajes")
+        store.addCategory("   ")
+        #expect(store.categories.filter { $0 == "Viajes" }.count == 1)
+        #expect(!store.categories.contains(""))
+    }
+
+    @Test func invalidBackupIsRejected() {
+        let store = newStore()
+        store.addEntry(makeEntry("a"))
+        let ok = store.importJSON(Data("no es json".utf8))
+        #expect(ok == false)
+        #expect(store.entries.count == 1)
+    }
+
+    @Test func deleteResourceRemovesOnlyThatOne() {
+        let store = newStore()
+        let r1 = Resource(id: "r1", text: "uno", url: "", type: "note", createdAt: Date())
+        let r2 = Resource(id: "r2", text: "dos", url: "", type: "note", createdAt: Date())
+        store.addResource(r1)
+        store.addResource(r2)
+        store.deleteResource(id: "r1")
+        #expect(store.resources.map(\.id) == ["r2"])
+    }
+}
