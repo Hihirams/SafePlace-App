@@ -70,10 +70,11 @@ struct EditorialNoteRow: View {
             onEdit()
         } label: {
             HStack(alignment: .top, spacing: SafeDesign.m) {
+                // Lomo de la ficha: recorre toda la altura de la fila.
                 Capsule()
                     .fill(entry.cardColor.fill)
-                    .frame(width: 4, height: 34)
-                    .padding(.top, 4)
+                    .frame(width: 4)
+                    .frame(maxHeight: .infinity)
 
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 6) {
@@ -88,7 +89,7 @@ struct EditorialNoteRow: View {
                     }
 
                     Text(entry.title)
-                        .font(SafeDesign.serifHead)
+                        .font(SafeDesign.serifTitle)
                         .foregroundStyle(SafeDesign.ink)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
@@ -118,7 +119,7 @@ struct EditorialNoteRow: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel("Note options")
             }
-            .padding(.vertical, SafeDesign.s)
+            .padding(.vertical, SafeDesign.m)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)

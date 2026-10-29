@@ -252,15 +252,13 @@ struct GlassTabBar: View {
             Haptics.tap()
             onCreate()
         } label: {
-            VStack(spacing: 3) {
+            ZStack {
+                Circle()
+                    .fill(SafeDesign.ink)
+                    .frame(width: 44, height: 44)
                 Image(systemName: "plus")
-                    .font(SafeDesign.scaled(18, weight: .semibold))
-                    .foregroundStyle(theme.tintStrong)
-                Text("Create")
-                    .font(SafeDesign.scaled(10, weight: .semibold))
-                    .minimumScaleFactor(0.8)
-                    .lineLimit(1)
-                    .foregroundStyle(SafeDesign.muted)
+                    .font(SafeDesign.scaled(18, weight: .bold))
+                    .foregroundStyle(SafeDesign.canvas)
             }
             .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
