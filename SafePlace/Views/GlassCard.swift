@@ -234,7 +234,7 @@ final class ProfilePhotoModel: ObservableObject {
     }
 }
 
-/// The user avatar: their photo, or a soft mood-tinted fallback (no letter).
+/// The user avatar: their photo, or a mood-tinted orb with the brand glyph.
 struct ProfileAvatar: View {
     var size: CGFloat = 42
     var image: UIImage?
@@ -254,9 +254,9 @@ struct ProfileAvatar: View {
                     .fill(RadialGradient(colors: [theme.tint, theme.tintStrong],
                                          center: .topLeading, startRadius: 2, endRadius: size))
                     .frame(width: size, height: size)
-                Image(systemName: "person.fill")
-                    .font(SafeDesign.scaled(size * 0.4, weight: .semibold))
-                    .foregroundStyle(SafeDesign.onPrimary.opacity(0.85))
+                // La skill prohíbe un círculo con glifo de persona: el avatar es
+                // marca, así que el fallback lleva el asterisco de SafePlace.
+                BrandMark(size: size * 0.38, color: SafeDesign.onPrimary.opacity(0.9))
             }
         }
         .overlay { Circle().strokeBorder(.white.opacity(0.5), lineWidth: 1) }
