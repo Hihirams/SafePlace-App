@@ -441,6 +441,26 @@
         }
       }
     },
+    "Delete this item?": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Eliminar este elemento?"
+          }
+        }
+      }
+    },
+    "Delete this note?": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Eliminar esta nota?"
+          }
+        }
+      }
+    },
     "Dismiss": {
       "localizations": {
         "es": {
@@ -747,6 +767,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Los insights aparecen conforme guardas."
+          }
+        }
+      }
+    },
+    "It can't be undone.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se puede deshacer."
           }
         }
       }

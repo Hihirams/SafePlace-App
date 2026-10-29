@@ -6,6 +6,8 @@ struct EntryCardView: View {
     var onDelete: () -> Void = {}
     var onDuplicate: () -> Void = {}
 
+    @State private var confirmDelete = false
+
     private var color: CardColor { entry.cardColor }
 
     var body: some View {
@@ -48,7 +50,7 @@ struct EntryCardView: View {
                 Menu {
                     Button { onEdit() } label: { Label("Edit", systemImage: "pencil") }
                     Button { onDuplicate() } label: { Label("Duplicate", systemImage: "doc.on.doc") }
-                    Button(role: .destructive) { onDelete() } label: { Label("Delete", systemImage: "trash") }
+                    Button(role: .destructive) { confirmDelete = true } label: { Label("Delete", systemImage: "trash") }
                 } label: {
                     Image(systemName: "ellipsis")
                         .font(SafeDesign.scaled(15, weight: .semibold))
@@ -80,7 +82,16 @@ struct EntryCardView: View {
         .contextMenu {
             Button { onEdit() } label: { Label("Edit", systemImage: "pencil") }
             Button { onDuplicate() } label: { Label("Duplicate", systemImage: "doc.on.doc") }
-            Button(role: .destructive) { onDelete() } label: { Label("Delete", systemImage: "trash") }
+            Button(role: .destructive) { confirmDelete = true } label: { Label("Delete", systemImage: "trash") }
+        }
+        // Borrar una nota no se puede deshacer: se confirma una vez.
+        .confirmationDialog(String(localized: "Delete this note?"),
+                            isPresented: $confirmDelete,
+                            titleVisibility: .visible) {
+            Button(String(localized: "Delete"), role: .destructive) { onDelete() }
+            Button(String(localized: "Cancel"), role: .cancel) { }
+        } message: {
+            Text(String(localized: "It can't be undone."))
         }
         .accessibilityElement(children: .combine)
         .accessibilityHint("Double tap to edit")

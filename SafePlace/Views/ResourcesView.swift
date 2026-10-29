@@ -11,6 +11,7 @@ struct ResourcesView: View {
     @State private var filter: Filter = .all
     @State private var contentWidth: CGFloat = 0
     @State private var copiedID: String?
+    @State private var resourceToDelete: Resource?
 
     enum Filter: String, CaseIterable, Identifiable {
         case all = "All"
@@ -60,6 +61,18 @@ struct ResourcesView: View {
             .padding(.top, SafeDesign.l)
             .padding(.bottom, SafeLayout.tabBarClearance(h))
             .readingWidth($contentWidth)
+        }
+        .confirmationDialog(String(localized: "Delete this item?"),
+                            isPresented: Binding(get: { resourceToDelete != nil },
+                                                 set: { if !$0 { resourceToDelete = nil } }),
+                            presenting: resourceToDelete) { resource in
+            Button(String(localized: "Delete"), role: .destructive) {
+                withAnimation(SafeDesign.spring) { store.deleteResource(id: resource.id) }
+                resourceToDelete = nil
+            }
+            Button(String(localized: "Cancel"), role: .cancel) { }
+        } message: { _ in
+            Text(String(localized: "It can't be undone."))
         }
     }
 
@@ -163,7 +176,7 @@ struct ResourcesView: View {
                 Button { convertToNote(resource) } label: { Label("Save as note", systemImage: "note.text.badge.plus") }
                 Button(role: .destructive) {
                     Haptics.warning()
-                    withAnimation(SafeDesign.spring) { store.deleteResource(id: resource.id) }
+                    resourceToDelete = resource
                 } label: { Label("Delete", systemImage: "trash") }
             } label: {
                 Image(systemName: "ellipsis")
