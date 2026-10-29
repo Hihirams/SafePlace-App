@@ -24,7 +24,7 @@ enum CardColor: String, CaseIterable, Identifiable {
         case .teal:
             return .white
         default:
-            return SafeDesign.ink
+            return SafeDesign.inkOnFill
         }
     }
 
@@ -34,7 +34,8 @@ enum CardColor: String, CaseIterable, Identifiable {
         case .teal:
             return .white.opacity(0.95)
         default:
-            return SafeDesign.ink.opacity(0.9)
+            // Misma razón que `foreground`: el pastel no cambia en modo oscuro.
+            return SafeDesign.inkOnFill.opacity(0.9)
         }
     }
 }

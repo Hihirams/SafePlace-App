@@ -669,29 +669,66 @@ struct MindCameraTests {
 /// deja de leerse, esto falla antes de publicar. Umbral AA para texto normal: 4.5:1.
 @Suite("Contraste de color")
 struct ContrastTests {
-    private func components(_ color: Color) -> (CGFloat, CGFloat, CGFloat) {
+    /// (r, g, b, a) en 0...1. `muted` y `hairline` son colores con alpha, así que
+    /// hay que componerlos sobre el fondo antes de medir: medirlos como opacos
+    /// daba un contraste falso.
+    private func components(_ color: Color) -> (CGFloat, CGFloat, CGFloat, CGFloat) {
         var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
         UIColor(color).getRed(&r, green: &g, blue: &b, alpha: &a)
-        return (r, g, b)
+        return (r, g, b, a)
     }
 
-    private func luminance(_ color: Color) -> CGFloat {
+    private func luminance(_ rgb: (CGFloat, CGFloat, CGFloat)) -> CGFloat {
         func channel(_ value: CGFloat) -> CGFloat {
             value <= 0.03928 ? value / 12.92 : pow((value + 0.055) / 1.055, 2.4)
         }
-        let (r, g, b) = components(color)
-        return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b)
+        return 0.2126 * channel(rgb.0) + 0.7152 * channel(rgb.1) + 0.0722 * channel(rgb.2)
     }
 
-    private func ratio(_ a: Color, _ b: Color) -> CGFloat {
-        let la = luminance(a), lb = luminance(b)
-        return (max(la, lb) + 0.05) / (min(la, lb) + 0.05)
+    private func ratio(_ foreground: Color, _ background: Color, dark: Bool = false) -> CGFloat {
+        let traits = UITraitCollection(userInterfaceStyle: dark ? .dark : .light)
+        let bgColor = UIColor(background).resolvedColor(with: traits)
+        let fgColor = UIColor(foreground).resolvedColor(with: traits)
+
+        var br: CGFloat = 0, bg: CGFloat = 0, bb: CGFloat = 0, ba: CGFloat = 0
+        bgColor.getRed(&br, green: &bg, blue: &bb, alpha: &ba)
+        var fr: CGFloat = 0, fg: CGFloat = 0, fb: CGFloat = 0, fa: CGFloat = 0
+        fgColor.getRed(&fr, green: &fg, blue: &fb, alpha: &fa)
+
+        // Componer el texto translúcido sobre el fondo.
+        let composited = (fa * fr + (1 - fa) * br, fa * fg + (1 - fa) * bg, fa * fb + (1 - fa) * bb)
+        let backgroundRGB = (br, bg, bb)
+        let lf = luminance(composited), lb = luminance(backgroundRGB)
+        return (max(lf, lb) + 0.05) / (min(lf, lb) + 0.05)
     }
 
     @Test func everyCardReadsItsText() {
         for card in CardColor.allCases {
-            let value = ratio(card.fill, card.foreground)
-            #expect(value >= 4.5, "La tarjeta \(card.rawValue) tiene contraste \(value)")
+            // Las fichas conservan el pastel en modo oscuro, así que el texto
+            // tiene que leerse en los dos modos (antes `ink` se invertía y
+            // quedaba texto casi blanco sobre pastel claro).
+            let light = ratio(card.fill, card.foreground)
+            let dark = ratio(card.fill, card.foreground, dark: true)
+            #expect(light >= 4.5, "La tarjeta \(card.rawValue) tiene contraste \(light)")
+            #expect(dark >= 4.5, "La tarjeta \(card.rawValue) en oscuro tiene contraste \(dark)")
+        }
+    }
+
+    @Test func textTokensPassAAOnEverySurface() {
+        let pairs: [(String, Color, Color)] = [
+            ("ink/canvas", SafeDesign.ink, SafeDesign.canvas),
+            ("ink/surfaceSoft", SafeDesign.ink, SafeDesign.surfaceSoft),
+            ("ink/surfaceCard", SafeDesign.ink, SafeDesign.surfaceCard),
+            ("inkSecondary/canvas", SafeDesign.inkSecondary, SafeDesign.canvas),
+            ("inkSecondary/surfaceSoft", SafeDesign.inkSecondary, SafeDesign.surfaceSoft),
+            ("muted/canvas", SafeDesign.muted, SafeDesign.canvas),
+            ("muted/surfaceSoft", SafeDesign.muted, SafeDesign.surfaceSoft)
+        ]
+        for (name, foreground, background) in pairs {
+            let light = ratio(foreground, background)
+            let dark = ratio(foreground, background, dark: true)
+            #expect(light >= 4.5, "Contraste insuficiente en \(name): \(light)")
+            #expect(dark >= 4.5, "Contraste insuficiente en \(name) (oscuro): \(dark)")
         }
     }
 

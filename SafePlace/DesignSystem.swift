@@ -47,6 +47,11 @@ enum SafeDesign {
     static let inkSecondary = dyn("6B625A", "B8AFA6")
     static let muted        = dynWhiteInk(0.66, 0.55)
 
+    /// Tinta para escribir **encima de un relleno de color** (tarjetas de nota,
+    /// píldoras de mood). Las fichas conservan su pastel en modo oscuro, así que
+    /// esta tinta no puede adaptarse: si se invierte, el texto desaparece.
+    static let inkOnFill    = Color(hex: "2A2622")
+
     // MARK: - Accent (peach glow)
     static let accent    = peachGlow
     static let accentDeep = Color(hex: "E8A56B")
@@ -95,8 +100,17 @@ enum SafeDesign {
     /// UIFontMetrics para que crezca con la preferencia de texto del sistema.
     static func scaled(_ size: CGFloat,
                        weight: Font.Weight = .regular,
-                       design: Font.Design = .default,
-                       relativeTo style: UIFont.TextStyle = .body) -> Font {
+                       design: Font.Design = .default) -> Font {
+        // HIG: un tamaño custom debe escalar contra el estilo de texto que le
+        // corresponde, no siempre contra .body (si no, las etiquetas de 10 pt
+        // crecen como si fueran cuerpo y rompen las filas).
+        let style: UIFont.TextStyle
+        switch size {
+        case ..<12: style = .caption2
+        case ..<15: style = .footnote
+        case ..<18: style = .subheadline
+        default:    style = .body
+        }
         let scaledSize = UIFontMetrics(forTextStyle: style).scaledValue(for: size)
         return .system(size: scaledSize, weight: weight, design: design)
     }
