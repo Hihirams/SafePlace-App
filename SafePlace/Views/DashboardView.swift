@@ -17,6 +17,12 @@ struct DashboardView: View {
     @State private var mode: DashboardMode = .overview
     @State private var justCheckedIn = false
 
+    private static let headerDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.setLocalizedDateFormatFromTemplate("EEEE d MMMM")
+        return formatter
+    }()
+
     enum DashboardMode: String, CaseIterable, Identifiable {
         case overview = "Overview"
         case insights = "Insights"
@@ -81,17 +87,31 @@ struct DashboardView: View {
 
     // MARK: - Header
 
+    /// Cabecera editorial: la marca manda, alineada a la izquierda con el glifo
+    /// del contrato, la fecha en versalitas debajo y las acciones a la derecha.
     private var header: some View {
-        ZStack {
-            Text("SafePlace")
-                .font(SafeDesign.serifTitle)
-                .foregroundStyle(SafeDesign.ink)
-
+        VStack(alignment: .leading, spacing: SafeDesign.xxs) {
             HStack {
                 avatar
                 Spacer()
                 searchButton
             }
+
+            HStack(alignment: .firstTextBaseline, spacing: SafeDesign.xs) {
+                BrandMark(size: 13, color: theme.tintStrong)
+                    .padding(.bottom, 2)
+                Text("SafePlace")
+                    .font(.system(.largeTitle, design: .serif).weight(.semibold))
+                    .tracking(0.4)
+                    .foregroundStyle(SafeDesign.ink)
+                Spacer(minLength: 0)
+            }
+            .padding(.top, SafeDesign.xxs)
+
+            Text(Self.headerDateFormatter.string(from: Date()).uppercased())
+                .font(SafeDesign.scaled(10, weight: .semibold))
+                .tracking(1.6)
+                .foregroundStyle(SafeDesign.muted)
         }
     }
 
@@ -131,8 +151,8 @@ struct DashboardView: View {
 
     private var mascotHero: some View {
         VStack(spacing: SafeDesign.xs) {
-            MascotView(size: 200, animate: true)
-                .frame(height: 224)
+            MascotView(size: 168, animate: true)
+                .frame(height: 186)
             Text("I'm here with you.")
                 .font(SafeDesign.caption)
                 .foregroundStyle(SafeDesign.muted)
@@ -147,7 +167,7 @@ struct DashboardView: View {
         VStack(alignment: .leading, spacing: SafeDesign.m) {
             HStack(alignment: .firstTextBaseline) {
                 Text("How are you feeling?")
-                    .font(SafeDesign.serifTitle)
+                    .font(SafeDesign.serifHero)
                     .foregroundStyle(SafeDesign.ink)
                 Spacer()
                 Text(String(localized: "\(daysThisWeek) this week · best \(personalBest)"))
