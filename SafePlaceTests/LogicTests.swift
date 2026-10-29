@@ -1,6 +1,7 @@
 import Testing
 import Foundation
 import SwiftUI
+import UIKit
 @testable import SafePlace
 
 // MARK: - Helpers
@@ -660,4 +661,45 @@ struct MindCameraTests {
         #expect(cam.targetZoom == 1.1)
         #expect(cam.targetPan == CGSize(width: 5, height: 5))
     }
+}
+
+// MARK: - Contraste (WCAG AA)
+
+/// Guarda contra cambios futuros de paleta: si alguien toca un color y el texto
+/// deja de leerse, esto falla antes de publicar. Umbral AA para texto normal: 4.5:1.
+@Suite("Contraste de color")
+struct ContrastTests {
+    private func components(_ color: Color) -> (CGFloat, CGFloat, CGFloat) {
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        UIColor(color).getRed(&r, green: &g, blue: &b, alpha: &a)
+        return (r, g, b)
+    }
+
+    private func luminance(_ color: Color) -> CGFloat {
+        func channel(_ value: CGFloat) -> CGFloat {
+            value <= 0.03928 ? value / 12.92 : pow((value + 0.055) / 1.055, 2.4)
+        }
+        let (r, g, b) = components(color)
+        return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b)
+    }
+
+    private func ratio(_ a: Color, _ b: Color) -> CGFloat {
+        let la = luminance(a), lb = luminance(b)
+        return (max(la, lb) + 0.05) / (min(la, lb) + 0.05)
+    }
+
+    @Test func everyCardReadsItsText() {
+        for card in CardColor.allCases {
+            let value = ratio(card.fill, card.foreground)
+            #expect(value >= 4.5, "La tarjeta \(card.rawValue) tiene contraste \(value)")
+        }
+    }
+
+    @Test func moodPillsReadInk() {
+        for mood in Mood.all {
+            let value = ratio(mood.color, SafeDesign.ink)
+            #expect(value >= 4.5, "El mood \(mood.id) tiene contraste \(value)")
+        }
+    }
+
 }
