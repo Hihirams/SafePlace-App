@@ -1,6 +1,18 @@
 import SwiftUI
 
 struct JournalView: View {
+    private static let dayNumberFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.setLocalizedDateFormatFromTemplate("d")
+        return formatter
+    }()
+
+    private static let dayLabelFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.setLocalizedDateFormatFromTemplate("EEE MMM")
+        return formatter
+    }()
+
     @ObservedObject var store: Store
     @Environment(\.horizontalSizeClass) private var h
     @Environment(\.verticalSizeClass) private var v
@@ -135,10 +147,16 @@ struct JournalView: View {
                     .font(SafeDesign.scaled(11, weight: .bold))
                     .foregroundStyle(SafeDesign.muted)
                     .rotationEffect(.degrees(isCollapsed ? 0 : 90))
-                Text(group.day.formattedDay().uppercased())
-                    .font(SafeDesign.scaled(12, weight: .semibold))
-                    .tracking(1.5)
-                    .foregroundStyle(SafeDesign.inkSecondary)
+                // Motivo del contrato: numeral serif grande + etiqueta sans chica.
+                HStack(alignment: .firstTextBaseline, spacing: SafeDesign.xs) {
+                    Text(Self.dayNumberFormatter.string(from: group.day))
+                        .font(SafeDesign.scaled(30, weight: .semibold, design: .serif))
+                        .foregroundStyle(SafeDesign.ink)
+                    Text(Self.dayLabelFormatter.string(from: group.day).uppercased())
+                        .font(SafeDesign.scaled(11, weight: .semibold))
+                        .tracking(1.4)
+                        .foregroundStyle(SafeDesign.inkSecondary)
+                }
                 Spacer()
                 Text("\(group.entries.count)")
                     .font(SafeDesign.scaled(11, weight: .semibold))
