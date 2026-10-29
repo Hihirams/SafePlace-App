@@ -17,12 +17,6 @@ struct DashboardView: View {
     @State private var mode: DashboardMode = .overview
     @State private var justCheckedIn = false
 
-    private static let headerDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.setLocalizedDateFormatFromTemplate("EEEE d MMMM")
-        return formatter
-    }()
-
     enum DashboardMode: String, CaseIterable, Identifiable {
         case overview = "Overview"
         case insights = "Insights"
@@ -87,31 +81,20 @@ struct DashboardView: View {
 
     // MARK: - Header
 
-    /// Cabecera editorial: la marca manda, alineada a la izquierda con el glifo
-    /// del contrato, la fecha en versalitas debajo y las acciones a la derecha.
+    /// Cabecera original: el wordmark centrado, con avatar y buscador a los lados.
+    /// (Se probó una versión editorial alineada a la izquierda con el glifo y la
+    /// fecha; el usuario prefirió esta.)
     private var header: some View {
-        VStack(alignment: .leading, spacing: SafeDesign.xxs) {
+        ZStack {
+            Text("SafePlace")
+                .font(SafeDesign.serifTitle)
+                .foregroundStyle(SafeDesign.ink)
+
             HStack {
                 avatar
                 Spacer()
                 searchButton
             }
-
-            HStack(alignment: .firstTextBaseline, spacing: SafeDesign.xs) {
-                BrandMark(size: 13, color: theme.tintStrong)
-                    .padding(.bottom, 2)
-                Text("SafePlace")
-                    .font(.system(.largeTitle, design: .serif).weight(.semibold))
-                    .tracking(0.4)
-                    .foregroundStyle(SafeDesign.ink)
-                Spacer(minLength: 0)
-            }
-            .padding(.top, SafeDesign.xxs)
-
-            Text(Self.headerDateFormatter.string(from: Date()).uppercased())
-                .font(SafeDesign.scaled(10, weight: .semibold))
-                .tracking(1.6)
-                .foregroundStyle(SafeDesign.muted)
         }
     }
 
