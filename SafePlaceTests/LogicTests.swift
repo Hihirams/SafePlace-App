@@ -617,3 +617,47 @@ struct MarkdownExportTests {
         #expect(store().exportMarkdown().hasPrefix("# SafePlace"))
     }
 }
+
+// MARK: - Cámara del grafo (extraída para poder probarla)
+
+@Suite("MindCamera")
+struct MindCameraTests {
+    @Test func advanceMovesTowardTheTarget() {
+        let cam = MindCamera()
+        cam.setTarget(zoom: 2, pan: CGSize(width: 10, height: 0))
+        let start = Date()
+        cam.advance(to: start)                                  // primer frame: sin dt
+        cam.advance(to: start.addingTimeInterval(0.05))
+        #expect(cam.zoom > 1)
+        #expect(cam.zoom < 2.5)                                 // amortiguado, no salta de golpe
+        #expect(cam.pan.width > 0)
+    }
+
+    @Test func snapJumpsStraightToTheTargets() {
+        let cam = MindCamera()
+        cam.setTarget(zoom: 1.6, pan: CGSize(width: -20, height: 5))
+        cam.snap()
+        #expect(cam.zoom == 1.6)
+        #expect(cam.pan == CGSize(width: -20, height: 5))
+        #expect(cam.contagion == 1)
+    }
+
+    @Test func resetReturnsToRestingState() {
+        let cam = MindCamera()
+        cam.setDirect(zoom: 3, pan: CGSize(width: 40, height: 40))
+        cam.reset()
+        #expect(cam.zoom == 1)
+        #expect(cam.pan == .zero)
+        #expect(cam.contagion == 0)
+        #expect(cam.pulse == 0)
+    }
+
+    @Test func setDirectAdoptsDragWithoutLatency() {
+        let cam = MindCamera()
+        cam.setTarget(zoom: 2, pan: .zero)
+        cam.setDirect(zoom: 1.1, pan: CGSize(width: 5, height: 5))
+        #expect(cam.zoom == 1.1)
+        #expect(cam.targetZoom == 1.1)
+        #expect(cam.targetPan == CGSize(width: 5, height: 5))
+    }
+}
