@@ -81,8 +81,11 @@ struct RootView: View {
     @StateObject private var store = Store()
     @StateObject private var profile = ProfilePhotoModel()
     @State private var showSplash = true
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    private let splashDuration: TimeInterval = 5.0
+    /// HIG pide minimizar la UI con temporizador: 5 s en cada arranque es un
+    /// bloqueo, no una animación de marca.
+    private let splashDuration: TimeInterval = 2.4
     private let splashFade: TimeInterval = 0.55
     private let splashTail: TimeInterval = 0.4
 
@@ -119,7 +122,8 @@ struct RootView: View {
 
     private func scheduleSplashDismiss() {
         Task {
-            let hold = max(0, splashDuration - splashFade)
+            let total = reduceMotion ? 0.7 : splashDuration
+            let hold = max(0, total - splashFade)
             try? await Task.sleep(nanoseconds: UInt64(hold * 1_000_000_000))
             withAnimation(.easeInOut(duration: splashFade)) { showSplash = false }
         }
@@ -299,6 +303,7 @@ struct GlassTabBar: View {
 struct SplashView: View {
     var typingDuration: Double = 4.05
     @Environment(\.appTheme) private var theme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var fillIn = false
     @State private var revealed = 0
     private let word = "SafePlace"
@@ -324,6 +329,12 @@ struct SplashView: View {
                 .foregroundStyle(SafeDesign.onPrimary)
         }
         .onAppear {
+            // Reduce Motion: el wordmark aparece completo, sin tecleo ni fundidos.
+            if reduceMotion {
+                fillIn = true
+                revealed = word.count
+                return
+            }
             withAnimation(.easeOut(duration: 0.6)) { fillIn = true }
             Task {
                 let steps = word.count + 1
