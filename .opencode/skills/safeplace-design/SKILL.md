@@ -83,6 +83,20 @@ selection transition, one ambient motion), all respecting Reduce Motion.
 - Emoji/emoji-like SF symbols as the only way to convey meaning.
 - Generic copy ("Elevate…", "Get started") — write in product language.
 
+## Verificación automática (CI)
+
+Dos scripts convierten el contrato en fallos de build:
+
+- `scripts/check_localization.py` — toda la copia de UI debe existir en
+  `Localizable.xcstrings` (claves en inglés, valor en `es`).
+- `scripts/check_design.py` — falla si aparece `.system(size:)` fuera de
+  `DesignSystem`, si se combinan hijos para VoiceOver sin
+  `.accessibilityAction`, o si vuelve copy genérica de la lista negra.
+
+Los tamaños tipográficos custom pasan **siempre** por `SafeDesign.scaled(...)`,
+que escala con Dynamic Type contra el estilo de texto que corresponde al tamaño
+(caption2 / footnote / subheadline / body) en vez de escalar todo contra `.body`.
+
 ## Litmus checks
 - Is the screen unmistakably SafePlace (not a template)?
 - Is there one clear dominant element and clear hierarchy by type/space?

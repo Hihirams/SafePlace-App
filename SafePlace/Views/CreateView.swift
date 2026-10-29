@@ -117,22 +117,29 @@ struct CreateView: View {
     // MARK: - Bottom bar
 
     private var bottomBar: some View {
-        HStack(spacing: SafeDesign.s) {
+        // Área de toque de 44 pt por chip; el círculo visible sigue en 34 y el
+        // espaciado baja a 4 para que la fila no crezca en iPhone chico.
+        HStack(spacing: SafeDesign.xxs) {
             ForEach(Mood.all) { m in
                 Button {
                     Haptics.selection()
                     withAnimation(SafeDesign.springSnappy) { mood = m.id }
                 } label: {
-                    Circle()
-                        .fill(mood == m.id ? m.color : SafeDesign.surfaceSoft)
-                        .frame(width: 34, height: 34)
+                    Color.clear
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                         .overlay {
-                            Image(systemName: m.icon)
-                                .font(SafeDesign.scaled(14, weight: .semibold))
-                                .foregroundStyle(SafeDesign.ink)
-                        }
-                        .overlay {
-                            Circle().strokeBorder(mood == m.id ? SafeDesign.ink.opacity(0.25) : SafeDesign.hairline, lineWidth: 1)
+                            Circle()
+                                .fill(mood == m.id ? m.color : SafeDesign.surfaceSoft)
+                                .frame(width: 34, height: 34)
+                                .overlay {
+                                    Image(systemName: m.icon)
+                                        .font(SafeDesign.scaled(14, weight: .semibold))
+                                        .foregroundStyle(SafeDesign.ink)
+                                }
+                                .overlay {
+                                    Circle().strokeBorder(mood == m.id ? SafeDesign.ink.opacity(0.25) : SafeDesign.hairline, lineWidth: 1)
+                                }
                         }
                 }
                 .buttonStyle(.plain)

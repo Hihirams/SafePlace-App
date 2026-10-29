@@ -185,22 +185,29 @@ struct EntryFormView: View {
                 Button {
                     withAnimation(SafeDesign.spring) { color = c }
                 } label: {
-                    Circle()
-                        .fill(c.fill)
-                        .frame(width: 36, height: 36)
+                    // 44 pt de área de toque; la muestra visible sigue en 36.
+                    Color.clear
+                        .frame(height: 44)
+                        .contentShape(Rectangle())
                         .overlay {
                             Circle()
-                                .strokeBorder(color == c ? SafeDesign.ink : .clear, lineWidth: 2)
-                        }
-                        .overlay {
-                            if color == c {
-                                Image(systemName: "checkmark")
-                                    .font(SafeDesign.scaled(13, weight: .bold))
-                                    .foregroundStyle(c.foreground)
-                            }
+                                .fill(c.fill)
+                                .frame(width: 36, height: 36)
+                                .overlay {
+                                    Circle()
+                                        .strokeBorder(color == c ? SafeDesign.ink : .clear, lineWidth: 2)
+                                }
+                                .overlay {
+                                    if color == c {
+                                        Image(systemName: "checkmark")
+                                            .font(SafeDesign.scaled(13, weight: .bold))
+                                            .foregroundStyle(c.foreground)
+                                    }
+                                }
                         }
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel(String(localized: "Card color"))
             }
         }
     }
