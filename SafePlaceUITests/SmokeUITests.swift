@@ -58,12 +58,12 @@ final class SmokeUITests: XCTestCase {
         createNote(app, text: text)
         XCTAssertTrue(app.staticTexts[text].waitForExistence(timeout: 10))
 
-        let menu = app.buttons["Note options"].firstMatch
-        XCTAssertTrue(menu.waitForExistence(timeout: 8), "No hay menú de opciones en la tarjeta")
-        menu.tap()
+        // La tarjeta combina sus hijos para VoiceOver, así que el menú se abre
+        // con pulsación larga (context menu) en vez de tocando el ellipsis.
+        app.staticTexts[text].press(forDuration: 1.2)
 
         let delete = app.buttons["Delete"].firstMatch
-        XCTAssertTrue(delete.waitForExistence(timeout: 5))
+        XCTAssertTrue(delete.waitForExistence(timeout: 8), "No se abrió el menú contextual")
         delete.tap()
 
         // Primero confirma: la nota sigue visible y aparece Cancelar.
