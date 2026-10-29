@@ -26,35 +26,30 @@ struct InsightsView: View {
                 emptyState
             } else {
                 summaryRow
+                Hairline()
                 activityChart
-                if !moodCounts.isEmpty { moodSection }
-                if !categoryCounts.isEmpty { categorySection }
-                if !topKeywords.isEmpty { keywordsSection }
+                if !moodCounts.isEmpty {
+                    Hairline()
+                    moodSection
+                }
+                if !categoryCounts.isEmpty {
+                    Hairline()
+                    categorySection
+                }
+                if !topKeywords.isEmpty {
+                    Hairline()
+                    keywordsSection
+                }
             }
         }
     }
 
+    /// Una línea, no una tira de tarjetas de métricas (la skill lo prohíbe).
     private var summaryRow: some View {
-        HStack(spacing: SafeDesign.m) {
-            metricCard(number: "\(store.entries.count)", label: String(localized: "notes"))
-            metricCard(number: "\(store.categories.count)", label: String(localized: "categories"))
-            metricCard(number: "\(personalBest)", label: String(localized: "best run"))
-        }
-    }
-
-    private func metricCard(number: String, label: String) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(number)
-                .font(SafeDesign.scaled(24, weight: .bold, design: .rounded))
-                .foregroundStyle(SafeDesign.ink)
-            Text(label.uppercased())
-                .font(SafeDesign.scaled(10, weight: .medium))
-                .tracking(1)
-                .foregroundStyle(SafeDesign.muted)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(SafeDesign.m)
-        .background(SafeDesign.surfaceSoft, in: RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous))
+        Text(String(localized: "\(store.entries.count) notes · \(store.categories.count) categories · best run \(personalBest)"))
+            .font(SafeDesign.caption)
+            .foregroundStyle(SafeDesign.inkSecondary)
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var activityChart: some View {
@@ -65,7 +60,7 @@ struct InsightsView: View {
             Chart(last14Days) { item in
                 BarMark(
                     x: .value(String(localized: "Day"), item.date, unit: .day),
-                    y: .value("Notes", item.count)
+                    y: .value(String(localized: "notes"), item.count)
                 )
                 .foregroundStyle(theme.tintStrong.gradient)
                 .cornerRadius(4)
@@ -84,8 +79,7 @@ struct InsightsView: View {
             .frame(height: 150)
             .accessibilityLabel("Notes per day over the last 14 days")
         }
-        .padding(SafeDesign.l)
-        .background(SafeDesign.surfaceSoft, in: RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous))
+        .padding(.vertical, SafeDesign.l)
     }
 
     private var moodSection: some View {
@@ -117,8 +111,7 @@ struct InsightsView: View {
             .frame(height: CGFloat(max(moodCounts.count, 1)) * 34)
             .accessibilityLabel("Notes by mood")
         }
-        .padding(SafeDesign.l)
-        .background(SafeDesign.surfaceSoft, in: RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous))
+        .padding(.vertical, SafeDesign.l)
     }
 
     private var categorySection: some View {
@@ -148,8 +141,7 @@ struct InsightsView: View {
                 }
             }
         }
-        .padding(SafeDesign.l)
-        .background(SafeDesign.surfaceSoft, in: RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous))
+        .padding(.vertical, SafeDesign.l)
     }
 
     private var keywordsSection: some View {
@@ -168,8 +160,7 @@ struct InsightsView: View {
                 }
             }
         }
-        .padding(SafeDesign.l)
-        .background(SafeDesign.surfaceSoft, in: RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous))
+        .padding(.vertical, SafeDesign.l)
     }
 
     private func fraction(_ count: Int) -> CGFloat {

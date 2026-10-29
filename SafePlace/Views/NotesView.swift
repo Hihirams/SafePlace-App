@@ -79,8 +79,7 @@ struct NotesView: View {
             step(3, color: SafeDesign.accentDeep, text: String(localized: "Tap Keep it to move it into your safe place as a note card."))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(SafeDesign.l)
-        .background(SafeDesign.surfaceSoft, in: RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous))
+        .padding(.vertical, SafeDesign.l)
     }
 
     private func step(_ n: Int, color: Color, text: String) -> some View {

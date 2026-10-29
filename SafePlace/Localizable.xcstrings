@@ -41,6 +41,16 @@
         }
       }
     },
+    "%lld notes · %lld categories · best run %lld": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld notas · %2$lld categorías · mejor racha %3$lld"
+          }
+        }
+      }
+    },
     "%lld this week · best %lld": {
       "localizations": {
         "es": {
@@ -951,6 +961,16 @@
         }
       }
     },
+    "Next": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Siguiente"
+          }
+        }
+      }
+    },
     "No moods yet.": {
       "localizations": {
         "es": {
@@ -1117,6 +1137,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Abre una nota en Notas de Apple, toca Compartir y elige SafePlace."
+          }
+        }
+      }
+    },
+    "Open my safe place": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir mi lugar seguro"
           }
         }
       }

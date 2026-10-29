@@ -72,7 +72,7 @@ struct OnboardingView: View {
 
                 // Actions
                 VStack(spacing: SafeDesign.l) {
-                    PrimaryButton(title: isLast ? String(localized: "Get started") : String(localized: "Continue"), icon: isLast ? nil : "arrow.right") {
+                    PrimaryButton(title: isLast ? String(localized: "Open my safe place") : String(localized: "Next"), icon: isLast ? nil : "arrow.right") {
                         if isLast {
                             withAnimation(.easeInOut(duration: 0.4)) { hasSeenOnboarding = true }
                         } else {
