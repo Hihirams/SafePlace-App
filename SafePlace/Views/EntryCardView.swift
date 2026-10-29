@@ -95,6 +95,11 @@ struct EntryCardView: View {
         }
         .accessibilityElement(children: .combine)
         .accessibilityHint("Double tap to edit")
+        // Los hijos están combinados: sin estas acciones el menú de opciones
+        // desaparece del árbol de VoiceOver y no hay forma de editar/duplicar/borrar.
+        .accessibilityAction(named: String(localized: "Edit")) { onEdit() }
+        .accessibilityAction(named: String(localized: "Duplicate")) { onDuplicate() }
+        .accessibilityAction(named: String(localized: "Delete")) { confirmDelete = true }
     }
 }
 
