@@ -40,7 +40,10 @@ selection transition, one ambient motion), all respecting Reduce Motion.
 ### Type
 - Display / titles: **system serif** (`Font.system(.title, design: .serif)`), weight ≤ 600.
 - Body / UI: SF (`Font.system(.subheadline/.footnote/...)`), semantic styles only.
-- Wordmark "SafePlace": serif, the loudest text on Home.
+- Wordmark "SafePlace": serif, **centrado** en la cabecera de Home, con avatar
+  y buscador a los lados. Es preferencia explícita del usuario: no moverlo a la
+  izquierda, no añadirle glifo ni fecha debajo (se probó en el build 1.44 y se
+  revirtió).
 
 ### Space & shape
 - Spacing scale in 4s: 4 / 8 / 12 / 16 / 20 / 24 / 32 / 48.
