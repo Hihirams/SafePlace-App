@@ -47,7 +47,7 @@ final class SmokeUITests: XCTestCase {
         waitForHome(app)
         let text = "Nota E2E \(Int(Date().timeIntervalSince1970))"
         createNote(app, text: text)
-        XCTAssertTrue(app.staticTexts[text].waitForExistence(timeout: 10),
+        XCTAssertTrue(app.staticTexts[text].firstMatch.waitForExistence(timeout: 10),
                       "La nota recién creada no aparece en Home")
     }
 
@@ -56,11 +56,11 @@ final class SmokeUITests: XCTestCase {
         waitForHome(app)
         let text = "Borrar E2E \(Int(Date().timeIntervalSince1970))"
         createNote(app, text: text)
-        XCTAssertTrue(app.staticTexts[text].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.staticTexts[text].firstMatch.waitForExistence(timeout: 10))
 
         // La tarjeta combina sus hijos para VoiceOver, así que el menú se abre
         // con pulsación larga (context menu) en vez de tocando el ellipsis.
-        app.staticTexts[text].press(forDuration: 1.2)
+        app.staticTexts[text].firstMatch.press(forDuration: 1.2)
 
         let delete = app.buttons["Delete"].firstMatch
         XCTAssertTrue(delete.waitForExistence(timeout: 8), "No se abrió el menú contextual")
@@ -70,6 +70,6 @@ final class SmokeUITests: XCTestCase {
         let cancel = app.buttons["Cancel"].firstMatch
         XCTAssertTrue(cancel.waitForExistence(timeout: 5), "No apareció la confirmación de borrado")
         cancel.tap()
-        XCTAssertTrue(app.staticTexts[text].exists, "La nota se borró sin confirmar")
+        XCTAssertTrue(app.staticTexts[text].firstMatch.exists, "La nota se borró sin confirmar")
     }
 }
