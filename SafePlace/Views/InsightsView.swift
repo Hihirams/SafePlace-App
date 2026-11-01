@@ -46,7 +46,7 @@ struct InsightsView: View {
 
     /// Una línea, no una tira de tarjetas de métricas (la skill lo prohíbe).
     private var summaryRow: some View {
-        Text(String(localized: "\(store.entries.count) notes · \(store.categories.count) categories · best run \(personalBest)"))
+        Text(String(localized: "\(store.entries.count) notes · \(store.categories.count) categories · best streak \(NoteStats.daysLabel(personalBest))"))
             .font(SafeDesign.caption)
             .foregroundStyle(SafeDesign.inkSecondary)
             .frame(maxWidth: .infinity, alignment: .leading)

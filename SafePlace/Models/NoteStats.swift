@@ -34,6 +34,37 @@ enum NoteStats {
         return days.count
     }
 
+    /// Dias consecutivos con al menos una nota, contando desde hoy (o desde ayer,
+    /// para no castigar a quien todavía no escribe hoy). Si la última nota es más
+    /// vieja, la racha está en cero.
+    static func currentStreak(_ entries: [Entry], now: Date = Date()) -> Int {
+        let cal = Calendar.current
+        let days = Set(entries.map { cal.startOfDay(for: $0.createdAt) })
+        guard !days.isEmpty else { return 0 }
+        let today = cal.startOfDay(for: now)
+        guard let yesterday = cal.date(byAdding: .day, value: -1, to: today) else { return 0 }
+        var cursor: Date
+        if days.contains(today) {
+            cursor = today
+        } else if days.contains(yesterday) {
+            cursor = yesterday
+        } else {
+            return 0
+        }
+        var streak = 0
+        while days.contains(cursor) {
+            streak += 1
+            guard let previous = cal.date(byAdding: .day, value: -1, to: cursor) else { break }
+            cursor = previous
+        }
+        return streak
+    }
+
+    /// "1 día" / "3 días": la unidad que faltaba en las métricas de racha.
+    static func daysLabel(_ count: Int) -> String {
+        count == 1 ? String(localized: "1 day") : String(localized: "\(count) days")
+    }
+
     /// Longest run of consecutive days with at least one note. Gentle, not punitive.
     static func personalBest(_ entries: [Entry]) -> Int {
         let cal = Calendar.current

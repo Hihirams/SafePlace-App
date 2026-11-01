@@ -466,6 +466,33 @@ struct DailyStatsTests {
         #expect(NoteStats.daysThisWeek(entries) == 1)
     }
 
+    @Test func currentStreakCountsConsecutiveDaysEndingToday() {
+        let entries = [
+            makeEntry("1", createdAt: day(0)),
+            makeEntry("2", createdAt: day(-1)),
+            makeEntry("3", createdAt: day(-2)),
+            makeEntry("4", createdAt: day(-5))
+        ]
+        #expect(NoteStats.currentStreak(entries) == 3)
+    }
+
+    @Test func currentStreakSurvivesNotWritingTodayYet() {
+        let entries = [
+            makeEntry("1", createdAt: day(-1)),
+            makeEntry("2", createdAt: day(-2))
+        ]
+        #expect(NoteStats.currentStreak(entries) == 2)
+    }
+
+    @Test func currentStreakZeroWhenLastNoteIsOlderThanYesterday() {
+        let entries = [makeEntry("1", createdAt: day(-3))]
+        #expect(NoteStats.currentStreak(entries) == 0)
+    }
+
+    @Test func currentStreakZeroWhenEmpty() {
+        #expect(NoteStats.currentStreak([]) == 0)
+    }
+
     @Test func last14DaysBucketsInChronologicalOrder() {
         let buckets = NoteStats.last14Days([makeEntry("1", createdAt: Date())])
         #expect(buckets.count == 14)

@@ -21,6 +21,16 @@
         }
       }
     },
+    "%lld days": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld días"
+          }
+        }
+      }
+    },
     "%lld matches": {
       "localizations": {
         "es": {
@@ -41,22 +51,12 @@
         }
       }
     },
-    "%lld notes · %lld categories · best run %lld": {
+    "%lld notes · %lld categories · best streak %@": {
       "localizations": {
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$lld notas · %2$lld categorías · mejor racha %3$lld"
-          }
-        }
-      }
-    },
-    "%lld this week · best %lld": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$lld esta semana · mejor %2$lld"
+            "value": "%1$lld notas · %2$lld categorías · mejor racha de %3$@"
           }
         }
       }
@@ -67,6 +67,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "+ Nueva"
+          }
+        }
+      }
+    },
+    "1 day": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 día"
           }
         }
       }
@@ -117,6 +127,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Una línea o dos, si te apetece…"
+          }
+        }
+      }
+    },
+    "A note today starts your streak.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una nota hoy empieza tu racha."
           }
         }
       }
@@ -981,6 +1001,16 @@
         }
       }
     },
+    "No note today · your record is %@": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hoy todavía no hay nota · tu récord es %1$@"
+          }
+        }
+      }
+    },
     "No notes match “%@”.": {
       "localizations": {
         "es": {
@@ -1471,6 +1501,16 @@
         }
       }
     },
+    "Streak of %@ · record %@": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Racha de %1$@ · récord de %2$@"
+          }
+        }
+      }
+    },
     "Suggested from your note": {
       "localizations": {
         "es": {
@@ -1807,16 +1847,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tu pensamiento"
-          }
-        }
-      }
-    },
-    "best run": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "mejor racha"
           }
         }
       }

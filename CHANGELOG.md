@@ -4,6 +4,15 @@ Todos los cambios notables de SafePlace. El formato sigue [Keep a Changelog](htt
 
 Desde el **build 23** la versión se calcula como `1.<build>` (ver [README → Versión y releases](README.md#versión-y-releases)). Los builds anteriores se listan por su número de build, que es el identificador estable de cada release.
 
+## [1.48] — build 48 · 2026-10-31
+### Corregido
+- **"0 esta semana · mejor 2" no se entendía**: la línea junto a "¿Cómo te sientes?" era un conteo de días de la semana natural (que se reseteaba cada domingo y por eso marcaba 0) más una racha sin unidad ni sustantivo. Ahora debajo de los sentimientos dice **"Racha de 3 días · récord de 5 días"**, o "Hoy todavía no hay nota · tu récord es 5 días" cuando la racha está cortada.
+### Cambiado
+- El título "¿Cómo te sientes?" usa todo el ancho de la tarjeta (antes el micro-texto lo partía en dos líneas) y la tarjeta ya no cierra con hairline.
+- **Insights**: la línea de resumen dice "mejor racha de 5 días" en vez de "mejor racha 5".
+### Añadido
+- `NoteStats.currentStreak`: días consecutivos con nota contando desde hoy o ayer, con 4 tests.
+
 ## [1.47] — build 47 · 2026-10-31
 ### Cambiado
 - **Home · panel de stats sin hairlines**: las dos líneas grises que cerraban "Por categoría" y "Sentimientos" desaparecen; las secciones se separan solo por espaciado del grid.

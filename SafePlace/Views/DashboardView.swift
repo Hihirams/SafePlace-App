@@ -34,7 +34,7 @@ struct DashboardView: View {
         store.entries.filter { Calendar.current.isDateInToday($0.createdAt) }
     }
 
-    private var daysThisWeek: Int { NoteStats.daysThisWeek(store.entries) }
+    private var currentStreak: Int { NoteStats.currentStreak(store.entries) }
 
     private var personalBest: Int { NoteStats.personalBest(store.entries) }
 
@@ -148,15 +148,10 @@ struct DashboardView: View {
 
     private var todayCard: some View {
         VStack(alignment: .leading, spacing: SafeDesign.m) {
-            HStack(alignment: .firstTextBaseline) {
-                Text("How are you feeling?")
-                    .font(SafeDesign.serifHero)
-                    .foregroundStyle(SafeDesign.ink)
-                Spacer()
-                Text(String(localized: "\(daysThisWeek) this week · best \(personalBest)"))
-                    .font(SafeDesign.micro)
-                    .foregroundStyle(SafeDesign.muted)
-            }
+            Text("How are you feeling?")
+                .font(SafeDesign.serifHero)
+                .foregroundStyle(SafeDesign.ink)
+                .fixedSize(horizontal: false, vertical: true)
 
             HStack(spacing: SafeDesign.xs) {
                 ForEach(Mood.all) { m in
@@ -189,10 +184,26 @@ struct DashboardView: View {
                     .font(SafeDesign.caption)
                     .foregroundStyle(theme.tintStrong)
                     .transition(.opacity)
+            } else {
+                Text(streakLine)
+                    .font(SafeDesign.caption)
+                    .foregroundStyle(SafeDesign.muted)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-
-            Hairline()
         }
+    }
+
+    /// Contexto de constancia en palabras completas: racha activa y récord.
+    /// Antes era "0 esta semana · mejor 2", que además de no traer unidades se
+    /// ponía en cero cada vez que arrancaba la semana.
+    private var streakLine: String {
+        let best = NoteStats.daysLabel(personalBest)
+        if currentStreak == 0 {
+            return personalBest > 0
+                ? String(localized: "No note today · your record is \(best)")
+                : String(localized: "A note today starts your streak.")
+        }
+        return String(localized: "Streak of \(NoteStats.daysLabel(currentStreak)) · record \(best)")
     }
 
     // MARK: - On this day
