@@ -4,6 +4,11 @@ Todos los cambios notables de SafePlace. El formato sigue [Keep a Changelog](htt
 
 Desde el **build 23** la versión se calcula como `1.<build>` (ver [README → Versión y releases](README.md#versión-y-releases)). Los builds anteriores se listan por su número de build, que es el identificador estable de cada release.
 
+## [1.47] — build 47 · 2026-10-31
+### Cambiado
+- **Home · panel de stats sin hairlines**: las dos líneas grises que cerraban "Por categoría" y "Sentimientos" desaparecen; las secciones se separan solo por espaciado del grid.
+- **Filas de categoría reacomodadas**: columna de nombre fija de 92 pt, conteos con dígitos monoespaciados y alineados a la derecha, espaciado uniforme de 10 pt entre filas y un mínimo de 6 pt de barra para que una categoría con una sola nota no se desvanezca.
+
 ## [1.41] — build 41 · 2026-10-29
 ### Añadido
 - **Textura de papel** (grano determinista al 3%) en el fondo, el motivo que pedía el contrato y no existía.

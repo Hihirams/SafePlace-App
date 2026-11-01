@@ -243,66 +243,73 @@ struct DashboardView: View {
 
     private var statsPanel: some View {
         let columns = SafeLayout.columns(forWidth: contentWidth)
-        return LazyVGrid(columns: columns, spacing: SafeDesign.m) {
+        return LazyVGrid(columns: columns, spacing: SafeDesign.l) {
             statCard(number: "\(store.entries.count)", label: store.entries.count == 1 ? String(localized: "thing saved") : String(localized: "things saved"))
             statCard(number: "\(store.categories.count)", label: String(localized: "categories"))
 
-            statCardWide {
-                VStack(alignment: .leading, spacing: SafeDesign.s) {
-                    Text("BY CATEGORY")
-                        .font(SafeDesign.scaled(11, weight: .medium))
-                        .tracking(1)
-                        .foregroundStyle(SafeDesign.muted)
-                    if categoryCounts.isEmpty {
-                        Text("Nothing here yet.")
-                            .font(SafeDesign.caption)
-                            .foregroundStyle(SafeDesign.muted)
-                    } else {
-                        VStack(spacing: SafeDesign.s) {
-                            ForEach(categoryCounts) { item in
-                                HStack(spacing: SafeDesign.xs) {
-                                    Text(item.name)
-                                        .font(SafeDesign.scaled(12, weight: .medium))
-                                        .foregroundStyle(SafeDesign.inkSecondary)
-                                        .lineLimit(1)
-                                        .frame(width: 84, alignment: .leading)
-                                    GeometryReader { geo in
-                                        ZStack(alignment: .leading) {
-                                            Capsule().fill(SafeDesign.surfaceStrong)
-                                            Capsule().fill(theme.tintStrong)
-                                                .frame(width: geo.size.width * fraction(for: item.count))
-                                        }
-                                    }
-                                    .frame(height: 8)
-                                    Text("\(item.count)")
-                                        .font(SafeDesign.scaled(12, weight: .medium))
-                                        .foregroundStyle(SafeDesign.muted)
-                                        .frame(width: 22, alignment: .trailing)
-                                }
-                            }
+            statSection {
+                sectionTitle("BY CATEGORY")
+                if categoryCounts.isEmpty {
+                    emptyNote("Nothing here yet.")
+                } else {
+                    VStack(spacing: 10) {
+                        ForEach(categoryCounts) { item in
+                            categoryRow(item)
                         }
                     }
                 }
             }
             .gridCellColumns(columns.count)
 
-            statCardWide {
-                VStack(alignment: .leading, spacing: SafeDesign.s) {
-                    Text("FEELINGS")
-                        .font(SafeDesign.scaled(11, weight: .medium))
-                        .tracking(1)
-                        .foregroundStyle(SafeDesign.muted)
-                    if moodCounts.isEmpty {
-                        Text("No moods yet.")
-                            .font(SafeDesign.caption)
-                            .foregroundStyle(SafeDesign.muted)
-                    } else {
-                        FlowMoodTags(moods: moodCounts)
-                    }
+            statSection {
+                sectionTitle("FEELINGS")
+                if moodCounts.isEmpty {
+                    emptyNote("No moods yet.")
+                } else {
+                    FlowMoodTags(moods: moodCounts)
                 }
             }
             .gridCellColumns(columns.count)
         }
+    }
+
+    /// Una fila de la distribución por categoría: etiqueta, barra y conteo.
+    /// La columna de etiquetas y la de conteo tienen ancho fijo para que todas
+    /// las barras empiecen y terminen en la misma x, sin importar el nombre.
+    private func categoryRow(_ item: NoteStats.CategoryCount) -> some View {
+        HStack(spacing: SafeDesign.s) {
+            Text(item.name)
+                .font(SafeDesign.scaled(12, weight: .medium))
+                .foregroundStyle(SafeDesign.inkSecondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.85)
+                .frame(width: 92, alignment: .leading)
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    Capsule().fill(SafeDesign.surfaceStrong)
+                    Capsule().fill(theme.tintStrong)
+                        .frame(width: barWidth(in: geo.size.width, for: item.count))
+                }
+            }
+            .frame(height: 8)
+            Text("\(item.count)")
+                .font(SafeDesign.scaled(12, weight: .medium).monospacedDigit())
+                .foregroundStyle(SafeDesign.muted)
+                .frame(width: 24, alignment: .trailing)
+        }
+    }
+
+    private func sectionTitle(_ key: LocalizedStringKey) -> some View {
+        Text(key)
+            .font(SafeDesign.scaled(11, weight: .medium))
+            .tracking(1)
+            .foregroundStyle(SafeDesign.muted)
+    }
+
+    private func emptyNote(_ key: LocalizedStringKey) -> some View {
+        Text(key)
+            .font(SafeDesign.caption)
+            .foregroundStyle(SafeDesign.muted)
     }
 
     private func statCard(number: String, label: String) -> some View {
@@ -319,13 +326,14 @@ struct DashboardView: View {
         .padding(.vertical, SafeDesign.s)
     }
 
-    private func statCardWide<Content: View>(@ViewBuilder content: () -> Content) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
+    /// Sección ancha del panel de stats. Sin hairline: las secciones se separan
+    /// por el espaciado del grid, no por una línea.
+    private func statSection<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: SafeDesign.s) {
             content()
-            Hairline()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.vertical, SafeDesign.s)
+        .padding(.vertical, SafeDesign.xxs)
     }
 
     private var categoryCounts: [NoteStats.CategoryCount] {
@@ -428,9 +436,13 @@ struct DashboardView: View {
         Haptics.success()
     }
 
-    private func fraction(for count: Int) -> CGFloat {
+    /// Ancho de la barra: proporcional al total, con un mínimo legible para que
+    /// una categoría con 1 nota no desaparezca, y sin pasarse del carril.
+    private func barWidth(in trackWidth: CGFloat, for count: Int) -> CGFloat {
+        guard count > 0, trackWidth > 0 else { return 0 }
         let total = max(store.entries.count, 1)
-        return CGFloat(count) / CGFloat(total)
+        let proportional = trackWidth * CGFloat(count) / CGFloat(total)
+        return min(trackWidth, max(proportional, 6))
     }
 }
 
