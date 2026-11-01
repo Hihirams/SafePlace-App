@@ -45,7 +45,7 @@ App de iPhone para guardar las pequeñas cosas que te ayudan: hábitos, personas
 ## Versión y releases
 
 - **Esquema**: la versión se calcula en CI como `1.<run_number>` y el build es `<run_number>` (el número de ejecución de GitHub Actions). Es monótono creciente, así que LiveContainer/AltStore detectan correctamente cada update.
-- **Versión actual: `1.48` (build 48)** — línea base en el proyecto; el último release publicado es `build-47`.
+- **Versión actual: `1.49` (build 49)** — línea base en el proyecto; el último release publicado es `build-48`.
 - **Fuente de la verdad**: el `run_number` del workflow. Los valores en `SafePlace.xcodeproj` (`MARKETING_VERSION` / `CURRENT_PROJECT_VERSION`) y en `docs/source.json` son la **línea base / última publicada** y se sobrescriben en cada build de CI.
 - **Cómo se publica**: push a `main` (o **Run workflow**) → job de tests → archive sin firma → GitHub Release `build-<n>` → regenera `docs/source.json` (AltSource) → deploy a GitHub Pages.
 - Los cambios notables se registran en [`CHANGELOG.md`](CHANGELOG.md).

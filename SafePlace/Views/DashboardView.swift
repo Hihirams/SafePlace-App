@@ -185,10 +185,15 @@ struct DashboardView: View {
                     .foregroundStyle(theme.tintStrong)
                     .transition(.opacity)
             } else {
-                Text(streakLine)
-                    .font(SafeDesign.caption)
-                    .foregroundStyle(SafeDesign.muted)
-                    .fixedSize(horizontal: false, vertical: true)
+                HStack(spacing: SafeDesign.xs) {
+                    StreakFlameBadge(active: currentStreak > 0)
+                    Text(streakLine)
+                        .font(SafeDesign.caption)
+                        .foregroundStyle(SafeDesign.muted)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(streakLine)
             }
         }
     }
@@ -457,8 +462,46 @@ struct DashboardView: View {
     }
 }
 
-// MARK: - Mood tag flow
+// MARK: - Streak flame
 
+/// Llama de la racha. Usa el pastel del mood "Con energía" para no salirse de la
+/// paleta de los sentimientos, y parpadea lento como una vela. Sin racha activa
+/// queda en contorno, en gris, y sin animación.
+private struct StreakFlameBadge: View {
+    let active: Bool
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var flicker = false
+
+    private var flameAnimation: Animation {
+        guard active, !reduceMotion else { return .default }
+        return .easeInOut(duration: 1.15).repeatForever(autoreverses: true)
+    }
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(active ? SafeDesign.moodBright : SafeDesign.surfaceStrong)
+                .frame(width: 22, height: 22)
+            Image(systemName: active ? "flame.fill" : "flame")
+                .font(SafeDesign.scaled(11, weight: .semibold))
+                .foregroundStyle(active ? SafeDesign.ink : SafeDesign.muted)
+                .scaleEffect(flicker ? 1.08 : 0.92, anchor: .bottom)
+                .offset(y: flicker ? -0.5 : 0.5)
+                .opacity(flicker ? 1 : 0.86)
+        }
+        .overlay { Circle().strokeBorder(SafeDesign.ink.opacity(0.06), lineWidth: 1) }
+        .shadow(color: active ? SafeDesign.moodBright.opacity(0.55) : .clear, radius: 6, y: 1)
+        .animation(flameAnimation, value: flicker)
+        .onAppear {
+            guard active, !reduceMotion else { return }
+            flicker = true
+        }
+        .accessibilityHidden(true)
+    }
+}
+
+// MARK: - Mood tag flow
 private struct FlowMoodTags: View {
     let moods: [NoteStats.MoodCount]
 
