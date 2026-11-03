@@ -310,15 +310,17 @@ struct SplashView: View {
     var typingDuration: Double = 4.05
     @Environment(\.appTheme) private var theme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var fillIn = false
+    @State private var settled = false
+    @State private var glow = false
     @State private var revealed = 0
     private let word = "SafePlace"
 
+    /// El icono de la app es el protagonista: la misma marca que pinta la launch
+    /// screen, sobre el papel del canvas, con el wordmark escribiéndose debajo.
     var body: some View {
         ZStack {
-            theme.tint
+            SafeDesign.canvas
                 .ignoresSafeArea()
-                .opacity(fillIn ? 1 : 0)
 
             RadialGradient(
                 colors: [.clear, theme.tintStrong.opacity(0.35)],
@@ -327,28 +329,42 @@ struct SplashView: View {
                 endRadius: 520
             )
             .ignoresSafeArea()
-            .opacity(fillIn ? 1 : 0)
+            .opacity(glow ? 1 : 0)
 
-            Text(String(word.prefix(revealed)))
-                .font(SafeDesign.scaled(46, weight: .semibold, design: .serif))
-                .tracking(2)
-                .foregroundStyle(SafeDesign.onPrimary)
+            VStack(spacing: SafeDesign.xxl) {
+                Image("SplashMark")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: SafeDesign.splashMarkSize)
+                    .scaleEffect(settled ? 1 : 0.94)
+                    .opacity(settled ? 1 : 0)
+                    .accessibilityHidden(true)
+
+                Text(String(word.prefix(revealed)))
+                    .font(SafeDesign.scaled(40, weight: .semibold, design: .serif))
+                    .tracking(2)
+                    .foregroundStyle(SafeDesign.ink)
+                    .frame(minHeight: 48)
+                    .accessibilityLabel(word)
+            }
         }
-        .onAppear {
-            // Reduce Motion: el wordmark aparece completo, sin tecleo ni fundidos.
+        .task {
+            // Reduce Motion: marca y wordmark ya colocados, sin tecleo ni fundidos.
             if reduceMotion {
-                fillIn = true
+                settled = true
+                glow = true
                 revealed = word.count
                 return
             }
-            withAnimation(SafeMotion.splashTintIn) { fillIn = true }
-            Task {
-                let steps = word.count + 1
-                let perStep = typingDuration / Double(steps)
-                for index in 0...word.count {
-                    try? await Task.sleep(nanoseconds: UInt64(perStep * 1_000_000_000))
-                    withAnimation(SafeMotion.splashType) { revealed = index }
-                }
+            withAnimation(SafeMotion.gentle) { settled = true }
+            withAnimation(SafeMotion.splashTintIn) { glow = true }
+
+            let steps = word.count + 1
+            let perStep = typingDuration / Double(steps)
+            for index in 0...word.count {
+                try? await Task.sleep(nanoseconds: UInt64(perStep * 1_000_000_000))
+                guard !Task.isCancelled else { return }
+                withAnimation(SafeMotion.splashType) { revealed = index }
             }
         }
     }

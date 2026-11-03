@@ -133,6 +133,9 @@ enum SafeDesign {
     static let radiusXL: CGFloat = 24
     static let radiusPill: CGFloat = 100
 
+    /// Ancho de la marca en el splash; el mismo tamaño que pinta la launch screen.
+    static let splashMarkSize: CGFloat = 128
+
     // MARK: - Motion
     //
     // La fuente de verdad de las animaciones es `SafeMotion`. Estos alias se
