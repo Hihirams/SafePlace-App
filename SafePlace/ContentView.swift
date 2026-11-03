@@ -84,8 +84,9 @@ struct RootView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     /// HIG pide minimizar la UI con temporizador: 5 s en cada arranque es un
-    /// bloqueo, no una animación de marca.
-    private let splashDuration: TimeInterval = 2.4
+    /// bloqueo, no una animación de marca. 1.9 s alcanza para que la marca se
+    /// lea y el wordmark termine de escribirse.
+    private let splashDuration: TimeInterval = 1.9
     private let splashFade: TimeInterval = SafeMotion.splashFade
     private let splashTail: TimeInterval = 0.4
 
@@ -317,6 +318,10 @@ struct SplashView: View {
 
     /// El icono de la app es el protagonista: la misma marca que pinta la launch
     /// screen, sobre el papel del canvas, con el wordmark escribiéndose debajo.
+    ///
+    /// La marca va centrada en la ZStack (no dentro de un VStack) para que su
+    /// posición sea exactamente la de la launch screen: así el salto entre las
+    /// dos pantallas no se ve.
     var body: some View {
         ZStack {
             SafeDesign.canvas
@@ -331,22 +336,20 @@ struct SplashView: View {
             .ignoresSafeArea()
             .opacity(glow ? 1 : 0)
 
-            VStack(spacing: SafeDesign.xxl) {
-                Image("SplashMark")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: SafeDesign.splashMarkSize)
-                    .scaleEffect(settled ? 1 : 0.94)
-                    .opacity(settled ? 1 : 0)
-                    .accessibilityHidden(true)
+            Image("SplashMark")
+                .resizable()
+                .scaledToFit()
+                .frame(width: SafeDesign.splashMarkSize)
+                .scaleEffect(settled ? 1 : 0.94)
+                .opacity(settled ? 1 : 0)
+                .accessibilityHidden(true)
 
-                Text(String(word.prefix(revealed)))
-                    .font(SafeDesign.scaled(40, weight: .semibold, design: .serif))
-                    .tracking(2)
-                    .foregroundStyle(SafeDesign.ink)
-                    .frame(minHeight: 48)
-                    .accessibilityLabel(word)
-            }
+            Text(String(word.prefix(revealed)))
+                .font(SafeDesign.scaled(40, weight: .semibold, design: .serif))
+                .tracking(2)
+                .foregroundStyle(SafeDesign.ink)
+                .offset(y: SafeDesign.splashMarkSize / 2 + 54)
+                .accessibilityLabel(word)
         }
         .task {
             // Reduce Motion: marca y wordmark ya colocados, sin tecleo ni fundidos.

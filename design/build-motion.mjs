@@ -1,6 +1,7 @@
 // Genera design/SafePlace-Motion.figcraft con figcraft-cli run
 // Uso: node design/build-motion.mjs [--keep]
 import { writeFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 
 const CLI = "C:\\Program Files\\ArtCraft\\FigCraft\\figcraft-cli.exe";
@@ -402,13 +403,15 @@ function nav(from, to, opts = {}) {
 // easeInOut de CSS: cubic-bezier(0.42, 0, 0.58, 1)
 const EASE_IN_OUT = { x1: 0.42, y1: 0, x2: 0.58, y2: 1 };
 
-// ── splash: el tinte entra, el wordmark se teclea, y se funde al Home
-const SPLASH_TINT = C.bright; // theme.tint con el mood por defecto
-const SPLASH_INK = "#2B2320";
+// ── splash: papel crema, la marca de la app y el wordmark escribiéndose debajo
+const SPLASH_INK = C.ink;
 function buildSplash({ name, x, y, typed }) {
-  const root = frame({ name, x, y, w: W, h: H, props: { fill: SPLASH_TINT, layout: "vertical", mainAlign: "center", crossAlign: "center", padding: [0, PAD, 0, PAD] } });
-  if (typed) glyph({ name: "SplashGlyph", path: ICON.sparkles, d: 26, parent: root, color: SPLASH_INK, weight: 1.4 });
-  t("SplashWord", typed, { size: 46, weight: "Semibold", design: SERIF, w: INNER, parent: root, align: "center", color: SPLASH_INK, tracking: 2 });
+  const root = frame({ name, x, y, w: W, h: H, props: { fill: C.canvas, layout: "vertical", gap: 32, mainAlign: "center", crossAlign: "center", padding: [0, PAD, 0, PAD] } });
+  reserve(); // image.place también consume un id
+  push("image.place", { path: resolve("design/SplashMark.png"), width: 128, parent: root, name: "SplashMark", mode: "fit" });
+  // hueco de altura fija: el wordmark crece al teclearse y no debe mover la marca
+  const slot = frame({ name: "SplashWordSlot", w: INNER, h: 52, parent: root, props: { layout: "vertical", mainAlign: "center", crossAlign: "center", fill: "none", sizingH: "fill", sizingV: "fixed" } });
+  t("SplashWord", typed, { size: 40, weight: "Semibold", design: SERIF, w: INNER, parent: slot, align: "center", color: SPLASH_INK, tracking: 2 });
   return { root };
 }
 

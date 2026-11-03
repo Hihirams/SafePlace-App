@@ -17,8 +17,9 @@ param(
 Add-Type -AssemblyName System.Drawing
 
 $CREAM = [System.Drawing.Color]::FromArgb(255, 250, 248, 244) # #FAF8F4 SafeDesign.canvas
+$DARK = [System.Drawing.Color]::FromArgb(255, 10, 10, 10)     # #0A0A0A, casi negro
 $SPLASH_PT = 128        # tamaño del mark en el splash, en puntos
-$ICON_FILL = 0.75       # fracción del tile 1024 que ocupa el mark
+$ICON_FILL = 0.88       # fracción del tile 1024 que ocupa el mark
 
 if (-not (Test-Path $Source)) { throw "No encuentro el PNG de origen: $Source" }
 $src = [System.Drawing.Bitmap]::new([System.Drawing.Image]::FromFile($Source))
@@ -90,21 +91,53 @@ $imagesJson = @'
 
 # ── AppIcon 1024 opaco (iOS no admite alfa en el icono)
 $iconSet = Join-Path $Catalog "AppIcon.appiconset"
-$tile = [System.Drawing.Bitmap]::new(1024, 1024, [System.Drawing.Imaging.PixelFormat]::Format24bppRgb)
-$g = [System.Drawing.Graphics]::FromImage($tile)
-$g.Clear($CREAM)
-$g.CompositingQuality = 'HighQuality'
-$g.InterpolationMode = 'HighQualityBicubic'
-$g.PixelOffsetMode = 'HighQuality'
-$w = [int](1024 * $ICON_FILL)
-$h = [int][Math]::Round($mark.Height * ($w / $mark.Width))
-$x = [int]((1024 - $w) / 2)
-$y = [int]((1024 - $h) / 2)
-$g.DrawImage($mark, [System.Drawing.Rectangle]::new($x, $y, $w, $h))
-$g.Dispose()
-$tile.Save((Join-Path $iconSet "AppIcon-1024.png"), [System.Drawing.Imaging.ImageFormat]::Png)
-Write-Output "  AppIcon-1024.png  1024x1024  (marca ${w}x${h} en $x,$y)"
-$tile.Dispose()
+
+function New-Icon {
+    param([string]$Name, [System.Drawing.Color]$Background)
+    $tile = [System.Drawing.Bitmap]::new(1024, 1024, [System.Drawing.Imaging.PixelFormat]::Format24bppRgb)
+    $g = [System.Drawing.Graphics]::FromImage($tile)
+    $g.Clear($Background)
+    $g.CompositingQuality = 'HighQuality'
+    $g.InterpolationMode = 'HighQualityBicubic'
+    $g.PixelOffsetMode = 'HighQuality'
+    $w = [int](1024 * $ICON_FILL)
+    $h = [int][Math]::Round($mark.Height * ($w / $mark.Width))
+    $x = [int]((1024 - $w) / 2)
+    $y = [int]((1024 - $h) / 2)
+    $g.DrawImage($mark, [System.Drawing.Rectangle]::new($x, $y, $w, $h))
+    $g.Dispose()
+    $tile.Save((Join-Path $iconSet $Name), [System.Drawing.Imaging.ImageFormat]::Png)
+    Write-Output "  $Name  marca ${w}x${h} en $x,$y"
+    $tile.Dispose()
+}
+
+New-Icon -Name "AppIcon-1024.png"      -Background $CREAM
+New-Icon -Name "AppIcon-1024-Dark.png" -Background $DARK
+
+$iconJson = @'
+{
+  "images" : [
+    {
+      "filename" : "AppIcon-1024.png",
+      "idiom" : "universal",
+      "platform" : "ios",
+      "size" : "1024x1024"
+    },
+    {
+      "appearances" : [
+        { "appearance" : "luminosity", "value" : "dark" }
+      ],
+      "filename" : "AppIcon-1024-Dark.png",
+      "idiom" : "universal",
+      "platform" : "ios",
+      "size" : "1024x1024"
+    }
+  ],
+  "info" : { "author" : "xcode", "version" : 1 }
+}
+'@
+[System.IO.File]::WriteAllText((Join-Path $iconSet "Contents.json"), $iconJson, [System.Text.UTF8Encoding]::new($false))
+
 $mark.Dispose()
 
 Write-Output "listo."
