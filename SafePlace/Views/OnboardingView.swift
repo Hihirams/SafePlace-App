@@ -74,7 +74,7 @@ struct OnboardingView: View {
                 VStack(spacing: SafeDesign.l) {
                     PrimaryButton(title: isLast ? String(localized: "Open my safe place") : String(localized: "Next"), icon: isLast ? nil : "arrow.right") {
                         if isLast {
-                            withAnimation(.easeInOut(duration: 0.4)) { hasSeenOnboarding = true }
+                            withAnimation(SafeMotion.dismiss) { hasSeenOnboarding = true }
                         } else {
                             withAnimation(SafeDesign.spring) { page += 1 }
                         }
@@ -82,7 +82,7 @@ struct OnboardingView: View {
                     .padding(.horizontal, SafeDesign.xl)
 
                     Button {
-                        withAnimation(.easeInOut(duration: 0.4)) { hasSeenOnboarding = true }
+                        withAnimation(SafeMotion.dismiss) { hasSeenOnboarding = true }
                     } label: {
                         Text("Skip")
                             .font(SafeDesign.caption)

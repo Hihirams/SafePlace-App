@@ -86,8 +86,8 @@ struct MascotView: View {
                 .offset(y: float ? -6 : 6)
         }
         .frame(width: size, height: height + size * 0.2)
-        .animation(shouldAnimate ? .easeInOut(duration: 4.2).repeatForever(autoreverses: true) : .default, value: float)
-        .animation(shouldAnimate ? .easeInOut(duration: 3.4).repeatForever(autoreverses: true) : .default, value: breathe)
+        .animation(shouldAnimate ? SafeMotion.float : .default, value: float)
+        .animation(shouldAnimate ? SafeMotion.breathe : .default, value: breathe)
         .animation(SafeDesign.spring, value: bodyColor)
         .onAppear {
             guard shouldAnimate else { return }

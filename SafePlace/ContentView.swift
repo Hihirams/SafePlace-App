@@ -86,7 +86,7 @@ struct RootView: View {
     /// HIG pide minimizar la UI con temporizador: 5 s en cada arranque es un
     /// bloqueo, no una animación de marca.
     private let splashDuration: TimeInterval = 2.4
-    private let splashFade: TimeInterval = 0.55
+    private let splashFade: TimeInterval = SafeMotion.splashFade
     private let splashTail: TimeInterval = 0.4
 
     private var mode: ThemeMode { ThemeMode(rawValue: themeRaw) ?? .system }
@@ -94,7 +94,7 @@ struct RootView: View {
 
     var body: some View {
         ZStack {
-            ContentView(store: store)
+            ContentView(store: store, covered: showSplash || !hasSeenOnboarding)
             if !hasSeenOnboarding {
                 OnboardingView().transition(.opacity).zIndex(1)
             } else if showSplash {
@@ -115,7 +115,7 @@ struct RootView: View {
         }
         .onChange(of: hasSeenOnboarding) { _, seen in
             if seen {
-                withAnimation(.easeInOut(duration: 0.4)) { showSplash = false }
+                withAnimation(SafeMotion.dismiss) { showSplash = false }
             }
         }
     }
@@ -134,11 +134,15 @@ struct RootView: View {
 
 struct ContentView: View {
     @ObservedObject var store: Store
+    /// El splash o el onboarding tapan la app: la tab bar espera a que se
+    /// descubra para aparecer, igual que el contenido.
+    var covered: Bool = false
     @State private var selectedTab: Tab = .home
     @State private var showCreate = false
     @State private var showSettings = false
     @State private var showSearch = false
     @Environment(\.horizontalSizeClass) private var h
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ZStack {
@@ -148,6 +152,7 @@ struct ContentView: View {
                 DashboardView(
                     store: store,
                     selectedTab: $selectedTab,
+                    covered: covered,
                     onOpenSettings: { showSettings = true },
                     onOpenSearch: { showSearch = true }
                 )
@@ -160,6 +165,9 @@ struct ContentView: View {
         }
         .overlay(alignment: .bottom) {
             GlassTabBar(selectedTab: $selectedTab) { showCreate = true }
+                .opacity(covered ? 0 : 1)
+                .offset(y: covered && !reduceMotion ? 8 : 0)
+                .animation(SafeMotion.gentle, value: covered)
         }
         .tint(SafeDesign.accent)
         .fullScreenCover(isPresented: $showCreate) {
@@ -191,7 +199,7 @@ struct GlassTabBar: View {
     private let slots: [Slot] = [.tab(.home), .tab(.journal), .create, .tab(.mind), .tab(.saved)]
     private let barHeight: CGFloat = 58
     private let inset: CGFloat = 5
-    private let selectorAnim = Animation.interactiveSpring(response: 0.26, dampingFraction: 0.74)
+    private let selectorAnim = SafeMotion.selector
 
     private var selectedIndex: Int {
         slots.firstIndex(of: .tab(selectedTab)) ?? 0
@@ -333,13 +341,13 @@ struct SplashView: View {
                 revealed = word.count
                 return
             }
-            withAnimation(.easeOut(duration: 0.6)) { fillIn = true }
+            withAnimation(SafeMotion.splashTintIn) { fillIn = true }
             Task {
                 let steps = word.count + 1
                 let perStep = typingDuration / Double(steps)
                 for index in 0...word.count {
                     try? await Task.sleep(nanoseconds: UInt64(perStep * 1_000_000_000))
-                    withAnimation(.easeOut(duration: 0.18)) { revealed = index }
+                    withAnimation(SafeMotion.splashType) { revealed = index }
                 }
             }
         }

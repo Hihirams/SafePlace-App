@@ -4,11 +4,15 @@ import UIKit
 struct DashboardView: View {
     @ObservedObject var store: Store
     @Binding var selectedTab: Tab
+    /// El splash (o el onboarding) sigue tapando la app: la cascada de entrada
+    /// espera a que se descubra, para que se vea de verdad.
+    var covered: Bool = false
     var onOpenSettings: () -> Void = {}
     var onOpenSearch: () -> Void = {}
     @Environment(\.horizontalSizeClass) private var h
     @Environment(\.verticalSizeClass) private var v
     @Environment(\.appTheme) private var theme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @EnvironmentObject private var profile: ProfilePhotoModel
 
     @State private var editingEntry: Entry?
@@ -16,6 +20,9 @@ struct DashboardView: View {
     @State private var contentWidth: CGFloat = 0
     @State private var mode: DashboardMode = .overview
     @State private var justCheckedIn = false
+    /// 0 = nada visible; 4 = todo. Lo mueve `runEntrance()`.
+    @State private var revealStage = 0
+    @State private var revealTask: Task<Void, Never>?
 
     enum DashboardMode: String, CaseIterable, Identifiable {
         case overview = "Overview"
@@ -50,19 +57,29 @@ struct DashboardView: View {
                 .padding(.horizontal, SafeLayout.pageInset(h, v))
                 .padding(.top, SafeDesign.s)
                 .padding(.bottom, SafeDesign.s)
+                .reveal(stage: revealStage, at: 1)
 
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: SafeDesign.xl) {
                     mascotHero
+                        .reveal(stage: revealStage, at: 1)
                     todayCard
-                    if !onThisDay.isEmpty { onThisDaySection }
+                        .reveal(stage: revealStage, at: 2)
+                    if !onThisDay.isEmpty {
+                        onThisDaySection
+                            .reveal(stage: revealStage, at: 3)
+                    }
                     modePicker
+                        .reveal(stage: revealStage, at: 2)
 
                     if mode == .overview {
                         statsPanel
+                            .reveal(stage: revealStage, at: 3)
                         recentSection
+                            .reveal(stage: revealStage, at: 4)
                     } else {
                         InsightsView(store: store)
+                            .reveal(stage: revealStage, at: 3)
                     }
                 }
                 .pageColumn(h, v)
@@ -71,10 +88,35 @@ struct DashboardView: View {
                 .readingWidth($contentWidth)
             }
         }
+        .onAppear { runEntranceIfNeeded() }
+        .onChange(of: covered) { _, isCovered in
+            if !isCovered { runEntranceIfNeeded() }
+        }
         .fullScreenCover(isPresented: $showForm) {
             CreateView(store: store, editing: editingEntry) {
                 showForm = false
                 editingEntry = nil
+            }
+        }
+    }
+
+    // MARK: - Entrance
+
+    /// Una sola vez: los bloques entran escalonados 40 ms, subiendo 12 pt.
+    /// Con Reduce Motion aparecen todos a la vez, ya colocados.
+    private func runEntranceIfNeeded() {
+        guard revealStage == 0, !covered else { return }
+        guard !reduceMotion else {
+            revealStage = 4
+            return
+        }
+        revealTask?.cancel()
+        revealTask = Task { @MainActor in
+            withAnimation(SafeMotion.gentle) { revealStage = 1 }
+            for stage in 2...4 {
+                try? await Task.sleep(nanoseconds: UInt64(SafeMotion.entranceStep * 1_000_000_000))
+                guard !Task.isCancelled else { return }
+                withAnimation(SafeMotion.gentle) { revealStage = stage }
             }
         }
     }
@@ -475,7 +517,7 @@ private struct StreakFlameBadge: View {
 
     private var flameAnimation: Animation {
         guard active, !reduceMotion else { return .default }
-        return .easeInOut(duration: 1.15).repeatForever(autoreverses: true)
+        return SafeMotion.flame
     }
 
     var body: some View {

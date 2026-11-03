@@ -134,10 +134,69 @@ enum SafeDesign {
     static let radiusPill: CGFloat = 100
 
     // MARK: - Motion
-    static let spring = Animation.spring(response: 0.35, dampingFraction: 0.78)
-    static let springSnappy = Animation.spring(response: 0.28, dampingFraction: 0.82)
-    static let springBouncy = Animation.spring(response: 0.42, dampingFraction: 0.68)
+    //
+    // La fuente de verdad de las animaciones es `SafeMotion`. Estos alias se
+    // mantienen porque medio app los usa; no añadir valores nuevos aquí.
+    static let spring = SafeMotion.gentle
+    static let springSnappy = SafeMotion.quick
+    static let springBouncy = SafeMotion.bouncy
     static let easeOut = Animation.easeOut(duration: 0.25)
+}
+
+/// Tokens de movimiento de SafePlace.
+///
+/// Los números están alineados con `design/SafePlace-Motion.figcraft` y con el
+/// contrato de `.opencode/skills/safeplace-motion/SKILL.md`: si cambia uno,
+/// cambian los tres. Ninguna vista debe escribir una duración literal.
+enum SafeMotion {
+
+    // MARK: Cambios de estado
+
+    /// Cambio con peso: entrada de pantalla, aparición de una sección.
+    static let gentle = Animation.spring(response: 0.35, dampingFraction: 0.78)
+
+    /// Respuesta a un toque, navegación, cambio de icono.
+    static let quick = Animation.spring(response: 0.28, dampingFraction: 0.82)
+
+    /// Momento emocional: elegir un mood, confirmar un check-in.
+    static let bouncy = Animation.spring(response: 0.42, dampingFraction: 0.68)
+
+    /// Selector de la tab bar, que sigue un arrastre y debe retargetear.
+    static let selector = Animation.interactiveSpring(response: 0.26, dampingFraction: 0.74)
+
+    // MARK: Loops ambientales
+    //
+    // `easeInOut` con autoreverse, nunca spring: un spring en bucle se lee
+    // como temblor nervioso. Todos se detienen con Reduce Motion.
+
+    /// La llama de la racha: respira como una vela.
+    static let flame = Animation.easeInOut(duration: 1.15).repeatForever(autoreverses: true)
+
+    /// El personaje flota.
+    static let float = Animation.easeInOut(duration: 4.2).repeatForever(autoreverses: true)
+
+    /// El personaje respira.
+    static let breathe = Animation.easeInOut(duration: 3.4).repeatForever(autoreverses: true)
+
+    // MARK: Entrada de pantalla
+
+    /// Separación entre bloques de la cascada de entrada.
+    static let entranceStep: Double = 0.04
+
+    /// Cuánto sube cada bloque al entrar.
+    static let entranceRise: CGFloat = 12
+
+    /// Fundido con el que el splash deja ver la app.
+    static let splashFade: Double = 0.55
+
+    /// El tinte del splash entra.
+    static let splashTintIn = Animation.easeOut(duration: 0.6)
+
+    /// Cada letra del wordmark, al teclearse.
+    static let splashType = Animation.easeOut(duration: 0.18)
+
+    /// Salida de una capa que tapa la app (splash, onboarding).
+    static let dismiss = Animation.easeInOut(duration: 0.4)
 }
 
 // MARK: - Adaptive layout (size-class aware)
@@ -181,6 +240,33 @@ extension View {
 
 /// Minimum tappable size (Apple HIG).
 let minTouchTarget: CGFloat = 44
+
+// MARK: - Entrada de pantalla
+
+/// La cascada de entrada: cada bloque aparece y sube 12 pt, separado 40 ms del
+/// anterior. Con Reduce Motion no hay desplazamiento ni espera: todo visible.
+struct RevealModifier: ViewModifier {
+    let stage: Int
+    let threshold: Int
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    func body(content: Content) -> some View {
+        content
+            .opacity(stage >= threshold ? 1 : 0)
+            .offset(y: stage >= threshold || reduceMotion ? 0 : SafeMotion.entranceRise)
+    }
+}
+
+extension View {
+    /// Aplica el estado de la cascada de entrada a un bloque.
+    /// - Parameters:
+    ///   - stage: bloque alcanzado por la cascada (0 = nada visible todavía).
+    ///   - threshold: bloque en el que este elemento entra.
+    func reveal(stage: Int, at threshold: Int) -> some View {
+        modifier(RevealModifier(stage: stage, threshold: threshold))
+    }
+}
 
 /// A stack that folds from horizontal to vertical at accessibility text sizes,
 /// so labels never truncate. Uses `AnyLayout` to keep identity/state across the swap.

@@ -1,0 +1,6 @@
+# artefactos del generador y de la revisión
+.motion-script.json
+.render*.png
+.p*.png
+.p*.figcraft
+.q.json

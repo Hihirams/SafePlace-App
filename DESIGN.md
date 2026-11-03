@@ -76,7 +76,30 @@ Escala en múltiplos de 4: `xxs 4 · xs 8 · s 12 · m 16 · l 20 · xl 24 · xx
 Radios: `radiusXS 6 · radiusS 8 · radiusM 12 · radiusL 16 · radiusXL 24 · radiusPill 100`. Preferir hairlines sobre bordes.
 
 ## Motion
-`spring`, `springSnappy`, `springBouncy`, `easeOut`. Todo movimiento ambiental (personaje, grafo) debe respetar **Reduce Motion**; los loops ambientales se detienen cuando está activo.
+
+La fuente de verdad es `SafeMotion` en `DesignSystem.swift`; `SafeDesign.spring`,
+`springSnappy` y `springBouncy` son alias que se conservan por compatibilidad.
+
+| Token | Valor | Uso |
+| --- | --- | --- |
+| `gentle` | spring 0.35 / 0.78 | entrada de pantalla, aparición de una sección |
+| `quick` | spring 0.28 / 0.82 | respuesta a un toque, cambio de icono |
+| `bouncy` | spring 0.42 / 0.68 | momento emocional (check-in de mood) |
+| `selector` | interactiveSpring 0.26 / 0.74 | selector de la tab bar |
+| `flame` | easeInOut 1.15 s en bucle | llama de la racha |
+| `float` / `breathe` | easeInOut 4.2 s / 3.4 s | personaje |
+| `splashTintIn`, `splashType`, `dismiss` | easeOut 0.6 / 0.18, easeInOut 0.4 | splash y salidas |
+
+**Entrada de pantalla:** cuatro bloques (cabecera + personaje, prompt + moods,
+stats, recientes) separados 40 ms, cada uno sube 12 pt y aparece con `gentle`.
+Se dispara cuando el splash o el onboarding dejan de tapar la app, una sola vez.
+
+Todo movimiento ambiental (personaje, llama, grafo) se detiene con **Reduce
+Motion**, y con Reduce Motion la cascada no escalona ni desplaza: los bloques
+aparecen ya colocados. Ninguna vista escribe una duración literal.
+
+El prototipo aprobado vive en `design/SafePlace-Motion.figcraft`; el contrato
+completo, en `.opencode/skills/safeplace-motion/SKILL.md`.
 
 ## Layout adaptativo
 - `pageColumn` limita el ancho de lectura (720) y aplica insets por tamaño de clase.
