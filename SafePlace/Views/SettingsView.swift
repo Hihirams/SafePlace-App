@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import PhotosUI
 import UniformTypeIdentifiers
 
@@ -11,6 +12,7 @@ struct SettingsView: View {
     @State private var photoItem: PhotosPickerItem?
 
     @AppStorage("themeMode") private var themeRaw = ThemeMode.system.rawValue
+    @AppStorage("appLanguage") private var languageRaw = AppLanguage.system.rawValue
     @AppStorage("reminderEnabled") private var reminderEnabled = false
     @AppStorage("reminderHour") private var reminderHour = 21
     @AppStorage("reminderMinute") private var reminderMinute = 0
@@ -23,6 +25,7 @@ struct SettingsView: View {
     @State private var importMessage: String?
 
     private var theme: ThemeMode { ThemeMode(rawValue: themeRaw) ?? .system }
+    private var language: AppLanguage { AppLanguage(rawValue: languageRaw) ?? .system }
     private var version: String {
         let short = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
         let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
@@ -52,6 +55,7 @@ struct SettingsView: View {
 
                     profileSection
                     appearanceSection
+                    languageSection
                     characterSection
                     sharedNotesSection
                     remindersSection
@@ -144,6 +148,45 @@ struct SettingsView: View {
                 }
             }
             .scrollClipDisabled()
+        }
+    }
+
+    private var languageSection: some View {
+        SettingsCard(title: String(localized: "Language"), icon: "globe") {
+            VStack(alignment: .leading, spacing: SafeDesign.m) {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: SafeDesign.xs) {
+                        ForEach(AppLanguage.allCases) { lang in
+                            SelectionPill(title: lang.label, icon: lang.icon, isSelected: language == lang) {
+                                Haptics.selection()
+                                withAnimation(SafeDesign.spring) { languageRaw = lang.rawValue }
+                                lang.apply()
+                            }
+                        }
+                    }
+                }
+                .scrollClipDisabled()
+
+                Text(language == .system
+                     ? String(localized: "Follows your iPhone language.")
+                     : String(localized: "Close and reopen SafePlace to see the change."))
+                    .font(SafeDesign.caption)
+                    .foregroundStyle(SafeDesign.inkSecondary)
+
+                Button {
+                    Haptics.tap()
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                } label: {
+                    settingsRowLabel(
+                        title: String(localized: "Open iOS Settings"),
+                        icon: "gearshape",
+                        tint: appTheme.tintStrong
+                    )
+                }
+                .buttonStyle(.plain)
+            }
         }
     }
 

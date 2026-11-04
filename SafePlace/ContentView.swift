@@ -73,6 +73,46 @@ enum ThemeMode: String, CaseIterable {
     }
 }
 
+// MARK: - Language
+
+/// Idioma de la app. `system` sigue el idioma del iPhone; las otras dos
+/// escriben el override de `AppleLanguages`, que iOS aplica al reabrir.
+enum AppLanguage: String, CaseIterable, Identifiable {
+    case system, spanish = "es", english = "en"
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .system: return String(localized: "System")
+        case .spanish: return "Español"
+        case .english: return "English"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .system: return "iphone"
+        case .spanish: return "character.book.closed"
+        case .english: return "character.book.closed.fill"
+        }
+    }
+
+    /// Deja el override como lo pide la opción. `system` lo borra para que
+    /// vuelva a mandar el idioma del iPhone.
+    func apply() {
+        let defaults = UserDefaults.standard
+        switch self {
+        case .system:
+            defaults.removeObject(forKey: "AppleLanguages")
+        case .spanish:
+            defaults.set(["es"], forKey: "AppleLanguages")
+        case .english:
+            defaults.set(["en"], forKey: "AppleLanguages")
+        }
+    }
+}
+
 // MARK: - Root (splash → app, theme applied here)
 
 struct RootView: View {
