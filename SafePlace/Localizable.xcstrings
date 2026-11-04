@@ -11,6 +11,16 @@
         }
       }
     },
+    "%lld / %lld days": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld / %2$lld días"
+          }
+        }
+      }
+    },
     "%lld categories · %lld notes": {
       "localizations": {
         "es": {
@@ -27,6 +37,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$lld días"
+          }
+        }
+      }
+    },
+    "%lld days in a row": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld días seguidos"
           }
         }
       }
@@ -57,6 +77,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$lld notas · %2$lld categorías · mejor racha de %3$@"
+          }
+        }
+      }
+    },
+    "%lld of %lld days": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld de %2$lld días"
           }
         }
       }
@@ -157,6 +187,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Un momento tranquilo"
+          }
+        }
+      }
+    },
+    "A year of showing up. Keep going.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un año entero apareciendo. Sigue así."
           }
         }
       }
@@ -311,6 +351,16 @@
         }
       }
     },
+    "Checked in": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con nota"
+          }
+        }
+      }
+    },
     "Choose a category": {
       "localizations": {
         "es": {
@@ -367,6 +417,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Guarda lo que te ayudó"
+          }
+        }
+      }
+    },
+    "Consecutive days checking in": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Días consecutivos registrando tu estado"
           }
         }
       }
@@ -861,6 +921,16 @@
         }
       }
     },
+    "Keep it going!": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¡Sigue así!"
+          }
+        }
+      }
+    },
     "Keep the things worth keeping close — a playlist, an article, a line that made sense at the right time.": {
       "localizations": {
         "es": {
@@ -1001,6 +1071,16 @@
         }
       }
     },
+    "No note": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sin nota"
+          }
+        }
+      }
+    },
     "No note today · your record is %@": {
       "localizations": {
         "es": {
@@ -1027,6 +1107,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aún no hay notas compartidas."
+          }
+        }
+      }
+    },
+    "Not yet": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no"
           }
         }
       }
@@ -1177,6 +1267,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Abrir mi lugar seguro"
+          }
+        }
+      }
+    },
+    "Opens your streak": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abre tu racha"
           }
         }
       }
@@ -1611,6 +1711,16 @@
         }
       }
     },
+    "Today": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hoy"
+          }
+        }
+      }
+    },
     "Try different words, or search by how you felt.": {
       "localizations": {
         "es": {
@@ -1781,6 +1891,16 @@
         }
       }
     },
+    "You're %@ from your next goal.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estás a %@ de tu próxima meta."
+          }
+        }
+      }
+    },
     "Your changes couldn't be saved to this device.": {
       "localizations": {
         "es": {
@@ -1807,6 +1927,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tus datos"
+          }
+        }
+      }
+    },
+    "Your first goal": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu primera meta"
           }
         }
       }
@@ -1841,6 +1971,16 @@
         }
       }
     },
+    "Your streak": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu racha"
+          }
+        }
+      }
+    },
     "Your thought": {
       "localizations": {
         "es": {
@@ -1857,6 +1997,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "categorías"
+          }
+        }
+      }
+    },
+    "days in a row": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "días seguidos"
           }
         }
       }

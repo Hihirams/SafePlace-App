@@ -101,18 +101,32 @@ enum SafeDesign {
     static func scaled(_ size: CGFloat,
                        weight: Font.Weight = .regular,
                        design: Font.Design = .default) -> Font {
-        // HIG: un tamaño custom debe escalar contra el estilo de texto que le
-        // corresponde, no siempre contra .body (si no, las etiquetas de 10 pt
-        // crecen como si fueran cuerpo y rompen las filas).
-        let style: UIFont.TextStyle
-        switch size {
-        case ..<12: style = .caption2
-        case ..<15: style = .footnote
-        case ..<18: style = .subheadline
-        default:    style = .body
-        }
+        let style = textStyle(for: size)
         let scaledSize = UIFontMetrics(forTextStyle: style).scaledValue(for: size)
         return .system(size: scaledSize, weight: weight, design: design)
+    }
+
+    /// Igual que `scaled`, pero con un techo en puntos. Para arte decorativo que
+    /// vive dentro de un círculo de tamaño fijo (llamas, iconos de un botón):
+    /// crece con Dynamic Type hasta donde cabe y ahí se detiene.
+    static func scaled(_ size: CGFloat,
+                       weight: Font.Weight = .regular,
+                       design: Font.Design = .default,
+                       cappedAt cap: CGFloat) -> Font {
+        let style = textStyle(for: size)
+        let scaledSize = min(UIFontMetrics(forTextStyle: style).scaledValue(for: size), cap)
+        return .system(size: scaledSize, weight: weight, design: design)
+    }
+
+    /// Estilo de texto contra el que escala un tamaño custom. Una etiqueta de
+    /// 10 pt crece como caption2, no como cuerpo.
+    private static func textStyle(for size: CGFloat) -> UIFont.TextStyle {
+        switch size {
+        case ..<12: return .caption2
+        case ..<15: return .footnote
+        case ..<18: return .subheadline
+        default:    return .body
+        }
     }
 
     // MARK: - Spacing (multiples of 4)

@@ -43,6 +43,7 @@
 		AA0100000000000000000120 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000001023 /* SearchView.swift */; };
 		AA0100000000000000000121 /* NoteStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000001024 /* NoteStats.swift */; };
 		AA0100000000000000000122 /* CreateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000001025 /* CreateView.swift */; };
+		AA0100000000000000000123 /* StreakView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000001026 /* StreakView.swift */; };
 		AA0100000000000000000300 /* LogicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000003002 /* LogicTests.swift */; };
 		AA0100000000000000000400 /* SmokeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000004002 /* SmokeUITests.swift */; };
 		AA0100000000000000000200 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0100000000000000002001 /* ShareViewController.swift */; };
@@ -127,6 +128,7 @@
 		BB0100000000000000001023 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		BB0100000000000000001024 /* NoteStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteStats.swift; sourceTree = "<group>"; };
 		BB0100000000000000001025 /* CreateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateView.swift; sourceTree = "<group>"; };
+		BB0100000000000000001026 /* StreakView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakView.swift; sourceTree = "<group>"; };
 		BB0100000000000000002001 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		BB0100000000000000002002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BB0100000000000000002003 /* SafePlaceShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SafePlaceShare.entitlements; sourceTree = "<group>"; };
@@ -274,6 +276,7 @@
 				BB0100000000000000001021 /* MascotView.swift */,
 				BB0100000000000000001023 /* SearchView.swift */,
 				BB0100000000000000001025 /* CreateView.swift */,
+				BB0100000000000000001026 /* StreakView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -465,6 +468,7 @@
 				AA0100000000000000000120 /* SearchView.swift in Sources */,
 				AA0100000000000000000121 /* NoteStats.swift in Sources */,
 				AA0100000000000000000122 /* CreateView.swift in Sources */,
+				AA0100000000000000000123 /* StreakView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -586,14 +590,14 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = SafePlace/SafePlace.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 49;
+				CURRENT_PROJECT_VERSION = 53;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = SafePlace/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.49;
+				MARKETING_VERSION = 1.53;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hihirams.safeplace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -609,14 +613,14 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = SafePlace/SafePlace.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 49;
+				CURRENT_PROJECT_VERSION = 53;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = SafePlace/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.49;
+				MARKETING_VERSION = 1.53;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hihirams.safeplace;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -630,7 +634,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = SafePlaceShare/SafePlaceShare.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 49;
+				CURRENT_PROJECT_VERSION = 53;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = SafePlaceShare/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -638,7 +642,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.49;
+				MARKETING_VERSION = 1.53;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hihirams.safeplace.Share;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -653,7 +657,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = SafePlaceShare/SafePlaceShare.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 49;
+				CURRENT_PROJECT_VERSION = 53;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = SafePlaceShare/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -661,7 +665,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.49;
+				MARKETING_VERSION = 1.53;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hihirams.safeplace.Share;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -676,10 +680,10 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 49;
+				CURRENT_PROJECT_VERSION = 53;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.49;
+				MARKETING_VERSION = 1.53;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hihirams.safeplace.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -693,10 +697,10 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 49;
+				CURRENT_PROJECT_VERSION = 53;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.49;
+				MARKETING_VERSION = 1.53;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hihirams.safeplace.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -709,10 +713,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 49;
+				CURRENT_PROJECT_VERSION = 53;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.49;
+				MARKETING_VERSION = 1.53;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hihirams.safeplace.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -725,10 +729,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 49;
+				CURRENT_PROJECT_VERSION = 53;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.49;
+				MARKETING_VERSION = 1.53;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hihirams.safeplace.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

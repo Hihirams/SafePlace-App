@@ -493,6 +493,63 @@ struct DailyStatsTests {
         #expect(NoteStats.currentStreak([]) == 0)
     }
 
+    // MARK: Modal de la racha
+
+    private func fixedDate(_ year: Int, _ month: Int, _ day: Int) -> Date {
+        cal.date(from: DateComponents(year: year, month: month, day: day, hour: 10)) ?? Date()
+    }
+
+    @Test func weekSnapshotHasSevenConsecutiveDays() {
+        let now = fixedDate(2026, 3, 2)
+        let snapshot = NoteStats.weekSnapshot([], now: now)
+        #expect(snapshot.count == 7)
+        #expect(snapshot.allSatisfy { $0.date == cal.startOfDay(for: $0.date) })
+        for (earlier, later) in zip(snapshot, snapshot.dropFirst()) {
+            #expect(cal.dateComponents([.day], from: earlier.date, to: later.date).day == 1)
+        }
+        #expect(snapshot.contains { cal.isDate($0.date, inSameDayAs: now) })
+    }
+
+    @Test func weekSnapshotReadsTodayAndFutureHonestly() {
+        let now = fixedDate(2026, 3, 2)
+        let todayStart = cal.startOfDay(for: now)
+        let snapshot = NoteStats.weekSnapshot([makeEntry("hoy", createdAt: now)], now: now)
+
+        let today = snapshot.first { $0.isToday }
+        #expect(today?.state == .done)
+        #expect(today?.count == 1)
+        #expect(snapshot.filter { $0.date > todayStart }.allSatisfy { $0.state == .upcoming })
+        #expect(snapshot.filter { $0.date < todayStart }.allSatisfy { $0.state == .missed })
+    }
+
+    @Test func weekSnapshotCrossesAMonthBoundary() {
+        let now = fixedDate(2026, 3, 2)
+        let snapshot = NoteStats.weekSnapshot([], now: now)
+        let firstOfMarch = cal.startOfDay(for: fixedDate(2026, 3, 1))
+        #expect(snapshot.count == 7)
+        #expect(snapshot.contains { $0.date == firstOfMarch })
+    }
+
+    @Test func streakGoalPointsToTheNextMilestone() {
+        #expect(NoteStats.streakGoal(for: 0).target == 3)
+        #expect(NoteStats.streakGoal(for: 2).target == 3)
+        #expect(NoteStats.streakGoal(for: 3).target == 7)
+        #expect(NoteStats.streakGoal(for: 12).target == 14)
+        #expect(NoteStats.streakGoal(for: 12).remaining == 2)
+        #expect(NoteStats.streakGoal(for: 14).target == 30)
+        #expect(NoteStats.streakGoal(for: 400).target == 365)
+        #expect(NoteStats.streakGoal(for: 400).remaining == 0)
+    }
+
+    @Test func streakGoalProgressStaysBetweenZeroAndOne() {
+        for value in [-5, 0, 1, 3, 6, 13, 14, 60, 100, 365, 800] {
+            let progress = NoteStats.streakGoal(for: value).progress
+            #expect(progress >= 0 && progress <= 1)
+        }
+        #expect(NoteStats.streakGoal(for: 7).progress == 0.5)
+        #expect(NoteStats.streakGoal(for: -5).target == 3)
+    }
+
     @Test func last14DaysBucketsInChronologicalOrder() {
         let buckets = NoteStats.last14Days([makeEntry("1", createdAt: Date())])
         #expect(buckets.count == 14)

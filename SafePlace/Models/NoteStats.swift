@@ -22,6 +22,29 @@ enum NoteStats {
         var id: Date { date }
     }
 
+    /// Un día de la semana de la racha, ya resuelto para pintar: si hubo nota,
+    /// si es hoy y si todavía no llega.
+    struct StreakDay: Identifiable {
+        enum State: Equatable { case done, missed, upcoming }
+
+        let date: Date
+        let count: Int
+        let state: State
+        let isToday: Bool
+        var id: Date { date }
+    }
+
+    /// La meta de constancia a la que apunta el modal: siempre el siguiente
+    /// hito, nunca un número inventado por la vista.
+    struct StreakGoal {
+        let target: Int
+        let remaining: Int
+        let progress: Double   // 0...1
+    }
+
+    /// Hitos de racha, de menor a mayor.
+    static let streakMilestones = [3, 7, 14, 30, 60, 100, 365]
+
     static func todayCount(_ entries: [Entry], now: Date = Date()) -> Int {
         let cal = Calendar.current
         return entries.filter { cal.isDate($0.createdAt, inSameDayAs: now) }.count
@@ -63,6 +86,44 @@ enum NoteStats {
     /// "1 día" / "3 días": la unidad que faltaba en las métricas de racha.
     static func daysLabel(_ count: Int) -> String {
         count == 1 ? String(localized: "1 day") : String(localized: "\(count) days")
+    }
+
+    /// La corrida de días de la semana en curso, en orden y según el primer día
+    /// del calendario del usuario. Los días que todavía no llegan van como
+    /// `.upcoming`: no son un fallo, son futuro.
+    static func weekSnapshot(_ entries: [Entry], now: Date = Date()) -> [StreakDay] {
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: now)
+        guard let week = cal.dateInterval(of: .weekOfYear, for: today) else { return [] }
+        let counts = Dictionary(grouping: entries) { cal.startOfDay(for: $0.createdAt) }
+            .mapValues { $0.count }
+        let start = cal.startOfDay(for: week.start)
+        return (0..<7).compactMap { offset in
+            guard let raw = cal.date(byAdding: .day, value: offset, to: start) else { return nil }
+            // Normalizar tras el salto: en DST, sumar un día puede caer a las
+            // 23:00 del día anterior y romper el bucket.
+            let day = cal.startOfDay(for: raw)
+            let count = counts[day, default: 0]
+            let state: StreakDay.State
+            if day > today {
+                state = .upcoming
+            } else if count > 0 {
+                state = .done
+            } else {
+                state = .missed
+            }
+            return StreakDay(date: day, count: count, state: state, isToday: day == today)
+        }
+    }
+
+    /// El siguiente hito por encima de la racha actual. Al llegar al último
+    /// (un año) la meta queda cumplida en vez de dispararse al infinito.
+    static func streakGoal(for streak: Int) -> StreakGoal {
+        let safe = max(streak, 0)
+        let target = streakMilestones.first { $0 > safe } ?? streakMilestones[streakMilestones.count - 1]
+        let remaining = max(target - safe, 0)
+        let progress = target > 0 ? min(Double(safe) / Double(target), 1) : 1
+        return StreakGoal(target: target, remaining: remaining, progress: progress)
     }
 
     /// Longest run of consecutive days with at least one note. Gentle, not punitive.

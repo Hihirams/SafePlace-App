@@ -50,4 +50,16 @@ final class SmokeUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts[text].firstMatch.waitForExistence(timeout: 10),
                       "La nota recién creada no aparece en Home")
     }
+
+    func testStreakDetailOpensAndCloses() throws {
+        let app = launchApp()
+        waitForHome(app)
+        let streak = app.buttons["home-streak"]
+        XCTAssertTrue(streak.waitForExistence(timeout: 8), "No hay fila de racha en Home")
+        streak.tap()
+        let close = app.buttons["streak-close"]
+        XCTAssertTrue(close.waitForExistence(timeout: 8), "El detalle de la racha no se abrió")
+        close.tap()
+        XCTAssertTrue(streak.waitForExistence(timeout: 8), "El detalle no se cerró")
+    }
 }

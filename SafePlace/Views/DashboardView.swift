@@ -9,6 +9,7 @@ struct DashboardView: View {
     var covered: Bool = false
     var onOpenSettings: () -> Void = {}
     var onOpenSearch: () -> Void = {}
+    var onOpenStreak: () -> Void = {}
     @Environment(\.horizontalSizeClass) private var h
     @Environment(\.verticalSizeClass) private var v
     @Environment(\.appTheme) private var theme
@@ -227,15 +228,30 @@ struct DashboardView: View {
                     .foregroundStyle(theme.tintStrong)
                     .transition(.opacity)
             } else {
-                HStack(spacing: SafeDesign.xs) {
-                    StreakFlameBadge(active: currentStreak > 0)
-                    Text(streakLine)
-                        .font(SafeDesign.caption)
-                        .foregroundStyle(SafeDesign.muted)
-                        .fixedSize(horizontal: false, vertical: true)
+                Button {
+                    Haptics.tap()
+                    onOpenStreak()
+                } label: {
+                    HStack(spacing: SafeDesign.xs) {
+                        StreakFlameBadge(active: currentStreak > 0)
+                        Text(streakLine)
+                            .font(SafeDesign.caption)
+                            .foregroundStyle(SafeDesign.muted)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Spacer(minLength: SafeDesign.xs)
+                        Image(systemName: "chevron.right")
+                            .font(SafeDesign.scaled(11, weight: .semibold))
+                            .foregroundStyle(SafeDesign.muted)
+                    }
+                    .frame(minHeight: minTouchTarget)
+                    .contentShape(Rectangle())
                 }
-                .accessibilityElement(children: .ignore)
+                .buttonStyle(.plain)
+                .pressable(scale: 0.98)
                 .accessibilityLabel(streakLine)
+                .accessibilityHint("Opens your streak")
+                .accessibilityIdentifier("home-streak")
             }
         }
     }
@@ -507,38 +523,21 @@ struct DashboardView: View {
 // MARK: - Streak flame
 
 /// Llama de la racha. Usa el pastel del mood "Con energía" para no salirse de la
-/// paleta de los sentimientos, y parpadea lento como una vela. Sin racha activa
-/// queda en contorno, en gris, y sin animación.
+/// paleta de los sentimientos. La animación vive en `StreakFlameGlyph`, que
+/// comparte con el héroe del modal. Sin racha activa queda en contorno, en gris,
+/// y sin animación.
 private struct StreakFlameBadge: View {
     let active: Bool
-
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var flicker = false
-
-    private var flameAnimation: Animation {
-        guard active, !reduceMotion else { return .default }
-        return SafeMotion.flame
-    }
 
     var body: some View {
         ZStack {
             Circle()
                 .fill(active ? SafeDesign.moodBright : SafeDesign.surfaceStrong)
                 .frame(width: 22, height: 22)
-            Image(systemName: active ? "flame.fill" : "flame")
-                .font(SafeDesign.scaled(11, weight: .semibold))
-                .foregroundStyle(active ? SafeDesign.ink : SafeDesign.muted)
-                .scaleEffect(flicker ? 1.08 : 0.92, anchor: .bottom)
-                .offset(y: flicker ? -0.5 : 0.5)
-                .opacity(flicker ? 1 : 0.86)
+            StreakFlameGlyph(size: 11, active: active, color: SafeDesign.inkOnFill)
         }
         .overlay { Circle().strokeBorder(SafeDesign.ink.opacity(0.06), lineWidth: 1) }
         .shadow(color: active ? SafeDesign.moodBright.opacity(0.55) : .clear, radius: 6, y: 1)
-        .animation(flameAnimation, value: flicker)
-        .onAppear {
-            guard active, !reduceMotion else { return }
-            flicker = true
-        }
         .accessibilityHidden(true)
     }
 }

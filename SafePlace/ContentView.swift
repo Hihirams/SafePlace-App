@@ -142,6 +142,7 @@ struct ContentView: View {
     @State private var showCreate = false
     @State private var showSettings = false
     @State private var showSearch = false
+    @State private var showStreak = false
     @Environment(\.horizontalSizeClass) private var h
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -155,7 +156,8 @@ struct ContentView: View {
                     selectedTab: $selectedTab,
                     covered: covered,
                     onOpenSettings: { showSettings = true },
-                    onOpenSearch: { showSearch = true }
+                    onOpenSearch: { showSearch = true },
+                    onOpenStreak: { withAnimation(SafeMotion.quick) { showStreak = true } }
                 )
                 .tag(Tab.home)
                 JournalView(store: store).tag(Tab.journal)
@@ -163,12 +165,25 @@ struct ContentView: View {
                 ResourcesView(store: store).tag(Tab.saved)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
+            .accessibilityHidden(showStreak)
+            .allowsHitTesting(!showStreak)
         }
         .overlay(alignment: .bottom) {
             GlassTabBar(selectedTab: $selectedTab) { showCreate = true }
                 .opacity(covered ? 0 : 1)
                 .offset(y: covered && !reduceMotion ? 8 : 0)
                 .animation(SafeMotion.gentle, value: covered)
+                .accessibilityHidden(showStreak)
+                .allowsHitTesting(!showStreak)
+        }
+        .overlay {
+            if showStreak {
+                StreakView(store: store) {
+                    withAnimation(SafeMotion.quick) { showStreak = false }
+                }
+                .transition(.opacity)
+                .zIndex(2)
+            }
         }
         .tint(SafeDesign.accent)
         .fullScreenCover(isPresented: $showCreate) {

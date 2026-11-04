@@ -4,6 +4,14 @@ Todos los cambios notables de SafePlace. El formato sigue [Keep a Changelog](htt
 
 Desde el **build 23** la versión se calcula como `1.<build>` (ver [README → Versión y releases](README.md#versión-y-releases)). Los builds anteriores se listan por su número de build, que es el identificador estable de cada release.
 
+## [1.53] — build 53 · 2026-11-03
+### Añadido
+- **Detalle de la racha**: al tocar la fila de racha de Home se abre una tarjeta centrada con la llama, los días seguidos, la semana en curso (hecho / sin nota / aún no) y el avance hacia el siguiente hito (3, 7, 14, 30, 60, 100 y 365 días).
+- `NoteStats.weekSnapshot` y `NoteStats.streakGoal`, con tests de borde de mes, futuro honesto y progreso clampeado.
+### Cambiado
+- La llama de Home y la del modal comparten `StreakFlameGlyph`, así que el loop `flame` se define una sola vez.
+- Con Reduce Motion la tarjeta aparece sin escala y la llama queda quieta; a tamaños AX la semana se lee como lista con el estado en palabras.
+
 ## [1.49] — build 49 · 2026-10-31
 ### Añadido
 - **Llama de racha** junto al texto de Home: círculo pastel del mood "Con energía" (`moodBright`) con `flame.fill` en tinta, parpadeo lento de vela y un halo cálido. Con racha en cero queda en contorno gris, sin animación; con Reduce Motion queda quieta.

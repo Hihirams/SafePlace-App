@@ -69,6 +69,8 @@ Fuentes **semánticas** (escalan con Dynamic Type). Los títulos usan el serif d
 
 Wordmark "SafePlace": serif del sistema.
 
+Tamaños custom: `SafeDesign.scaled(...)` escala contra el estilo de texto que le corresponde (caption2 / footnote / subheadline / body). Para arte decorativo dentro de un círculo fijo (llamas, iconos de botón) existe `SafeDesign.scaled(..., cappedAt:)`, que se detiene antes de desbordar el contenedor.
+
 **Regla:** no usar `.system(size:)` para texto de contenido; reservarlo para decorativos (cifras, iconos, badges) dentro de contenedores flexibles.
 
 ## Espaciado y radios
@@ -98,6 +100,10 @@ Todo movimiento ambiental (personaje, llama, grafo) se detiene con **Reduce
 Motion**, y con Reduce Motion la cascada no escalona ni desplaza: los bloques
 aparecen ya colocados. Ninguna vista escribe una duración literal.
 
+**Detalle de la racha:** la tarjeta entra con `bouncy` (escala 0.94→1 y
+opacidad) y sale con `quick`; con Reduce Motion aparece sin escala. La llama
+reutiliza `flame`, así que no hay tokens nuevos.
+
 El prototipo aprobado vive en `design/SafePlace-Motion.figcraft`; el contrato
 completo, en `.opencode/skills/safeplace-motion/SKILL.md`.
 
@@ -123,7 +129,7 @@ completo, en `.opencode/skills/safeplace-motion/SKILL.md`.
 - En iOS 26 usa Liquid Glass nativo (`glassEffect`); antes, `.ultraThinMaterial` con borde especular.
 
 ## Componentes
-`PrimaryButton` / `SecondaryButton`, `ClayTextField` / `ClayTextArea` / `ClaySearchBar`, `SelectionPill`, `BadgePill`, `GlassIconButton`, `Hairline`, `SectionHeader`, `BrandMark`, `ClayCard`, `EditorialNoteRow`, `EntryCardView`, `MascotView`, `ProfileAvatar`, `GlassTabBar`, `SheetHeader`, `FlowLayout`, `SettingsCard`.
+`PrimaryButton` / `SecondaryButton`, `ClayTextField` / `ClayTextArea` / `ClaySearchBar`, `SelectionPill`, `BadgePill`, `GlassIconButton`, `Hairline`, `SectionHeader`, `BrandMark`, `ClayCard`, `EditorialNoteRow`, `EntryCardView`, `MascotView`, `ProfileAvatar`, `GlassTabBar`, `SheetHeader`, `FlowLayout`, `SettingsCard`, `StreakFlameGlyph`, `StreakView`.
 
 ## Reglas
 - **Objetivos táctiles** ≥ 44×44 (`minTouchTarget`).
