@@ -4,6 +4,10 @@ Todos los cambios notables de SafePlace. El formato sigue [Keep a Changelog](htt
 
 Desde el **build 23** la versión se calcula como `1.<build>` (ver [README → Versión y releases](README.md#versión-y-releases)). Los builds anteriores se listan por su número de build, que es el identificador estable de cada release.
 
+## [1.54] — build 54 · 2026-11-03
+### Cambiado
+- **El detalle de la racha ya no ocupa la pantalla**: la tarjeta se ajusta a su contenido (~485 pt en vez de ~640) y solo hace scroll cuando no cabe, como a tamaños AX. Héroe, número, semana y panel de meta más compactos; el scrim baja al 18 %.
+
 ## [1.53] — build 53 · 2026-11-03
 ### Añadido
 - **Detalle de la racha**: al tocar la fila de racha de Home se abre una tarjeta centrada con la llama, los días seguidos, la semana en curso (hecho / sin nota / aún no) y el avance hacia el siguiente hito (3, 7, 14, 30, 60, 100 y 365 días).

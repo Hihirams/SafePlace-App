@@ -49,7 +49,7 @@ struct StreakView: View {
     // MARK: - Scrim
 
     private var scrim: some View {
-        Color.black.opacity(0.24)
+        Color.black.opacity(0.18)
             .ignoresSafeArea()
             .contentShape(Rectangle())
             .onTapGesture { close() }
@@ -59,43 +59,16 @@ struct StreakView: View {
     // MARK: - Card
 
     private var card: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 0) {
-                flameHero
-
-                VStack(spacing: SafeDesign.xs) {
-                    Text("Your streak")
-                        .font(SafeDesign.serifHero)
-                        .foregroundStyle(SafeDesign.ink)
-                        .multilineTextAlignment(.center)
-                        .accessibilityFocused($titleFocused)
-                    Text("Consecutive days checking in")
-                        .font(SafeDesign.caption)
-                        .foregroundStyle(SafeDesign.inkSecondary)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .padding(.top, SafeDesign.m)
-
-                streakNumber
-                    .padding(.top, SafeDesign.l)
-
-                if dynamicTypeSize.isAccessibilitySize {
-                    accessibleWeek
-                } else {
-                    weekRow
-                }
-
-                goalPanel
-                    .padding(.top, SafeDesign.xl)
+        // La tarjeta se ajusta a lo que mide su contenido. Solo si no cabe
+        // (tamaños AX o pantallas muy cortas) se convierte en scroll.
+        ViewThatFits(in: .vertical) {
+            cardContent
+            ScrollView(showsIndicators: false) {
+                cardContent
             }
-            .padding(.horizontal, SafeDesign.l)
-            .padding(.top, SafeDesign.xxl + SafeDesign.s)
-            .padding(.bottom, SafeDesign.xl)
+            .scrollBounceBehavior(.basedOnSize)
         }
-        .scrollBounceBehavior(.basedOnSize)
         .frame(maxWidth: 400)
-        .frame(maxHeight: 660)
         .background(
             SafeDesign.surfaceCard,
             in: RoundedRectangle(cornerRadius: SafeDesign.radiusXL, style: .continuous)
@@ -111,6 +84,41 @@ struct StreakView: View {
         .shadow(color: .black.opacity(0.16), radius: 28, y: 12)
         .accessibilityElement(children: .contain)
         .accessibilityAction(.escape) { close() }
+    }
+
+    private var cardContent: some View {
+        VStack(spacing: 0) {
+            flameHero
+
+            VStack(spacing: SafeDesign.xs) {
+                Text("Your streak")
+                    .font(SafeDesign.serifHead)
+                    .foregroundStyle(SafeDesign.ink)
+                    .multilineTextAlignment(.center)
+                    .accessibilityFocused($titleFocused)
+                Text("Consecutive days checking in")
+                    .font(SafeDesign.caption)
+                    .foregroundStyle(SafeDesign.inkSecondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(.top, SafeDesign.m)
+
+            streakNumber
+                .padding(.top, SafeDesign.m)
+
+            if dynamicTypeSize.isAccessibilitySize {
+                accessibleWeek
+            } else {
+                weekRow
+            }
+
+            goalPanel
+                .padding(.top, SafeDesign.m)
+        }
+        .padding(.horizontal, SafeDesign.l)
+        .padding(.top, SafeDesign.xl)
+        .padding(.bottom, SafeDesign.xl)
     }
 
     private var closeButton: some View {
@@ -135,16 +143,16 @@ struct StreakView: View {
         ZStack {
             Circle()
                 .fill(streakTint.opacity(0.10))
-                .frame(width: 164, height: 164)
+                .frame(width: 116, height: 116)
             Circle()
                 .fill(streakTint.opacity(0.18))
-                .frame(width: 122, height: 122)
+                .frame(width: 88, height: 88)
             Circle()
                 .fill(streakTint.opacity(0.30))
-                .frame(width: 84, height: 84)
-            StreakFlameGlyph(size: 40, active: streak > 0, color: streakTintStrong)
+                .frame(width: 64, height: 64)
+            StreakFlameGlyph(size: 30, active: streak > 0, color: streakTintStrong)
         }
-        .frame(height: 168)
+        .frame(height: 120)
         .accessibilityHidden(true)
     }
 
@@ -153,7 +161,7 @@ struct StreakView: View {
     private var streakNumber: some View {
         VStack(spacing: 0) {
             Text("\(streak)")
-                .font(SafeDesign.scaled(56, weight: .semibold, design: .serif).monospacedDigit())
+                .font(SafeDesign.scaled(44, weight: .semibold, design: .serif).monospacedDigit())
                 .foregroundStyle(SafeDesign.ink)
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
@@ -163,10 +171,10 @@ struct StreakView: View {
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, SafeDesign.m)
+        .padding(.vertical, SafeDesign.s)
         .background(
             streakTint.opacity(0.32),
-            in: RoundedRectangle(cornerRadius: SafeDesign.radiusXL, style: .continuous)
+            in: RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous)
         )
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(String(localized: "\(streak) days in a row"))
@@ -183,14 +191,14 @@ struct StreakView: View {
                         .foregroundStyle(day.isToday ? SafeDesign.ink : SafeDesign.muted)
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
-                    dayMark(day, size: 32)
+                    dayMark(day, size: 28)
                 }
                 .frame(maxWidth: .infinity)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(dayAccessibilityLabel(day))
             }
         }
-        .padding(.top, SafeDesign.xl)
+        .padding(.top, SafeDesign.l)
     }
 
     /// A tamaño de accesibilidad siete columnas ya no caben: la semana se lee
@@ -222,7 +230,7 @@ struct StreakView: View {
             case .done:
                 Circle().fill(streakTint)
                 Image(systemName: "checkmark")
-                    .font(SafeDesign.scaled(12, weight: .bold, cappedAt: 18))
+                    .font(SafeDesign.scaled(12, weight: .bold, cappedAt: 16))
                     .foregroundStyle(SafeDesign.inkOnFill)
             case .missed:
                 Circle().fill(SafeDesign.surfaceSoft)
@@ -290,7 +298,7 @@ struct StreakView: View {
                 }
             }
         }
-        .padding(SafeDesign.m)
+        .padding(SafeDesign.s)
         .background(
             SafeDesign.surfaceSoft,
             in: RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous)
@@ -306,9 +314,9 @@ struct StreakView: View {
             ZStack {
                 Circle()
                     .fill(streakTint.opacity(0.38))
-                    .frame(width: 32, height: 32)
+                    .frame(width: 28, height: 28)
                 Image(systemName: "flame.fill")
-                    .font(SafeDesign.scaled(13, weight: .semibold, cappedAt: 18))
+                    .font(SafeDesign.scaled(12, weight: .semibold, cappedAt: 16))
                     .foregroundStyle(streakTintStrong)
             }
             .accessibilityHidden(true)
