@@ -146,7 +146,7 @@ jobs:
                 "subtitle": "Guarda las pequeñas cosas que te ayudan",
                 "localizedDescription": "App de iPhone para guardar hábitos, personas, lugares, música y autocuidado.",
                 "iconURL": "$PAGES_URL/icon.png",
-                "tintColor": "FF4D8B",
+                "tintColor": "F5B07B",
                 "category": "lifestyle",
                 "versions": [
                   {

@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- impeccable-disable cream-palette: the #FAF8F4 paper is the canvas token from the app's DESIGN.md; the brief outranks the palette warning -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SafePlace — A safe place for the small things</title>
+<meta name="description" content="Habits, people, places, music and everything that helps you feel better. An iPhone app that stays on your device and looks like a well-made notebook.">
+<link rel="alternate" hreflang="es" href="index.html">
+<link rel="alternate" hreflang="en" href="en.html">
+<link rel="icon" href="icon.png">
+<meta property="og:title" content="SafePlace">
+<meta property="og:description" content="A safe place for the small things.">
+<meta property="og:image" content="assets/og.png">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="landing.css">
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="en.html">
+      <img src="icon.png" alt="" width="26" height="26">
+      <span class="wordmark">SafePlace</span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="#feel">How it feels</a>
+      <a href="#screens">Screens</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#install">Install</a>
+    </nav>
+    <div class="top-actions">
+      <a class="lang" href="index.html" hreflang="es" lang="es">ES</a>
+      <a class="btn btn--sm" href="#install">Install</a>
+    </div>
+  </div>
+</header>
+
+<main id="content">
+
+  <section class="hero">
+    <div class="hero-bg">
+      <img src="assets/hero-wide.webp" width="1672" height="941" alt="Two people on the living-room sofa, looking at a phone together.">
+    </div>
+    <div class="hero-scrim" aria-hidden="true"></div>
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <h1 class="rise">A safe place for the small things.</h1>
+        <p class="hero-sub rise d1">Habits, people, places and music. On your iPhone, no account.</p>
+        <div class="hero-cta rise d2">
+          <a class="btn" href="#install">Install on iPhone
+            <svg class="btn-arrow" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 10h13M11 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="rule" id="feel">
+    <div class="wrap">
+      <div class="mood reveal">
+        <h2>The colour follows your mood.</h2>
+        <p class="lede">In SafePlace the accent is not a fixed brand colour: it comes from how you feel. Pick a mood and watch the whole page change, the same way the app does.</p>
+        <p class="mood-q" style="margin-top:26px">How are you feeling?</p>
+        <div class="moods" role="group" aria-label="Mood">
+          <button class="mood-btn" type="button" data-mood="bright" aria-pressed="true" data-deep="#E8A85F" data-wash="rgba(254,200,154,.22)" data-label="bright">
+            <span class="mood-dot" style="background:#FEC89A"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="#2A2622" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg></span>
+            Bright
+          </button>
+          <button class="mood-btn" type="button" data-mood="calm" aria-pressed="false" data-deep="#7E9C93" data-wash="rgba(216,226,220,.30)" data-label="calm">
+            <span class="mood-dot" style="background:#D8E2DC"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="#2A2622" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-7 4.5-12.5 13-13 .5 8.5-4.5 13-13 13Z"/><path d="M5 19c2.5-4 5.5-7 9-9"/></svg></span>
+            Calm
+          </button>
+          <button class="mood-btn" type="button" data-mood="hopeful" aria-pressed="false" data-deep="#D9836F" data-wash="rgba(254,197,187,.26)" data-label="hopeful">
+            <span class="mood-dot" style="background:#FEC5BB"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="#2A2622" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="2.6"/><path d="M12 9.4C12 6.8 10.4 4.6 12 3.2c1.6 1.4 0 3.6 0 6.2M14.6 12c2.6 0 4.8-1.6 6.2 0-1.4 1.6-3.6 0-6.2 0M12 14.6c0 2.6 1.6 4.8 0 6.2-1.6-1.4 0-3.6 0-6.2M9.4 12c-2.6 0-4.8 1.6-6.2 0 1.4-1.6 3.6 0 6.2 0"/></svg></span>
+            Hopeful
+          </button>
+          <button class="mood-btn" type="button" data-mood="mixed" aria-pressed="false" data-deep="#D99A5C" data-wash="rgba(255,215,186,.26)" data-label="mixed">
+            <span class="mood-dot" style="background:#FFD7BA"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="#2A2622" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="8" r="3.2"/><path d="M8.5 2.8v1.4M3.3 8h1.4M4.8 4.3l1 1"/><path d="M9 18.5h8.2a3.6 3.6 0 0 0 0-7.2c-.5 0-1 .1-1.4.3A5 5 0 0 0 7 13.2"/></svg></span>
+            Mixed
+          </button>
+          <button class="mood-btn" type="button" data-mood="heavy" aria-pressed="false" data-deep="#5F7C9B" data-wash="rgba(169,188,208,.28)" data-label="heavy">
+            <span class="mood-dot" style="background:#A9BCD0"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="#2A2622" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 15.5a4 4 0 0 1 .6-7.95 5 5 0 0 1 9.6 1.2 3.4 3.4 0 0 1-.2 6.75Z"/><path d="M8.5 18.6l-.7 2M12 18.6l-.7 2M15.5 18.6l-.7 2"/></svg></span>
+            Heavy
+          </button>
+        </div>
+        <p class="mood-read" id="moodRead" aria-live="polite">Right now the app looks <strong>bright</strong>. That is how the tint works: one accent, and everything else stays paper.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="rule" id="keeps">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>What fits in a SafePlace.</h2>
+        <p class="lede">It is where you keep what serves you: a line you liked, the name of a place you want to go back to, a song for the car.</p>
+      </div>
+      <div class="cats">
+        <div class="cat reveal">
+          <span class="cat-name">Habits</span>
+          <span class="cat-desc">What you want to repeat. The streak counts the days in a row without punishing the ones you missed.</span>
+          <span class="cat-count">streak and record</span>
+        </div>
+        <div class="cat reveal">
+          <span class="cat-name">People</span>
+          <span class="cat-desc">Who you want to talk to, what they told you, when it was the last time.</span>
+          <span class="cat-count">by category</span>
+        </div>
+        <div class="cat reveal">
+          <span class="cat-name">Places</span>
+          <span class="cat-desc">Addresses, cafés, routes. The things you do not want to search for again.</span>
+          <span class="cat-count">on your map</span>
+        </div>
+        <div class="cat reveal">
+          <span class="cat-name">Music</span>
+          <span class="cat-desc">Records, single tracks, the thing you heard in a shop and could not name.</span>
+          <span class="cat-count">with a link</span>
+        </div>
+        <div class="cat reveal">
+          <span class="cat-name">Self-care</span>
+          <span class="cat-desc">What settles your head: a routine, a reminder, a note for the hard day.</span>
+          <span class="cat-count">no guilt</span>
+        </div>
+      </div>
+      <figure class="band reveal">
+        <img src="assets/band-kitchen.webp" alt="An older man in the kitchen at night, saving a note on his phone." width="1914" height="822">
+        <figcaption>The kitchen, 11:40 pm. One more note before bed.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="rule" id="screens">
+    <div class="wrap wrap--wide">
+      <div class="section-head reveal">
+        <h2>Three screens, one idea.</h2>
+        <p class="lede">Sections and lists separated by thin lines. Colour shows up in the detail, never in the background.</p>
+      </div>
+      <div class="screens">
+        <figure class="device reveal">
+          <div class="device-frame">
+            <div class="device-screen">
+              <div class="device-notch"></div>
+              <!-- REPLACE: <img src="assets/shot-home.png" alt="SafePlace home screen"> -->
+              <div class="shot-slot" data-shot="home">
+                <img class="slot-mascot" src="assets/logo.webp" alt="" width="384" height="373">
+                <b>Home</b>
+                <span>screenshot pending</span>
+              </div>
+            </div>
+          </div>
+          <figcaption class="device-cap"><b>Home</b>Your day, your numbers, your recent notes.</figcaption>
+      </figure>
+
+        <figure class="device reveal">
+          <div class="device-frame">
+            <div class="device-screen">
+              <div class="device-notch"></div>
+              <!-- REPLACE: <img src="assets/shot-journal.png" alt="SafePlace journal screen"> -->
+              <div class="shot-slot" data-shot="journal">
+                <img class="slot-mascot" src="assets/logo.webp" alt="" width="384" height="373">
+                <b>Journal</b>
+                <span>screenshot pending</span>
+              </div>
+            </div>
+          </div>
+          <figcaption class="device-cap"><b>Journal</b>Your timeline, grouped by day.</figcaption>
+      </figure>
+
+        <figure class="device reveal">
+          <div class="device-frame">
+            <div class="device-screen">
+              <div class="device-notch"></div>
+              <!-- REPLACE: <img src="assets/shot-mind.png" alt="SafePlace Mind graph screen"> -->
+              <div class="shot-slot" data-shot="mind">
+                <img class="slot-mascot" src="assets/logo.webp" alt="" width="384" height="373">
+                <b>Mind</b>
+                <span>screenshot pending</span>
+              </div>
+            </div>
+          </div>
+          <figcaption class="device-cap"><b>Mind</b>The graph of your notes, grouped by category.</figcaption>
+      </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="rule" id="mind">
+    <div class="wrap mind">
+      <div class="reveal">
+        <h2>Your head, on a map that moves.</h2>
+        <p class="lede">Every category is a hub and every note orbits around it. Nodes grow with what you write, and the motion depends on how many notes you have and how you feel.</p>
+        <ul class="mind-facts">
+          <li>Tap a node to focus it and read the note.</li>
+          <li>Pinch to zoom between 0.6× and 3×, drag to move.</li>
+          <li>You can pause the motion. With Reduce Motion it starts still.</li>
+        </ul>
+      </div>
+      <div class="mind-canvas-wrap reveal">
+        <canvas id="mind-canvas" role="img" aria-label="Example graph: three hubs with notes orbiting around them."></canvas>
+      </div>
+    </div>
+  </section>
+
+  <section class="rule" id="moments">
+    <div class="wrap wrap--wide scene">
+      <div class="scene-art reveal">
+        <img src="assets/scene-1.webp" alt="A man on a train saving a note on his phone." width="1672" height="941">
+      </div>
+      <div class="reveal">
+        <h2>It gets written the moment it happens.</h2>
+        <p class="lede">The create button opens a blank canvas, with no boxed-in fields. You write, the app suggests a category, and the colour comes from your mood. Afterwards you can change everything, or nothing.</p>
+        <p class="lede">And if the thought came from Apple Notes, you share it to SafePlace and decide whether to keep it or throw it away.</p>
+        <div class="hero-cta">
+          <a class="btn btn--ghost" href="#install">Try it on your iPhone</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="rule" id="night">
+    <div class="wrap wrap--wide scene scene--flip">
+      <div class="scene-art reveal">
+        <img src="assets/scene-3.webp" alt="A person in bed at night, holding their phone." width="1148" height="1370">
+      </div>
+      <div class="reveal">
+        <h2>And when the day ends, it goes quiet.</h2>
+        <p class="lede">You can turn on a daily reminder at the time you choose. If you do not open it, nothing happens: the app does not nag and it does not turn rest into another task.</p>
+        <p class="lede">In bed, with the brightness low, dark mode protects the contrast. The mascot is still there, in the colour of the day you had.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="rule" id="privacy">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Your notes never leave your iPhone.</h2>
+        <p class="lede">No account, no sign-up, no server. The app keeps everything on the device and lets you export it whenever you want.</p>
+      </div>
+      <div class="cats">
+        <div class="cat reveal"><span class="cat-name">Local</span><span class="cat-desc">The data lives on your phone. There is no backend to send it to.</span><span class="cat-count">no account</span></div>
+        <div class="cat reveal"><span class="cat-name">Portable</span><span class="cat-desc">Export and import everything as JSON from Settings. It is your file, not ours.</span><span class="cat-count">export / import</span></div>
+        <div class="cat reveal"><span class="cat-name">No analytics</span><span class="cat-desc">The app ships no third-party analytics and no trackers.</span><span class="cat-count">nothing to sell</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="rule" id="install">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Installing takes three steps.</h2>
+        <p class="lede">SafePlace ships as a build signed by me, not by the App Store. That is why iOS asks for a small detour the first time.</p>
+      </div>
+      <ol class="steps reveal">
+        <li><div><b>Install LiveContainer or AltStore</b><span>They are the two apps that let you install builds outside the App Store on iOS.</span></div></li>
+        <li><div><b>Add the SafePlace feed</b><span>Copy the address below and paste it as a new source in LiveContainer or AltStore.</span></div></li>
+        <li><div><b>Install and update</b><span>Every new push shows up as an update. Your data survives between versions.</span></div></li>
+      </ol>
+
+      <div class="install reveal">
+        <h3>Feed address</h3>
+        <p>It is the same one AltSource uses. You can also open the direct link from Safari on your iPhone.</p>
+        <div class="feed">
+          <code id="feedUrl">https://hihirams.github.io/SafePlace-App/source.json</code>
+          <button class="btn btn--sm" type="button" id="copyBtn">Copy</button>
+        </div>
+        <p class="install-note">Requires iOS 17 or later. The latest version is <strong id="versionLabel">1.49</strong>.</p>
+        <div class="hero-cta">
+          <a class="btn" href="livecontainer://sources?url=https://hihirams.github.io/SafePlace-App/source.json">Open in LiveContainer</a>
+          <a class="btn btn--ghost" href="https://github.com/Hihirams/SafePlace-App/releases/latest">See releases on GitHub</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="rule" id="appstore">
+    <div class="wrap">
+      <div class="reveal" style="max-width:64ch">
+        <h2 style="font-size:clamp(24px,3vw,32px)">What about the App Store?</h2>
+        <p class="lede">Not yet. SafePlace is a personal project and today it installs through LiveContainer or AltStore. The day it reaches the App Store, this page will be the first place to say so. You will not find a badge here that means nothing.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="rule" id="faq">
+    <div class="wrap">
+      <h2 class="reveal" style="margin-bottom:8px">Frequently asked.</h2>
+      <div class="faq">
+        <details>
+          <summary>Do I need an account or a subscription?</summary>
+          <p>No. There is no account, no cloud and no in-app purchases. You install it and use it.</p>
+        </details>
+        <details>
+          <summary>What happens to my data if I delete the app?</summary>
+          <p>It goes with the app. That is why Settings includes exporting to JSON: do that before deleting it if you want to keep your history.</p>
+        </details>
+        <details>
+          <summary>Does it work on iPad?</summary>
+          <p>Yes. The app adapts the reading width and uses three or four column grids on larger screens.</p>
+        </details>
+        <details>
+          <summary>How do Apple Notes get in?</summary>
+          <p>You open the note, tap Share, choose SafePlace, and the note shows up in the Notes tab so you can decide whether to keep it. iOS does not allow reading Notes directly, so the share sheet is the way in.</p>
+        </details>
+        <details>
+          <summary>Is there a dark mode?</summary>
+          <p>Light, dark and automatic. In dark mode the paper turns black and the accent stays, because the colour keeps doing the same job.</p>
+        </details>
+        <details>
+          <summary>Why is it not on the App Store?</summary>
+          <p>Because it is a personal project published build by build. Shipping through LiveContainer lets it update without waiting on a review.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <div class="foot-brand">
+          <img src="icon.png" alt="" width="30" height="30">
+          <span class="wordmark">SafePlace</span>
+        </div>
+        <p>A safe place for the small things. Made in Monterrey, for iPhone.</p>
+      </div>
+      <nav class="foot-links" aria-label="Footer">
+        <a href="#install">Install</a>
+        <a href="https://github.com/Hihirams/SafePlace-App">GitHub</a>
+        <a href="https://github.com/Hihirams/SafePlace-App/blob/main/CHANGELOG.md">Changelog</a>
+        <a href="index.html" hreflang="es" lang="es">Español</a>
+      </nav>
+    </div>
+    <div class="legal">
+      <span>SafePlace · MIT license</span>
+      <span>The illustrations were generated for this page.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  var root = document.documentElement;
+
+  /* mood: el acento tiñe toda la página */
+  var buttons = Array.prototype.slice.call(document.querySelectorAll(".mood-btn"));
+  var read = document.getElementById("moodRead");
+
+  function setMood(btn) {
+    buttons.forEach(function (b) { b.setAttribute("aria-pressed", String(b === btn)); });
+    root.style.setProperty("--accent", getComputedStyle(btn.querySelector(".mood-dot")).backgroundColor);
+    root.style.setProperty("--accent-deep", btn.getAttribute("data-deep"));
+    root.style.setProperty("--accent-wash", btn.getAttribute("data-wash"));
+    if (read) {
+      read.innerHTML = "Right now the app looks <strong>" + btn.getAttribute("data-label") + "</strong>. That is how the tint works: one accent, and everything else stays paper.";
+    }
+  }
+
+  buttons.forEach(function (b) {
+    b.addEventListener("click", function () { setMood(b); });
+  });
+
+  /* copiar el feed */
+  var copyBtn = document.getElementById("copyBtn");
+  if (copyBtn) {
+    copyBtn.addEventListener("click", function () {
+      var text = document.getElementById("feedUrl").textContent.trim();
+      var done = function () {
+        copyBtn.textContent = "Copied";
+        setTimeout(function () { copyBtn.textContent = "Copy"; }, 1800);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, done);
+      } else { done(); }
+    });
+  }
+
+  /* versión desde el feed AltSource */
+  var versionLabel = document.getElementById("versionLabel");
+  if (versionLabel && location.protocol !== "file:") {
+    fetch("source.json", { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        var v = data && data.apps && data.apps[0] && data.apps[0].versions && data.apps[0].versions[0];
+        if (v && v.version) versionLabel.textContent = v.version;
+      })
+      .catch(function () {});
+  }
+
+  /* revelados */
+  var els = document.querySelectorAll(".reveal");
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
+      });
+    }, { rootMargin: "0px 0px -6% 0px", threshold: .08 });
+    els.forEach(function (el) { io.observe(el); });
+  } else {
+    els.forEach(function (el) { el.classList.add("in"); });
+  }
+
+  /* grafo Mente: órbitas lentas y repulsión al cursor */
+  var canvas = document.getElementById("mind-canvas");
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (canvas && canvas.getContext) {
+    var ctx = canvas.getContext("2d");
+    var w = 0, h = 0, hubs = [], nodes = [];
+    var pointer = { x: -9999, y: -9999, active: false };
+    var REPEL = 150;
+
+    function accent() {
+      return getComputedStyle(root).getPropertyValue("--accent-deep").trim() || "#D98F3F";
+    }
+
+    function build() {
+      var rect = canvas.getBoundingClientRect();
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = rect.width; h = rect.height;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      hubs = [
+        { x: w * .28, y: h * .33, cat: "Habits" },
+        { x: w * .70, y: h * .41, cat: "People" },
+        { x: w * .46, y: h * .74, cat: "Places" }
+      ];
+
+      nodes = [];
+      for (var i = 0; i < 36; i++) {
+        var hub = hubs[i % hubs.length];
+        nodes.push({
+          hub: hub,
+          a: (Math.floor(i / 3) / 12) * Math.PI * 2 + Math.random() * 0.5,
+          d: 30 + Math.random() * 70,
+          sp: (0.00008 + Math.random() * 0.00016) * (Math.random() < .5 ? -1 : 1),
+          r: 2 + Math.random() * 2.6,
+          ox: 0, oy: 0, vx: 0, vy: 0
+        });
+      }
+    }
+
+    function step() {
+      var c = accent();
+      ctx.clearRect(0, 0, w, h);
+
+      var i, n, hx, hy, dx, dy, dist, force;
+
+      for (i = 0; i < nodes.length; i++) {
+        n = nodes[i];
+        if (!reduce) n.a += n.sp * 16;
+        hx = n.hub.x + Math.cos(n.a) * n.d;
+        hy = n.hub.y + Math.sin(n.a) * n.d;
+
+        if (!reduce && pointer.active) {
+          dx = hx + n.ox - pointer.x;
+          dy = hy + n.oy - pointer.y;
+          dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          if (dist < REPEL) {
+            force = Math.pow(1 - dist / REPEL, 2) * 3.2;
+            n.vx += (dx / dist) * force;
+            n.vy += (dy / dist) * force;
+          }
+        }
+
+        n.vx += -n.ox * 0.035;
+        n.vy += -n.oy * 0.035;
+        n.vx *= 0.90;
+        n.vy *= 0.90;
+        n.ox += n.vx;
+        n.oy += n.vy;
+
+        var px = hx + n.ox;
+        var py = hy + n.oy;
+
+        dx = px - n.hub.x;
+        dy = py - n.hub.y;
+        dist = Math.sqrt(dx * dx + dy * dy);
+
+        ctx.beginPath();
+        ctx.moveTo(n.hub.x, n.hub.y);
+        ctx.lineTo(px, py);
+        ctx.strokeStyle = c;
+        ctx.globalAlpha = Math.max(0.03, 0.16 - dist / 1100);
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.globalAlpha = 0.8;
+        ctx.fillStyle = c;
+        ctx.beginPath();
+        ctx.arc(px, py, n.r, 0, 6.283);
+        ctx.fill();
+      }
+
+      for (i = 0; i < hubs.length; i++) {
+        var hb = hubs[i];
+        ctx.globalAlpha = 0.16;
+        ctx.fillStyle = c;
+        ctx.beginPath();
+        ctx.arc(hb.x, hb.y, 22, 0, 6.283);
+        ctx.fill();
+
+        ctx.globalAlpha = 1;
+        ctx.beginPath();
+        ctx.arc(hb.x, hb.y, 8, 0, 6.283);
+        ctx.fill();
+
+        ctx.globalAlpha = 0.5;
+        ctx.fillStyle = "#2A2622";
+        ctx.font = "500 11px -apple-system, Segoe UI, system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(hb.cat, hb.x, hb.y + 30);
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function loop() {
+      step();
+      if (!reduce) requestAnimationFrame(loop);
+    }
+
+    canvas.addEventListener("pointermove", function (e) {
+      var rect = canvas.getBoundingClientRect();
+      pointer.x = e.clientX - rect.left;
+      pointer.y = e.clientY - rect.top;
+      pointer.active = true;
+    });
+    canvas.addEventListener("pointerleave", function () { pointer.active = false; });
+
+    window.addEventListener("resize", function () { build(); step(); });
+    build();
+    requestAnimationFrame(loop);
+    if (window.ResizeObserver) {
+      new ResizeObserver(function () { build(); step(); }).observe(canvas);
+    }
+  }
+})();
+</script>
+</body>
+</html>
