@@ -320,8 +320,8 @@ struct DashboardView: View {
     private var statsPanel: some View {
         let columns = SafeLayout.columns(forWidth: contentWidth)
         return LazyVGrid(columns: columns, spacing: SafeDesign.l) {
-            statCard(number: "\(store.entries.count)", label: store.entries.count == 1 ? AppStrings.localized("thing saved") : AppStrings.localized("things saved"))
-            statCard(number: "\(store.categories.count)", label: AppStrings.localized("categories"))
+            statsBand
+                .gridCellColumns(columns.count)
 
             statSection {
                 sectionTitle("BY CATEGORY")
@@ -388,6 +388,30 @@ struct DashboardView: View {
             .foregroundStyle(SafeDesign.muted)
     }
 
+    /// Las dos cifras de cabecera comparten una sola fila, repartidas al ancho
+    /// completo y separadas por una línea vertical. Antes caían en dos renglones
+    /// (el grid usa una columna en iPhone) y dejaban media pantalla vacía.
+    private var statsBand: some View {
+        VStack(spacing: SafeDesign.s) {
+            Hairline()
+            HStack(alignment: .center, spacing: SafeDesign.l) {
+                statCard(
+                    number: "\(store.entries.count)",
+                    label: store.entries.count == 1
+                        ? AppStrings.localized("thing saved")
+                        : AppStrings.localized("things saved")
+                )
+                statCard(number: "\(store.categories.count)", label: AppStrings.localized("categories"))
+            }
+            .background(alignment: .center) {
+                Rectangle()
+                    .fill(SafeDesign.hairline)
+                    .frame(width: 1)
+            }
+            Hairline()
+        }
+    }
+
     private func statCard(number: String, label: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(number)
@@ -399,7 +423,9 @@ struct DashboardView: View {
                 .foregroundStyle(SafeDesign.muted)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.vertical, SafeDesign.s)
+        .padding(.vertical, SafeDesign.xs)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(number) \(label)")
     }
 
     /// Sección ancha del panel de stats. Sin hairline: las secciones se separan
