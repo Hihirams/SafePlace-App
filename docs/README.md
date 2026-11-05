@@ -15,6 +15,9 @@ serif de display, un único acento que cambia con el estado de ánimo.
 | `assets/scene-1.webp` | Escena del tren (1672×941) |
 | `assets/scene-3.webp` | Escena de la cama (1200 px) |
 | `assets/band-kitchen.webp` | Banda de la cocina (1914×822) |
+| `assets/shot-home.webp` | Captura real de la pantalla de inicio (739×1600) |
+| `assets/shot-journal.webp` | Captura real del diario (739×1600) |
+| `assets/shot-mind.webp` | Captura real de Mente (739×1600) |
 | `assets/og.png` | Imagen para compartir (1200×630) |
 | `icon.png` | Icono de la app. **Copia de `AppIcon-1024.png`**: no editar aquí |
 | `source.json` | Feed AltSource. **Lo regenera el CI en cada release** |
@@ -24,34 +27,24 @@ en el mismo dominio: `https://hihirams.github.io/SafePlace-App/`.
 
 ## Cambiar las capturas de la app
 
-La sección **Tres pantallas** usa marcadores con el color del sistema hasta que
-haya capturas reales. Para reemplazarlos, en `index.html` y `en.html` busca los
-comentarios `REEMPLAZAR` / `REPLACE` dentro de `.device-screen`.
+La sección **Tres pantallas** usa capturas reales de la app, ya en proporción
+9:19.5. Para reemplazarlas, en `index.html` y `en.html` busca `shot-home.webp`,
+`shot-journal.webp` y `shot-mind.webp`.
 
-Cada marcador es esto:
-
-```html
-<div class="shot-slot" data-shot="home">
-  <img class="slot-mascot" src="assets/logo.webp" alt="">
-  <b>Inicio</b>
-  <span>captura pendiente</span>
-</div>
-```
-
-Cámbialo por una imagen con la misma proporción (9:19.5):
+Cada una es esto:
 
 ```html
-<img src="assets/shot-home.png" alt="Pantalla de inicio de SafePlace">
+<img src="assets/shot-home.webp" alt="Pantalla de inicio de SafePlace" width="739" height="1600">
 ```
+
+Exporta desde el simulador o el iPhone a 1179×2556 (iPhone 15 Pro) o equivalente,
+convierte a WebP y actualiza `width`, `height` y el `alt`. El marco recorta lo que
+sobre, pero mantén la proporción 9:19.5 para que no se deforme.
 
 En móvil el carrusel **no usa scroll horizontal nativo**: un visor con
 `overflow:hidden` recorta un riel que se mueve por `transform`, y las flechas
 cambian de diapositiva. Si le devuelves `overflow-x:auto`, el gesto horizontal
 vuelve a competir con el scroll vertical de la página.
-
-Nombres sugeridos: `shot-home.png`, `shot-journal.png`, `shot-mind.png`.
-Exporta desde el simulador a 1179×2556 (iPhone 15 Pro) o equivalente; el marco
-recorta lo que sobre.
 
 ## Probar en local
 
