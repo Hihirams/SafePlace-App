@@ -1,8 +1,20 @@
 name: Build iOS IPA
 
+# Dos rutas:
+# - Código de la app, proyecto y tests -> test + IPA + release + Pages.
+# - Landing y generador del feed -> solo Pages, sin compilar.
 on:
   push:
     branches: [main]
+    paths:
+      - 'SafePlace/**'
+      - 'SafePlaceShare/**'
+      - 'SafePlaceTests/**'
+      - 'SafePlaceUITests/**'
+      - 'SafePlace.xcodeproj/**'
+      - 'scripts/**'
+      - 'docs/**'
+      - '.github/workflows/build-ios.yml'
   workflow_dispatch:
 
 permissions:
@@ -24,7 +36,49 @@ env:
   BUILD: ${{ github.run_number }}
 
 jobs:
+  changes:
+    name: Detectar cambios
+    runs-on: ubuntu-latest
+    outputs:
+      app: ${{ steps.areas.outputs.app }}
+      docs: ${{ steps.areas.outputs.docs }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detectar qué carpetas cambiaron
+        id: areas
+        run: |
+          set -euo pipefail
+          before="${{ github.event.before }}"
+          after="${{ github.sha }}"
+
+          # Ejecución manual o base desconocida: se compila todo.
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ -z "$before" ] || ! git cat-file -e "${before}^{commit}" 2>/dev/null; then
+            echo "app=true" >> "$GITHUB_OUTPUT"
+            echo "docs=true" >> "$GITHUB_OUTPUT"
+            echo "Ejecución completa (manual o base desconocida)."
+            exit 0
+          fi
+
+          app=false
+          docs=false
+          while IFS= read -r file; do
+            case "$file" in
+              SafePlace/*|SafePlaceShare/*|SafePlaceTests/*|SafePlaceUITests/*|SafePlace.xcodeproj/*|scripts/check_*) app=true ;;
+              docs/*|scripts/write_source_json.sh|.github/workflows/build-ios.yml) docs=true ;;
+            esac
+          done < <(git diff --name-only "$before" "$after")
+
+          echo "app=$app" >> "$GITHUB_OUTPUT"
+          echo "docs=$docs" >> "$GITHUB_OUTPUT"
+          echo "Cambios -> app=$app docs=$docs"
+
   test:
+    needs: changes
+    if: needs.changes.outputs.app == 'true'
     runs-on: macos-15
 
     steps:
@@ -126,45 +180,54 @@ jobs:
       - name: Generate AltSource
         run: |
           set -euo pipefail
-          SIZE=$(stat -f%z SafePlace.ipa)
-          DATE=$(date -u +%Y-%m-%d)
-          RELEASE_URL="https://github.com/$REPO/releases/download/build-$BUILD/SafePlace.ipa"
-          mkdir -p docs
-          cat > docs/source.json <<EOF
-          {
-            "name": "$APP_NAME",
-            "identifier": "$BUNDLE_ID.source",
-            "sourceURL": "$PAGES_URL/source.json",
-            "subtitle": "Builds personales de $APP_NAME",
-            "description": "Builds automáticos de $APP_NAME para LiveContainer.",
-            "iconURL": "$PAGES_URL/icon.png",
-            "apps": [
-              {
-                "name": "$APP_NAME",
-                "bundleIdentifier": "$BUNDLE_ID",
-                "developerName": "Hihirams",
-                "subtitle": "Guarda las pequeñas cosas que te ayudan",
-                "localizedDescription": "App de iPhone para guardar hábitos, personas, lugares, música y autocuidado.",
-                "iconURL": "$PAGES_URL/icon.png",
-                "tintColor": "F5B07B",
-                "category": "lifestyle",
-                "versions": [
-                  {
-                    "version": "$VERSION",
-                    "buildVersion": "$BUILD",
-                    "date": "$DATE",
-                    "localizedDescription": "Build $BUILD ($DATE)",
-                    "downloadURL": "$RELEASE_URL",
-                    "size": $SIZE,
-                    "minOSVersion": "$MIN_OS"
-                  }
-                ]
-              }
-            ]
-          }
-          EOF
+          export SIZE=$(stat -f%z SafePlace.ipa)
+          export DATE=$(date -u +%Y-%m-%d)
+          bash scripts/write_source_json.sh docs/source.json
           echo "---- docs/source.json ----"
           cat docs/source.json
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+
+  pages:
+    name: Desplegar landing (solo docs)
+    needs: changes
+    if: needs.changes.outputs.docs == 'true' && needs.changes.outputs.app != 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Regenerate AltSource from latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          release=$(gh api "repos/$REPO/releases/latest")
+          tag=$(printf '%s' "$release" | jq -r '.tag_name')
+          case "$tag" in
+            build-*) ;;
+            *) echo "Tag inesperado: $tag" >&2; exit 1 ;;
+          esac
+          BUILD="${tag#build-}"
+          VERSION="1.$BUILD"
+          DATE=$(printf '%s' "$release" | jq -r '.published_at[0:10]')
+          SIZE=$(printf '%s' "$release" | jq -r '.assets[0].size')
+          if [ -z "$SIZE" ] || [ "$SIZE" = "null" ]; then
+            echo "El release $tag no tiene IPA adjunto." >&2
+            exit 1
+          fi
+          export BUILD VERSION DATE SIZE
+          bash scripts/write_source_json.sh docs/source.json
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

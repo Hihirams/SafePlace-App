@@ -3,6 +3,13 @@ name: Build check
 on:
   push:
     branches-ignore: [main]
+    paths:
+      - 'SafePlace/**'
+      - 'SafePlaceShare/**'
+      - 'SafePlaceTests/**'
+      - 'SafePlaceUITests/**'
+      - 'SafePlace.xcodeproj/**'
+      - 'scripts/check_*.py'
   workflow_dispatch:
 
 permissions:

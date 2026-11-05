@@ -24,6 +24,18 @@ serif de display, un único acento que cambia con el estado de ánimo.
 
 El workflow publica toda la carpeta `docs/`, así que la landing y el feed viven
 en el mismo dominio: `https://hihirams.github.io/SafePlace-App/`.
+## Cómo se publica
+
+El workflow `build-ios.yml` revisa qué cambió en cada push a `main`:
+
+- **Cambios en la app** (`SafePlace/**`, `SafePlaceShare/**`, tests, proyecto o
+  `scripts/check_*`): corre tests, compila el IPA, publica el release y despliega
+  `docs/`.
+- **Cambios solo en `docs/**` o el generador del feed**: despliega la landing sin compilar ni publicar
+  un release nuevo.
+
+En ambos caminos el feed `source.json` se regenera desde el último release antes
+de publicar, para que un deploy de solo-docs no lo sobrescriba con datos viejos.
 
 ## Cambiar las capturas de la app
 
