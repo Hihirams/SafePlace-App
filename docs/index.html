@@ -136,7 +136,9 @@
         <h2>Tres pantallas, una idea.</h2>
         <p class="lede">Secciones y listas separadas por líneas finas. El color aparece en el detalle, nunca en el fondo.</p>
       </div>
-      <div class="screens">
+      <div class="screens-shell">
+        <div class="screens-viewport">
+        <div class="screens" id="screens-track">
         <figure class="device reveal">
           <div class="device-frame">
             <div class="device-screen">
@@ -181,6 +183,17 @@
           </div>
           <figcaption class="device-cap"><b>Mente</b>El grafo de tus notas, agrupado por categoría.</figcaption>
       </figure>
+      </div>
+      </div>
+      <div class="screens-controls">
+        <button class="screen-nav" type="button" data-dir="-1" aria-label="Pantalla anterior">
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <span class="screen-count" aria-live="polite">1 / 3</span>
+        <button class="screen-nav" type="button" data-dir="1" aria-label="Pantalla siguiente">
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7.5 4.5 13 10l-5.5 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
       </div>
     </div>
   </section>
@@ -324,6 +337,7 @@
           <span class="wordmark">SafePlace</span>
         </div>
         <p>Un lugar seguro para las pequeñas cosas. Hecho en Monterrey, para iPhone.</p>
+        <p class="foot-credit">Diseñado y construido por <a href="https://github.com/Hihirams">Hiram · @Hihirams</a>.</p>
       </div>
       <nav class="foot-links" aria-label="Pie">
         <a href="#instalar">Instalar</a>
@@ -535,6 +549,41 @@
     if (window.ResizeObserver) {
       new ResizeObserver(function () { build(); step(); }).observe(canvas);
     }
+  }
+  /* carrusel de pantallas: mueve por transform, sin scroll horizontal nativo,
+     para que el gesto vertical de la página nunca quede secuestrado */
+  var track = document.getElementById("screens-track");
+  var shell = track && track.closest ? track.closest(".screens-shell") : null;
+  if (track && shell) {
+    var slides = Array.prototype.slice.call(track.querySelectorAll(".device"));
+    var arrows = Array.prototype.slice.call(shell.querySelectorAll(".screen-nav"));
+    var counter = shell.querySelector(".screen-count");
+    var index = 0;
+    var mq = window.matchMedia("(max-width: 900px)");
+
+    function renderScreens() {
+      var last = slides.length - 1;
+      if (index < 0) index = 0;
+      if (index > last) index = last;
+      track.style.transform = mq.matches ? "translateX(" + (-index * 100) + "%)" : "";
+      arrows.forEach(function (b) {
+        var dir = Number(b.getAttribute("data-dir"));
+        b.disabled = mq.matches && ((dir < 0 && index === 0) || (dir > 0 && index === last));
+      });
+      if (counter) counter.textContent = (index + 1) + " / " + slides.length;
+    }
+
+    arrows.forEach(function (b) {
+      b.addEventListener("click", function () {
+        index += Number(b.getAttribute("data-dir"));
+        renderScreens();
+      });
+    });
+
+    if (mq.addEventListener) mq.addEventListener("change", renderScreens);
+    else if (mq.addListener) mq.addListener(renderScreens);
+
+    renderScreens();
   }
 })();
 </script>

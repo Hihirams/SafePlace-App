@@ -12,7 +12,9 @@ serif de display, un único acento que cambia con el estado de ánimo.
 | `en.html` | Landing en inglés |
 | `landing.css` | Tokens y componentes compartidos. Sin build step |
 | `assets/hero-wide.webp` | Ilustración del hero (1672×941) |
-| `assets/scene-1..3.webp` | Ilustraciones de las secciones (generadas, 1200 px) |
+| `assets/scene-1.webp` | Escena del tren (1672×941) |
+| `assets/scene-3.webp` | Escena de la cama (1200 px) |
+| `assets/band-kitchen.webp` | Banda de la cocina (1914×822) |
 | `assets/og.png` | Imagen para compartir (1200×630) |
 | `icon.png` | Icono de la app. **Copia de `AppIcon-1024.png`**: no editar aquí |
 | `source.json` | Feed AltSource. **Lo regenera el CI en cada release** |
@@ -30,7 +32,7 @@ Cada marcador es esto:
 
 ```html
 <div class="shot-slot" data-shot="home">
-  <svg class="slot-mascot" …></svg>
+  <img class="slot-mascot" src="assets/logo.webp" alt="">
   <b>Inicio</b>
   <span>captura pendiente</span>
 </div>
@@ -41,6 +43,11 @@ Cámbialo por una imagen con la misma proporción (9:19.5):
 ```html
 <img src="assets/shot-home.png" alt="Pantalla de inicio de SafePlace">
 ```
+
+En móvil el carrusel **no usa scroll horizontal nativo**: un visor con
+`overflow:hidden` recorta un riel que se mueve por `transform`, y las flechas
+cambian de diapositiva. Si le devuelves `overflow-x:auto`, el gesto horizontal
+vuelve a competir con el scroll vertical de la página.
 
 Nombres sugeridos: `shot-home.png`, `shot-journal.png`, `shot-mind.png`.
 Exporta desde el simulador a 1179×2556 (iPhone 15 Pro) o equivalente; el marco
