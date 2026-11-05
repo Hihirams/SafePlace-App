@@ -205,7 +205,7 @@ struct MindView: View {
            let position = simulation.position(for: node.id) {
             let center = toScreen(position)
             let radius = max(node.radius * baseScale * zoom, 6)
-            let title = node.entry.title.isEmpty ? String(localized: "Untitled") : node.entry.title
+            let title = node.entry.title.isEmpty ? AppStrings.localized("Untitled") : node.entry.title
             let resolved = context.resolve(Text(title).font(SafeDesign.scaled(12, weight: .semibold)).foregroundStyle(SafeDesign.ink))
             let textSize = resolved.measure(in: CGSize(width: 220, height: 40))
             let chipRect = CGRect(x: center.x - textSize.width / 2 - 8, y: center.y + radius + 10, width: textSize.width + 16, height: textSize.height + 8)
@@ -333,7 +333,7 @@ struct MindView: View {
 
     private var header: some View {
         HStack {
-            BadgePill(text: String(localized: "mind"))
+            BadgePill(text: AppStrings.localized("mind"))
             Spacer()
             statusPill
         }
@@ -343,10 +343,10 @@ struct MindView: View {
         let text: String
         let icon: String
         if colorMode == .wave, let dominantMood {
-            text = String(localized: "mostly \(dominantMood.label.lowercased()) · \(Int(dominance * 100))%")
+            text = AppStrings.localized("mostly \(dominantMood.label.lowercased()) · \(Int(dominance * 100))%")
             icon = dominantMood.icon
         } else {
-            text = String(localized: "\(graph.hubs.count) categories · \(store.entries.count) notes")
+            text = AppStrings.localized("\(graph.hubs.count) categories · \(store.entries.count) notes")
             icon = "tag.fill"
         }
         return Label(text, systemImage: icon)
@@ -394,7 +394,7 @@ struct MindView: View {
                 HStack(spacing: 6) {
                     Image(systemName: showAll ? "circle.grid.cross.fill" : "circle.grid.cross")
                         .font(SafeDesign.scaled(13, weight: .semibold))
-                    Text(showAll ? String(localized: "Hide all") : String(localized: "Show all"))
+                    Text(showAll ? AppStrings.localized("Hide all") : AppStrings.localized("Show all"))
                         .font(SafeDesign.caption)
                 }
                 .foregroundStyle(showAll ? SafeDesign.canvas : SafeDesign.ink)
@@ -404,7 +404,7 @@ struct MindView: View {
                 .overlay { Capsule().strokeBorder(SafeDesign.hairline, lineWidth: 1) }
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(showAll ? String(localized: "Hide all") : String(localized: "Show all"))
+            .accessibilityLabel(showAll ? AppStrings.localized("Hide all") : AppStrings.localized("Show all"))
             .accessibilityIdentifier("mind-show-all")
         }
     }
@@ -441,7 +441,7 @@ struct MindView: View {
                         }
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(String(localized: "Close"))
+                .accessibilityLabel(AppStrings.localized("Close"))
             }
 
             Text(entry.title)

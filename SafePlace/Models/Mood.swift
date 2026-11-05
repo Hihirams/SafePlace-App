@@ -12,11 +12,11 @@ struct Mood: Identifiable, Hashable {
     /// sin reiniciar. Un `static let` se congelaría en el idioma de arranque.
     var label: String {
         switch id {
-        case "bright": return String(localized: "Bright")
-        case "hopeful": return String(localized: "Hopeful")
-        case "mixed": return String(localized: "Mixed")
-        case "heavy": return String(localized: "Heavy")
-        default: return String(localized: "Calm")
+        case "bright": return AppStrings.localized("Bright")
+        case "hopeful": return AppStrings.localized("Hopeful")
+        case "mixed": return AppStrings.localized("Mixed")
+        case "heavy": return AppStrings.localized("Heavy")
+        default: return AppStrings.localized("Calm")
         }
     }
 

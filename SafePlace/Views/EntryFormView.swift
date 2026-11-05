@@ -37,17 +37,17 @@ struct EntryFormView: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: SafeDesign.xl) {
                     SheetHeader(
-                        title: isEditing ? String(localized: "Edit this note") : String(localized: "What helped you?"),
-                        subtitle: isEditing ? String(localized: "Tweak what you saved.") : String(localized: "Add something that gently carried you."),
+                        title: isEditing ? AppStrings.localized("Edit this note") : AppStrings.localized("What helped you?"),
+                        subtitle: isEditing ? AppStrings.localized("Tweak what you saved.") : AppStrings.localized("Add something that gently carried you."),
                         onClose: onClose
                     )
 
-                    field(String(localized: "Title")) {
-                        ClayTextField(icon: "textformat", placeholder: String(localized: "e.g. A slow morning coffee"), text: $title)
+                    field(AppStrings.localized("Title")) {
+                        ClayTextField(icon: "textformat", placeholder: AppStrings.localized("e.g. A slow morning coffee"), text: $title)
                     }
 
-                    field(String(localized: "What happened")) {
-                        ClayTextArea(placeholder: String(localized: "Write a little about why it helped..."), text: $description)
+                    field(AppStrings.localized("What happened")) {
+                        ClayTextArea(placeholder: AppStrings.localized("Write a little about why it helped..."), text: $description)
                     }
 
                     field("Category") {
@@ -62,9 +62,11 @@ struct EntryFormView: View {
                                     }
                                 } label: {
                                     HStack {
-                                        Text(category.isEmpty ? String(localized: "Choose a category") : category)
+                                        Text(category.isEmpty ? AppStrings.localized("Choose a category") : category)
                                             .font(SafeDesign.body)
                                             .foregroundStyle(category.isEmpty ? SafeDesign.muted : SafeDesign.ink)
+                                            .lineLimit(1)
+                                            .truncationMode(.tail)
                                         Spacer()
                                         Image(systemName: "chevron.down")
                                             .font(SafeDesign.scaled(12, weight: .semibold))
@@ -76,12 +78,13 @@ struct EntryFormView: View {
                                     .overlay { Capsule().strokeBorder(SafeDesign.hairline, lineWidth: 1) }
                                 }
                                 .buttonStyle(.plain)
+                                .frame(maxWidth: .infinity)
 
                                 Button {
                                     userChoseCategory = true
                                     withAnimation(SafeDesign.spring) { showNewCategory.toggle() }
                                 } label: {
-                                    Text(showNewCategory ? String(localized: "Cancel") : String(localized: "+ New"))
+                                    Text(showNewCategory ? AppStrings.localized("Cancel") : AppStrings.localized("+ New"))
                                         .font(SafeDesign.caption)
                                         .foregroundStyle(SafeDesign.ink)
                                         .padding(.horizontal, SafeDesign.l)
@@ -93,7 +96,7 @@ struct EntryFormView: View {
                             }
 
                             if showNewCategory {
-                                ClayTextField(icon: "plus", placeholder: String(localized: "New category name..."), text: $newCategory)
+                                ClayTextField(icon: "plus", placeholder: AppStrings.localized("New category name..."), text: $newCategory)
                             }
 
                             if initial == nil, let suggested = autoSuggested, category == suggested, !userChoseCategory {
@@ -104,17 +107,17 @@ struct EntryFormView: View {
                         }
                     }
 
-                    field(String(localized: "How did it make you feel?")) {
+                    field(AppStrings.localized("How did it make you feel?")) {
                         moodPicker
                     }
 
-                    field(String(localized: "Card color")) {
+                    field(AppStrings.localized("Card color")) {
                         colorSwatches
                     }
 
                     HStack(spacing: SafeDesign.s) {
-                        SecondaryButton(title: String(localized: "Cancel"), icon: "xmark") { onClose() }
-                        PrimaryButton(title: isEditing ? String(localized: "Save changes") : String(localized: "Save note"), icon: "checkmark") {
+                        SecondaryButton(title: AppStrings.localized("Cancel"), icon: "xmark") { onClose() }
+                        PrimaryButton(title: isEditing ? AppStrings.localized("Save changes") : AppStrings.localized("Save note"), icon: "checkmark") {
                             save()
                         }
                     }
@@ -149,32 +152,32 @@ struct EntryFormView: View {
     }
 
     private var moodPicker: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: SafeDesign.s) {
-                ForEach(Mood.all) { m in
-                    Button {
-                        withAnimation(SafeDesign.spring) { mood = m.id }
-                    } label: {
-                        HStack(spacing: 6) {
-                            Image(systemName: m.icon)
-                                .font(SafeDesign.scaled(12, weight: .semibold))
-                            Text(m.label)
-                                .font(SafeDesign.caption)
-                        }
-                        .foregroundStyle(mood == m.id ? SafeDesign.onPrimary : SafeDesign.inkSecondary)
-                        .padding(.horizontal, SafeDesign.l)
-                        .padding(.vertical, SafeDesign.s)
-                        .background {
-                            if mood == m.id {
-                                Capsule().fill(m.color)
-                            } else {
-                                Capsule().strokeBorder(SafeDesign.hairline, lineWidth: 1)
-                            }
+        ContainedChoiceRow(spacing: SafeDesign.s) {
+            ForEach(Mood.all) { m in
+                Button {
+                    withAnimation(SafeDesign.spring) { mood = m.id }
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: m.icon)
+                            .font(SafeDesign.scaled(12, weight: .semibold))
+                        Text(m.label)
+                            .font(SafeDesign.caption)
+                            .lineLimit(1)
+                            .fixedSize(horizontal: true, vertical: false)
+                    }
+                    .foregroundStyle(mood == m.id ? SafeDesign.onPrimary : SafeDesign.inkSecondary)
+                    .padding(.horizontal, SafeDesign.l)
+                    .padding(.vertical, SafeDesign.s)
+                    .background {
+                        if mood == m.id {
+                            Capsule().fill(m.color)
+                        } else {
+                            Capsule().strokeBorder(SafeDesign.hairline, lineWidth: 1)
                         }
                     }
-                    .buttonStyle(.plain)
-                    .pressable(scale: 0.95)
                 }
+                .buttonStyle(.plain)
+                .pressable(scale: 0.95)
             }
         }
     }
@@ -207,7 +210,7 @@ struct EntryFormView: View {
                         }
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(String(localized: "Card color"))
+                .accessibilityLabel(AppStrings.localized("Card color"))
             }
         }
     }
@@ -226,9 +229,9 @@ struct EntryFormView: View {
         let chosenCategory = finalCategory.isEmpty ? category : finalCategory
         let entry = Entry(
             id: initial?.id ?? "e-\(UUID().uuidString)",
-            title: title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? String(localized: "Untitled") : title.trimmingCharacters(in: .whitespacesAndNewlines),
+            title: title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? AppStrings.localized("Untitled") : title.trimmingCharacters(in: .whitespacesAndNewlines),
             description: description.trimmingCharacters(in: .whitespacesAndNewlines),
-            category: chosenCategory.isEmpty ? String(localized: "Uncategorized") : chosenCategory,
+            category: chosenCategory.isEmpty ? AppStrings.localized("Uncategorized") : chosenCategory,
             mood: mood,
             color: color.rawValue,
             createdAt: initial?.createdAt ?? Date()

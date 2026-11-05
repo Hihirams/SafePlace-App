@@ -46,7 +46,7 @@ struct InsightsView: View {
 
     /// Una línea, no una tira de tarjetas de métricas (la skill lo prohíbe).
     private var summaryRow: some View {
-        Text(String(localized: "\(store.entries.count) notes · \(store.categories.count) categories · best streak \(NoteStats.daysLabel(personalBest))"))
+        Text(AppStrings.localized("\(store.entries.count) notes · \(store.categories.count) categories · best streak \(NoteStats.daysLabel(personalBest))"))
             .font(SafeDesign.caption)
             .foregroundStyle(SafeDesign.inkSecondary)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -59,8 +59,8 @@ struct InsightsView: View {
                 .foregroundStyle(SafeDesign.ink)
             Chart(last14Days) { item in
                 BarMark(
-                    x: .value(String(localized: "Day"), item.date, unit: .day),
-                    y: .value(String(localized: "notes"), item.count)
+                    x: .value(AppStrings.localized("Day"), item.date, unit: .day),
+                    y: .value(AppStrings.localized("notes"), item.count)
                 )
                 .foregroundStyle(theme.tintStrong.gradient)
                 .cornerRadius(4)
@@ -90,8 +90,8 @@ struct InsightsView: View {
             Chart {
                 ForEach(moodCounts) { item in
                     BarMark(
-                        x: .value(String(localized: "Count"), item.count),
-                        y: .value(String(localized: "Mood"), item.mood.label)
+                        x: .value(AppStrings.localized("Count"), item.count),
+                        y: .value(AppStrings.localized("Mood"), item.mood.label)
                     )
                     .foregroundStyle(item.mood.color)
                     .cornerRadius(6)

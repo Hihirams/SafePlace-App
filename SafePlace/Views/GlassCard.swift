@@ -128,13 +128,13 @@ struct EditorialNoteRow: View {
             Button { onDuplicate() } label: { Label("Duplicate", systemImage: "doc.on.doc") }
             Button(role: .destructive) { confirmDelete = true } label: { Label("Delete", systemImage: "trash") }
         }
-        .confirmationDialog(String(localized: "Delete this note?"),
+        .confirmationDialog(AppStrings.localized("Delete this note?"),
                             isPresented: $confirmDelete,
                             titleVisibility: .visible) {
-            Button(String(localized: "Delete"), role: .destructive) { onDelete() }
-            Button(String(localized: "Cancel"), role: .cancel) { }
+            Button(AppStrings.localized("Delete"), role: .destructive) { onDelete() }
+            Button(AppStrings.localized("Cancel"), role: .cancel) { }
         } message: {
-            Text(String(localized: "It can't be undone."))
+            Text(AppStrings.localized("It can't be undone."))
         }
     }
 }

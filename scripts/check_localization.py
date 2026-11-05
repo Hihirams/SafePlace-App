@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """Falla si hay texto de UI en Swift que no esté en Localizable.xcstrings.
 
-Motivo: la app tiene `developmentRegion = es` y las claves del catálogo son las
-cadenas en inglés. Un literal nuevo que se muestre al usuario y no esté en el
+Motivo: el idioma base del proyecto y las claves del catálogo son inglés.
+Un literal nuevo que se muestre al usuario y no esté en el
 catálogo se queda en inglés sin que nada avise — es exactamente el bug que se
 coló al traducir la app por primera vez.
 
 Reglas:
   * Un literal que se pasa directamente como clave localizable
     (Text("..."), Label("..."), Button("..."), .navigationTitle("..."),
+    AppStrings.localized("..."),
     placeholder:, .accessibilityLabel(...), .accessibilityValue(...))
     debe existir en el catálogo.
   * Un literal devuelto por una propiedad `String` (return "...") también,
@@ -34,7 +35,7 @@ ALLOWLIST = {"SafePlace", "LiveContainer"}
 
 # Claves localizables directas: literal usado como LocalizedStringKey / String.
 DIRECT = re.compile(
-    r"(?:Text|Label|Button|Section|navigationTitle|navigationBarTitleDisplayMode|"
+    r"(?:Text|Label|Button|Section|AppStrings\.localized|navigationTitle|navigationBarTitleDisplayMode|"
     r"accessibilityLabel|accessibilityValue|alert|confirmationDialog)\("
     r"\s*\"((?:[^\"\\]|\\.)*)\""
 )

@@ -135,7 +135,7 @@ final class Store: ObservableObject {
             try Store.write(entries: entries, categories: categories, resources: resources, to: fileURL)
             lastSaveError = nil
         } catch {
-            lastSaveError = String(localized: "Your changes couldn't be saved to this device.")
+            lastSaveError = AppStrings.localized("Your changes couldn't be saved to this device.")
         }
     }
 
@@ -214,20 +214,20 @@ final class Store: ObservableObject {
             out.append("")
             for entry in dayEntries {
                 let title = entry.title.trimmingCharacters(in: .whitespacesAndNewlines)
-                out.append("### \(title.isEmpty ? String(localized: "Untitled") : title)")
+                out.append("### \(title.isEmpty ? AppStrings.localized("Untitled") : title)")
                 out.append("")
                 let body = entry.description.trimmingCharacters(in: .whitespacesAndNewlines)
                 if !body.isEmpty {
                     out.append(body)
                     out.append("")
                 }
-                out.append("- \(String(localized: "Category")): \(entry.category)")
-                out.append("- \(String(localized: "Mood")): \(entry.moodValue.label)")
+                out.append("- \(AppStrings.localized("Category")): \(entry.category)")
+                out.append("- \(AppStrings.localized("Mood")): \(entry.moodValue.label)")
                 out.append("")
             }
         }
         if !resources.isEmpty {
-            out.append("## \(String(localized: "Saved"))")
+            out.append("## \(AppStrings.localized("Saved"))")
             out.append("")
             for resource in resources {
                 let link = resource.url.isEmpty ? "" : " — \(resource.url)"
@@ -260,7 +260,7 @@ final class Store: ObservableObject {
 
     /// Move a shared note into the safe place as a regular entry.
     func importSharedNote(_ note: SharedNote) {
-        let title = note.title.isEmpty ? String(localized: "From my notes") : note.title
+        let title = note.title.isEmpty ? AppStrings.localized("From my notes") : note.title
         addEntry(Entry(
             id: "shared-\(UUID().uuidString)",
             title: title,

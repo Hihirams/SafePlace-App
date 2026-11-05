@@ -36,8 +36,8 @@ enum MindColorMode: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .wave: return String(localized: "Wave")
-        case .category: return String(localized: "Category")
+        case .wave: return AppStrings.localized("Wave")
+        case .category: return AppStrings.localized("Category")
         }
     }
 

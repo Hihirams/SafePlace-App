@@ -18,7 +18,7 @@ struct NotesView: View {
                     emptyState
                 } else {
                     HStack {
-                        Text(notes.count == 1 ? String(localized: "1 note waiting") : String(localized: "\(notes.count) notes waiting"))
+                        Text(notes.count == 1 ? AppStrings.localized("1 note waiting") : AppStrings.localized("\(notes.count) notes waiting"))
                             .font(SafeDesign.caption)
                             .foregroundStyle(SafeDesign.inkSecondary)
                         Spacer()
@@ -59,7 +59,7 @@ struct NotesView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: SafeDesign.xxs) {
-            BadgePill(text: String(localized: "notes"))
+            BadgePill(text: AppStrings.localized("notes"))
             Text("Notes from your iPhone.")
                 .font(SafeDesign.largeTitle)
                 .foregroundStyle(SafeDesign.ink)
@@ -74,9 +74,9 @@ struct NotesView: View {
             Label("How it works", systemImage: "square.and.arrow.up")
                 .font(SafeDesign.headline)
                 .foregroundStyle(SafeDesign.ink)
-            step(1, color: SafeDesign.pink, text: String(localized: "Open a note in Apple Notes, tap the Share button, then choose SafePlace."))
-            step(2, color: SafeDesign.mint, text: String(localized: "The note lands in this tab, where you can read it and decide what to keep."))
-            step(3, color: SafeDesign.accentDeep, text: String(localized: "Tap Keep it to move it into your safe place as a note card."))
+            step(1, color: SafeDesign.pink, text: AppStrings.localized("Open a note in Apple Notes, tap the Share button, then choose SafePlace."))
+            step(2, color: SafeDesign.mint, text: AppStrings.localized("The note lands in this tab, where you can read it and decide what to keep."))
+            step(3, color: SafeDesign.accentDeep, text: AppStrings.localized("Tap Keep it to move it into your safe place as a note card."))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, SafeDesign.l)
@@ -119,7 +119,7 @@ struct NotesView: View {
                 Image(systemName: "note.text")
                     .font(SafeDesign.scaled(15, weight: .semibold))
                     .foregroundStyle(theme.tintStrong)
-                Text(note.title.isEmpty ? String(localized: "Untitled note") : note.title)
+                Text(note.title.isEmpty ? AppStrings.localized("Untitled note") : note.title)
                     .font(SafeDesign.serifHead)
                     .foregroundStyle(SafeDesign.ink)
                     .lineLimit(2)
@@ -181,7 +181,7 @@ struct NotesView: View {
                         }
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(String(localized: "Dismiss"))
+                .accessibilityLabel(AppStrings.localized("Dismiss"))
             }
             .padding(.top, SafeDesign.xs)
         }
@@ -237,16 +237,16 @@ private struct NotePreviewSheet: View {
         NavigationStack {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: SafeDesign.l) {
-                    SheetHeader(title: String(localized: "Shared note"), subtitle: String(localized: "Edit before keeping it."), onClose: { dismiss(); onDone() })
-                    ClayTextField(icon: "textformat", placeholder: String(localized: "Title"), text: $title)
-                    ClayTextArea(placeholder: String(localized: "Note text"), text: $text)
+                    SheetHeader(title: AppStrings.localized("Shared note"), subtitle: AppStrings.localized("Edit before keeping it."), onClose: { dismiss(); onDone() })
+                    ClayTextField(icon: "textformat", placeholder: AppStrings.localized("Title"), text: $title)
+                    ClayTextArea(placeholder: AppStrings.localized("Note text"), text: $text)
                     HStack(spacing: SafeDesign.s) {
-                        SecondaryButton(title: String(localized: "Dismiss"), icon: "xmark") {
+                        SecondaryButton(title: AppStrings.localized("Dismiss"), icon: "xmark") {
                             store.discardSharedNote(note)
                             dismiss()
                             onDone()
                         }
-                        PrimaryButton(title: String(localized: "Keep it"), icon: "checkmark") {
+                        PrimaryButton(title: AppStrings.localized("Keep it"), icon: "checkmark") {
                             save()
                         }
                     }

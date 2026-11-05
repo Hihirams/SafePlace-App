@@ -1,15 +1,14 @@
 import SwiftUI
-import ObjectiveC
 
 enum Tab: Int, CaseIterable {
     case home, journal, mind, saved
 
     var title: String {
         switch self {
-        case .home: return String(localized: "Home")
-        case .journal: return String(localized: "Journal")
-        case .mind: return String(localized: "Mind")
-        case .saved: return String(localized: "Saved")
+        case .home: return AppStrings.localized("Home")
+        case .journal: return AppStrings.localized("Journal")
+        case .mind: return AppStrings.localized("Mind")
+        case .saved: return AppStrings.localized("Saved")
         }
     }
     /// Identificador estable para accessibilityIdentifier y UI tests.
@@ -55,9 +54,9 @@ enum ThemeMode: String, CaseIterable {
     }
     var label: String {
         switch self {
-        case .system: return String(localized: "System")
-        case .light: return String(localized: "Light")
-        case .dark: return String(localized: "Dark")
+        case .system: return AppStrings.localized("System")
+        case .light: return AppStrings.localized("Light")
+        case .dark: return AppStrings.localized("Dark")
         }
     }
     var icon: String {
@@ -77,16 +76,28 @@ enum ThemeMode: String, CaseIterable {
 // MARK: - Language
 
 /// Idioma de la app. `system` sigue el idioma del iPhone; las otras dos
-/// fijan el `.lproj` que resuelve `LanguageBundle` y dejan `AppleLanguages`
-/// alineado para el próximo arranque.
+/// usan un locale explícito y dejan `AppleLanguages` alineado para el
+/// próximo arranque.
 enum AppLanguage: String, CaseIterable, Identifiable {
     case system, spanish = "es", english = "en"
 
     var id: String { rawValue }
 
+    static var selected: AppLanguage {
+        AppLanguage(rawValue: UserDefaults.standard.string(forKey: "appLanguage") ?? "system") ?? .system
+    }
+
+    var locale: Locale {
+        switch self {
+        case .system: return .autoupdatingCurrent
+        case .spanish: return Locale(identifier: "es")
+        case .english: return Locale(identifier: "en")
+        }
+    }
+
     var label: String {
         switch self {
-        case .system: return String(localized: "System")
+        case .system: return AppStrings.localized("System")
         case .spanish: return "Español"
         case .english: return "English"
         }
@@ -115,35 +126,13 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     }
 }
 
-/// Bundle que resuelve las cadenas contra el idioma elegido en Ajustes en
-/// lugar del idioma del sistema. Se instala una sola vez sobre `Bundle.main`,
-/// así que tanto `String(localized:)` como `Text("literal")` cambian en vivo.
-final class LanguageBundle: Bundle {
-    /// Bundle ya cargado de cada idioma. `NSCache` es thread-safe, que es lo
-    /// único que necesitamos: la resolución puede venir de cualquier cola.
-    private static let cache = NSCache<NSString, Bundle>()
-
-    static func install() {
-        guard !(Bundle.main is LanguageBundle) else { return }
-        _ = object_setClass(Bundle.main, LanguageBundle.self)
-    }
-
-    override func localizedString(forKey key: String, value: String?, table tableName: String?) -> String {
-        guard let code = UserDefaults.standard.string(forKey: "appLanguage"),
-              code != AppLanguage.system.rawValue,
-              let bundle = Self.bundle(for: code) else {
-            return super.localizedString(forKey: key, value: value, table: tableName)
-        }
-        return bundle.localizedString(forKey: key, value: value, table: tableName)
-    }
-
-    private static func bundle(for code: String) -> Bundle? {
-        let key = code as NSString
-        if let hit = cache.object(forKey: key) { return hit }
-        guard let path = Bundle.main.path(forResource: code, ofType: "lproj"),
-              let bundle = Bundle(path: path) else { return nil }
-        cache.setObject(bundle, forKey: key)
-        return bundle
+/// Las cadenas calculadas fuera de `Text` no leen el entorno de SwiftUI.
+/// Pasarles el locale explícito mantiene títulos, botones y exportaciones
+/// sincronizados con la selección actual sin cambiar la clase de Bundle.main.
+enum AppStrings {
+    static func localized(_ key: String.LocalizationValue) -> String {
+        let resource = LocalizedStringResource(key, locale: AppLanguage.selected.locale)
+        return String(localized: resource)
     }
 }
 
@@ -151,6 +140,7 @@ final class LanguageBundle: Bundle {
 
 struct RootView: View {
     @AppStorage("themeMode") private var themeRaw = ThemeMode.system.rawValue
+    @AppStorage("appLanguage") private var languageRaw = AppLanguage.system.rawValue
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding = false
     @StateObject private var store = Store()
     @StateObject private var profile = ProfilePhotoModel()
@@ -165,6 +155,7 @@ struct RootView: View {
     private let splashTail: TimeInterval = 0.4
 
     private var mode: ThemeMode { ThemeMode(rawValue: themeRaw) ?? .system }
+    private var language: AppLanguage { AppLanguage(rawValue: languageRaw) ?? .system }
     private var moodState: MoodState { MoodState.derive(from: store.entries) }
 
     var body: some View {
@@ -178,6 +169,7 @@ struct RootView: View {
             }
         }
         .environment(\.appTheme, AppTheme(moodState: moodState))
+        .environment(\.locale, language.locale)
         .environmentObject(profile)
         .interfaceStyle(mode)
         .onAppear {
@@ -248,6 +240,7 @@ struct ContentView: View {
         }
         .overlay(alignment: .bottom) {
             GlassTabBar(selectedTab: $selectedTab) { showCreate = true }
+                .id(languageRaw)
                 .opacity(covered ? 0 : 1)
                 .offset(y: covered && !reduceMotion ? 8 : 0)
                 .animation(SafeMotion.gentle, value: covered)

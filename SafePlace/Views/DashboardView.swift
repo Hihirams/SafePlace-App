@@ -32,8 +32,8 @@ struct DashboardView: View {
 
         var title: String {
             switch self {
-            case .overview: return String(localized: "Overview")
-            case .insights: return String(localized: "Insights")
+            case .overview: return AppStrings.localized("Overview")
+            case .insights: return AppStrings.localized("Insights")
             }
         }
     }
@@ -263,10 +263,10 @@ struct DashboardView: View {
         let best = NoteStats.daysLabel(personalBest)
         if currentStreak == 0 {
             return personalBest > 0
-                ? String(localized: "No note today · your record is \(best)")
-                : String(localized: "A note today starts your streak.")
+                ? AppStrings.localized("No note today · your record is \(best)")
+                : AppStrings.localized("A note today starts your streak.")
         }
-        return String(localized: "Streak of \(NoteStats.daysLabel(currentStreak)) · record \(best)")
+        return AppStrings.localized("Streak of \(NoteStats.daysLabel(currentStreak)) · record \(best)")
     }
 
     // MARK: - On this day
@@ -302,14 +302,13 @@ struct DashboardView: View {
     // MARK: - Mode picker
 
     private var modePicker: some View {
-        HStack(spacing: SafeDesign.xs) {
+        ContainedChoiceRow {
             ForEach(DashboardMode.allCases) { m in
                 SelectionPill(title: m.title, isSelected: mode == m) {
                     Haptics.selection()
                     withAnimation(SafeDesign.spring) { mode = m }
                 }
             }
-            Spacer()
         }
     }
 
@@ -318,8 +317,8 @@ struct DashboardView: View {
     private var statsPanel: some View {
         let columns = SafeLayout.columns(forWidth: contentWidth)
         return LazyVGrid(columns: columns, spacing: SafeDesign.l) {
-            statCard(number: "\(store.entries.count)", label: store.entries.count == 1 ? String(localized: "thing saved") : String(localized: "things saved"))
-            statCard(number: "\(store.categories.count)", label: String(localized: "categories"))
+            statCard(number: "\(store.entries.count)", label: store.entries.count == 1 ? AppStrings.localized("thing saved") : AppStrings.localized("things saved"))
+            statCard(number: "\(store.categories.count)", label: AppStrings.localized("categories"))
 
             statSection {
                 sectionTitle("BY CATEGORY")
@@ -471,7 +470,7 @@ struct DashboardView: View {
     private func checkIn(_ mood: Mood) {
         let entry = Entry(
             id: "checkin-\(UUID().uuidString)",
-            title: String(localized: "Feeling \(mood.label.lowercased())"),
+            title: AppStrings.localized("Feeling \(mood.label.lowercased())"),
             description: "",
             category: "Check-in",
             mood: mood.id,

@@ -95,7 +95,7 @@ struct JournalView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: SafeDesign.xxs) {
-            BadgePill(text: String(localized: "journal"))
+            BadgePill(text: AppStrings.localized("journal"))
             Text("A gentle timeline.")
                 .font(SafeDesign.largeTitle)
                 .foregroundStyle(SafeDesign.ink)
@@ -106,15 +106,12 @@ struct JournalView: View {
     }
 
     private var moodFilterBar: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: SafeDesign.xs) {
-                moodChip("all", label: String(localized: "All"), icon: "circle.grid.2x2", color: SafeDesign.surfaceCard)
-                ForEach(Mood.all) { m in
-                    moodChip(m.id, label: m.label, icon: m.icon, color: m.color)
-                }
+        ContainedChoiceRow {
+            moodChip("all", label: AppStrings.localized("All"), icon: "circle.grid.2x2", color: SafeDesign.surfaceCard)
+            ForEach(Mood.all) { m in
+                moodChip(m.id, label: m.label, icon: m.icon, color: m.color)
             }
         }
-        .scrollClipDisabled()
     }
 
     private func moodChip(_ id: String, label: String, icon: String, color: Color) -> some View {
@@ -125,6 +122,8 @@ struct JournalView: View {
         } label: {
             Label(label, systemImage: icon)
                 .font(SafeDesign.caption)
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
                 .foregroundStyle(SafeDesign.ink)
                 .padding(.horizontal, SafeDesign.l)
                 .padding(.vertical, SafeDesign.s)
@@ -168,7 +167,7 @@ struct JournalView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityValue(isCollapsed ? String(localized: "Collapsed") : String(localized: "Expanded"))
+        .accessibilityValue(isCollapsed ? AppStrings.localized("Collapsed") : AppStrings.localized("Expanded"))
     }
 
     private var emptyState: some View {

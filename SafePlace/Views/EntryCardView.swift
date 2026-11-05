@@ -59,7 +59,7 @@ struct EntryCardView: View {
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(String(localized: "Note options"))
+                .accessibilityLabel(AppStrings.localized("Note options"))
             }
         }
         .padding(SafeDesign.l)
@@ -85,21 +85,21 @@ struct EntryCardView: View {
             Button(role: .destructive) { confirmDelete = true } label: { Label("Delete", systemImage: "trash") }
         }
         // Borrar una nota no se puede deshacer: se confirma una vez.
-        .confirmationDialog(String(localized: "Delete this note?"),
+        .confirmationDialog(AppStrings.localized("Delete this note?"),
                             isPresented: $confirmDelete,
                             titleVisibility: .visible) {
-            Button(String(localized: "Delete"), role: .destructive) { onDelete() }
-            Button(String(localized: "Cancel"), role: .cancel) { }
+            Button(AppStrings.localized("Delete"), role: .destructive) { onDelete() }
+            Button(AppStrings.localized("Cancel"), role: .cancel) { }
         } message: {
-            Text(String(localized: "It can't be undone."))
+            Text(AppStrings.localized("It can't be undone."))
         }
         .accessibilityElement(children: .combine)
         .accessibilityHint("Double tap to edit")
         // Los hijos están combinados: sin estas acciones el menú de opciones
         // desaparece del árbol de VoiceOver y no hay forma de editar/duplicar/borrar.
-        .accessibilityAction(named: String(localized: "Edit")) { onEdit() }
-        .accessibilityAction(named: String(localized: "Duplicate")) { onDuplicate() }
-        .accessibilityAction(named: String(localized: "Delete")) { confirmDelete = true }
+        .accessibilityAction(named: AppStrings.localized("Edit")) { onEdit() }
+        .accessibilityAction(named: AppStrings.localized("Duplicate")) { onDuplicate() }
+        .accessibilityAction(named: AppStrings.localized("Delete")) { confirmDelete = true }
     }
 }
 

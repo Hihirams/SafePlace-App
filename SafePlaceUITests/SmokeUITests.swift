@@ -42,6 +42,25 @@ final class SmokeUITests: XCTestCase {
         }
     }
 
+    func testLanguageChangesWhileSettingsStayOpen() throws {
+        let app = launchApp()
+        waitForHome(app)
+        app.buttons["home-avatar"].tap()
+
+        let spanish = app.buttons["settings-language-es"]
+        XCTAssertTrue(spanish.waitForExistence(timeout: 8))
+        spanish.tap()
+        XCTAssertTrue(app.staticTexts["Ajustes"].waitForExistence(timeout: 8))
+
+        let english = app.buttons["settings-language-en"]
+        if !english.isHittable { spanish.swipeLeft() }
+        english.tap()
+        XCTAssertTrue(app.staticTexts["Settings"].waitForExistence(timeout: 8))
+        XCTAssertTrue(app.buttons["settings-appearance-system"].exists)
+        app.buttons["xmark"].tap()
+        XCTAssertTrue(app.staticTexts["Home"].waitForExistence(timeout: 8))
+    }
+
     func testCreatedNoteShowsUpOnHome() throws {
         let app = launchApp()
         waitForHome(app)

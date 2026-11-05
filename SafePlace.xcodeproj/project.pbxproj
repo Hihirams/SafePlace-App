@@ -396,7 +396,7 @@
 			};
 			buildConfigurationList = FF0100000000000000000007 /* Build configuration list for PBXProject "SafePlace" */;
 			compatibilityVersion = "Xcode 14.0";
-			developmentRegion = es;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				es,

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Guard de diseño para la app iOS.
 
-Convierte en fallo de CI tres reglas que ya costaron trabajo real:
+Convierte en fallo de CI reglas que ya costaron trabajo real:
 
 1. Tamaños de fuente fijos (`.system(size:)`) fuera del design system: no escalan
    con Dynamic Type, así que quien sube el tamaño de texto no ve cambios.
@@ -9,6 +9,7 @@ Convierte en fallo de CI tres reglas que ya costaron trabajo real:
    mismo archivo: combinar hijos borra los botones del árbol de VoiceOver (así
    desapareció el menú de las tarjetas).
 3. Copy genérica de la lista negra del contrato ("Get started", "Elevate", ...).
+4. Scroll sin recorte que deja botones visibles fuera de su contenedor.
 
 Uso: python3 scripts/check_design.py
 Sale con 1 si encuentra violaciones.
@@ -28,6 +29,7 @@ ALLOWED_FIXED_FONT = {"DesignSystem.swift"}          # el helper escalable vive 
 COMBINE = re.compile(r"accessibilityElement\(children:\s*\.combine\)")
 ACTION = re.compile(r"accessibilityAction\(")
 BANNED_COPY = re.compile(r'"(Get started|Elevate|Seamless|Unlock|Supercharge)"')
+UNCLIPPED_SCROLL = re.compile(r"\.scrollClipDisabled\(")
 
 
 def rel(path: Path) -> str:
@@ -54,6 +56,10 @@ def main() -> int:
                 problems.append(
                     f"{rel(path)}:{number} copy genérica {banned.group(0)} — escribe en lenguaje de producto"
                 )
+            if UNCLIPPED_SCROLL.search(line):
+                problems.append(
+                    f"{rel(path)}:{number} scroll sin recorte — los botones pueden salir de su contenedor"
+                )
 
         if COMBINE.search(text) and not ACTION.search(text):
             problems.append(
@@ -62,7 +68,7 @@ def main() -> int:
             )
 
     if not problems:
-        print("✓ Diseño: sin tamaños fijos, sin controles ocultos y sin copy genérica")
+        print("✓ Diseño: sin tamaños fijos, controles ocultos, copy genérica ni scroll sin recorte")
         return 0
 
     print(f"✗ {len(problems)} problema(s) de diseño:\n")

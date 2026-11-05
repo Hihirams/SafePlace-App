@@ -85,7 +85,7 @@ enum NoteStats {
 
     /// "1 día" / "3 días": la unidad que faltaba en las métricas de racha.
     static func daysLabel(_ count: Int) -> String {
-        count == 1 ? String(localized: "1 day") : String(localized: "\(count) days")
+        count == 1 ? AppStrings.localized("1 day") : AppStrings.localized("\(count) days")
     }
 
     /// La corrida de días de la semana en curso, en orden y según el primer día

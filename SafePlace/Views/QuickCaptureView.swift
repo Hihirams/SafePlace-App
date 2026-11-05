@@ -22,20 +22,20 @@ struct QuickCaptureView: View {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: SafeDesign.xl) {
                     SheetHeader(
-                        title: String(localized: "How are you, really?"),
-                        subtitle: String(localized: "Tap a feeling and save it in seconds."),
+                        title: AppStrings.localized("How are you, really?"),
+                        subtitle: AppStrings.localized("Tap a feeling and save it in seconds."),
                         onClose: { dismiss() }
                     )
 
                     moodRow
 
-                    ClayTextField(icon: "textformat", placeholder: String(localized: "What's this about? (optional)"), text: $title)
+                    ClayTextField(icon: "textformat", placeholder: AppStrings.localized("What's this about? (optional)"), text: $title)
 
-                    ClayTextArea(placeholder: String(localized: "A line or two, if you feel like it…"), text: $note)
+                    ClayTextArea(placeholder: AppStrings.localized("A line or two, if you feel like it…"), text: $note)
 
                     categoryRow
 
-                    PrimaryButton(title: String(localized: "Save to SafePlace"), icon: "checkmark") {
+                    PrimaryButton(title: AppStrings.localized("Save to SafePlace"), icon: "checkmark") {
                         save()
                     }
                     .padding(.top, SafeDesign.xs)
@@ -61,7 +61,7 @@ struct QuickCaptureView: View {
     }
 
     private var moodRow: some View {
-        HStack(spacing: SafeDesign.xs) {
+        ContainedChoiceRow {
             ForEach(Mood.all) { m in
                 let sel = mood == m.id
                 Button {
@@ -85,8 +85,9 @@ struct QuickCaptureView: View {
                             .font(SafeDesign.scaled(10, weight: .semibold))
                             .foregroundStyle(sel ? SafeDesign.ink : SafeDesign.muted)
                             .lineLimit(1)
+                            .fixedSize(horizontal: true, vertical: false)
                     }
-                    .frame(maxWidth: .infinity)
+                    .frame(minWidth: 56)
                 }
                 .buttonStyle(.plain)
             }
@@ -98,19 +99,16 @@ struct QuickCaptureView: View {
             Text("Category")
                 .font(SafeDesign.scaled(13, weight: .medium))
                 .foregroundStyle(SafeDesign.inkSecondary)
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: SafeDesign.xs) {
-                    ForEach(store.categories, id: \.self) { c in
-                        SelectionPill(title: c, isSelected: category == c) {
-                            Haptics.selection()
-                            userChoseCategory = true
-                            withAnimation(SafeDesign.springSnappy) { category = c }
-                        }
+            ContainedChoiceRow {
+                ForEach(store.categories, id: \.self) { c in
+                    SelectionPill(title: c, isSelected: category == c) {
+                        Haptics.selection()
+                        userChoseCategory = true
+                        withAnimation(SafeDesign.springSnappy) { category = c }
                     }
                 }
-                .padding(.vertical, 2)
             }
-            .scrollClipDisabled()
+            .padding(.vertical, 2)
         }
     }
 
@@ -119,7 +117,7 @@ struct QuickCaptureView: View {
         let trimmedNote = note.trimmingCharacters(in: .whitespacesAndNewlines)
         let entry = Entry(
             id: "e-\(UUID().uuidString)",
-            title: trimmedTitle.isEmpty ? String(localized: "\(Mood.mood(for: mood).label) moment") : trimmedTitle,
+            title: trimmedTitle.isEmpty ? AppStrings.localized("\(Mood.mood(for: mood).label) moment") : trimmedTitle,
             description: trimmedNote,
             category: category.isEmpty ? "Autocuidado" : category,
             mood: mood,

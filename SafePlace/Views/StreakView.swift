@@ -177,7 +177,7 @@ struct StreakView: View {
             in: RoundedRectangle(cornerRadius: SafeDesign.radiusL, style: .continuous)
         )
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(String(localized: "\(streak) days in a row"))
+        .accessibilityLabel(AppStrings.localized("\(streak) days in a row"))
     }
 
     // MARK: - Week
@@ -258,9 +258,9 @@ struct StreakView: View {
 
     private func dayStatus(_ day: NoteStats.StreakDay) -> String {
         switch day.state {
-        case .done: return String(localized: "Checked in")
-        case .missed: return String(localized: "No note")
-        case .upcoming: return String(localized: "Not yet")
+        case .done: return AppStrings.localized("Checked in")
+        case .missed: return AppStrings.localized("No note")
+        case .upcoming: return AppStrings.localized("Not yet")
         }
     }
 
@@ -277,7 +277,7 @@ struct StreakView: View {
         let weekday = fullWeekday(day.date)
         let status = dayStatus(day)
         return day.isToday
-            ? "\(String(localized: "Today")), \(weekday), \(status)"
+            ? "\(AppStrings.localized("Today")), \(weekday), \(status)"
             : "\(weekday), \(status)"
     }
 
@@ -322,7 +322,7 @@ struct StreakView: View {
             .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 3) {
-                Text(streak == 0 ? String(localized: "Your first goal") : String(localized: "Keep it going!"))
+                Text(streak == 0 ? AppStrings.localized("Your first goal") : AppStrings.localized("Keep it going!"))
                     .font(SafeDesign.body)
                     .foregroundStyle(SafeDesign.ink)
                 Text(goalMessage)
@@ -336,7 +336,7 @@ struct StreakView: View {
 
     private var goalProgress: some View {
         VStack(alignment: .trailing, spacing: 6) {
-            Text(String(localized: "\(streak) / \(goal.target) days"))
+            Text(AppStrings.localized("\(streak) / \(goal.target) days"))
                 .font(SafeDesign.scaled(11, weight: .medium).monospacedDigit())
                 .foregroundStyle(SafeDesign.inkSecondary)
                 .lineLimit(1)
@@ -354,17 +354,17 @@ struct StreakView: View {
         }
         .frame(maxWidth: .infinity, alignment: .trailing)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(String(localized: "\(streak) of \(goal.target) days"))
+        .accessibilityLabel(AppStrings.localized("\(streak) of \(goal.target) days"))
     }
 
     private var goalMessage: String {
         if streak == 0 {
-            return String(localized: "A note today starts your streak.")
+            return AppStrings.localized("A note today starts your streak.")
         }
         if goal.remaining == 0 {
-            return String(localized: "A year of showing up. Keep going.")
+            return AppStrings.localized("A year of showing up. Keep going.")
         }
-        return String(localized: "You're \(NoteStats.daysLabel(goal.remaining)) from your next goal.")
+        return AppStrings.localized("You're \(NoteStats.daysLabel(goal.remaining)) from your next goal.")
     }
 
     // MARK: - Actions

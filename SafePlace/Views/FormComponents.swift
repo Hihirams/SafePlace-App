@@ -116,6 +116,31 @@ struct ClayTextArea: View {
     }
 }
 
+// MARK: - Choice rows
+
+/// Centra las opciones cuando caben; en anchos pequeños permite desplazarlas
+/// sin pintar ni activar botones fuera de la zona del contenedor.
+struct ContainedChoiceRow<Content: View>: View {
+    var spacing: CGFloat = SafeDesign.xs
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: spacing) { content }
+                .fixedSize(horizontal: true, vertical: false)
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: spacing) { content }
+                    .fixedSize(horizontal: true, vertical: false)
+                    .padding(.horizontal, 1)
+            }
+            .scrollBounceBehavior(.basedOnSize)
+            .clipped()
+        }
+        .frame(maxWidth: .infinity)
+    }
+}
+
 // MARK: - Selection pill
 
 struct SelectionPill: View {
@@ -134,6 +159,8 @@ struct SelectionPill: View {
                 }
                 Text(title)
                     .font(SafeDesign.caption)
+                    .lineLimit(1)
+                    .fixedSize(horizontal: true, vertical: false)
             }
             .foregroundStyle(isSelected ? SafeDesign.ink : SafeDesign.inkSecondary)
             .padding(.horizontal, SafeDesign.l)

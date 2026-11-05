@@ -21,9 +21,9 @@ struct ResourcesView: View {
 
         var title: String {
             switch self {
-            case .all: return String(localized: "All")
-            case .link: return String(localized: "Links")
-            case .note: return String(localized: "Notes")
+            case .all: return AppStrings.localized("All")
+            case .link: return AppStrings.localized("Links")
+            case .note: return AppStrings.localized("Notes")
             }
         }
     }
@@ -62,23 +62,23 @@ struct ResourcesView: View {
             .padding(.bottom, SafeLayout.tabBarClearance(h))
             .readingWidth($contentWidth)
         }
-        .confirmationDialog(String(localized: "Delete this item?"),
+        .confirmationDialog(AppStrings.localized("Delete this item?"),
                             isPresented: Binding(get: { resourceToDelete != nil },
                                                  set: { if !$0 { resourceToDelete = nil } }),
                             presenting: resourceToDelete) { resource in
-            Button(String(localized: "Delete"), role: .destructive) {
+            Button(AppStrings.localized("Delete"), role: .destructive) {
                 withAnimation(SafeDesign.spring) { store.deleteResource(id: resource.id) }
                 resourceToDelete = nil
             }
-            Button(String(localized: "Cancel"), role: .cancel) { }
+            Button(AppStrings.localized("Cancel"), role: .cancel) { }
         } message: { _ in
-            Text(String(localized: "It can't be undone."))
+            Text(AppStrings.localized("It can't be undone."))
         }
     }
 
     private var header: some View {
         VStack(alignment: .leading, spacing: SafeDesign.xxs) {
-            BadgePill(text: String(localized: "saved"))
+            BadgePill(text: AppStrings.localized("saved"))
             Text("Links, quotes & reminders.")
                 .font(SafeDesign.largeTitle)
                 .foregroundStyle(SafeDesign.ink)
@@ -90,9 +90,9 @@ struct ResourcesView: View {
 
     private var addForm: some View {
         VStack(spacing: SafeDesign.s) {
-            ClayTextField(icon: "textformat", placeholder: String(localized: "What do you want to keep?"), text: $text)
-            ClayTextField(icon: "link", placeholder: String(localized: "Paste a link (optional)"), text: $url)
-            PrimaryButton(title: String(localized: "Save"), icon: "plus") {
+            ClayTextField(icon: "textformat", placeholder: AppStrings.localized("What do you want to keep?"), text: $text)
+            ClayTextField(icon: "link", placeholder: AppStrings.localized("Paste a link (optional)"), text: $url)
+            PrimaryButton(title: AppStrings.localized("Save"), icon: "plus") {
                 saveResource()
             }
         }
@@ -101,17 +101,14 @@ struct ResourcesView: View {
     }
 
     private var filterBar: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: SafeDesign.s) {
-                ForEach(Filter.allCases) { f in
-                    SelectionPill(title: f.title, isSelected: filter == f) {
-                        Haptics.selection()
-                        withAnimation(SafeDesign.spring) { filter = f }
-                    }
+        ContainedChoiceRow(spacing: SafeDesign.s) {
+            ForEach(Filter.allCases) { f in
+                SelectionPill(title: f.title, isSelected: filter == f) {
+                    Haptics.selection()
+                    withAnimation(SafeDesign.spring) { filter = f }
                 }
             }
         }
-        .scrollClipDisabled()
     }
 
     private var emptyState: some View {
@@ -225,7 +222,7 @@ struct ResourcesView: View {
             id: "e-\(UUID().uuidString)",
             title: String(resource.text.prefix(40)),
             description: resource.isLink ? "\(resource.text)\n\(resource.url)" : resource.text,
-            category: String(localized: "Saved"),
+            category: AppStrings.localized("Saved"),
             mood: "calm",
             color: CardColor.cream.rawValue,
             createdAt: Date()
