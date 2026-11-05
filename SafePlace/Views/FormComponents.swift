@@ -147,6 +147,9 @@ struct SelectionPill: View {
     let title: String
     var icon: String? = nil
     let isSelected: Bool
+    /// Ocupa todo el ancho disponible: se usa cuando las opciones deben
+    /// repartirse la fila completa en lugar de agruparse centradas.
+    var expands: Bool = false
     let action: () -> Void
     @Environment(\.appTheme) private var theme
 
@@ -160,11 +163,13 @@ struct SelectionPill: View {
                 Text(title)
                     .font(SafeDesign.caption)
                     .lineLimit(1)
-                    .fixedSize(horizontal: true, vertical: false)
+                    .minimumScaleFactor(expands ? 0.8 : 1)
+                    .fixedSize(horizontal: !expands, vertical: false)
             }
             .foregroundStyle(isSelected ? SafeDesign.ink : SafeDesign.inkSecondary)
             .padding(.horizontal, SafeDesign.l)
-            .padding(.vertical, SafeDesign.s)
+            .padding(.vertical, expands ? SafeDesign.m : SafeDesign.s)
+            .frame(maxWidth: expands ? .infinity : nil)
             .background {
                 if isSelected {
                     Capsule().fill(theme.tint)

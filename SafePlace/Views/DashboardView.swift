@@ -302,14 +302,17 @@ struct DashboardView: View {
     // MARK: - Mode picker
 
     private var modePicker: some View {
-        ContainedChoiceRow {
+        // Dos opciones que se reparten todo el ancho de la columna: botones
+        // grandes y simétricos, en vez de dos píldoras centradas.
+        HStack(spacing: SafeDesign.s) {
             ForEach(DashboardMode.allCases) { m in
-                SelectionPill(title: m.title, isSelected: mode == m) {
+                SelectionPill(title: m.title, isSelected: mode == m, expands: true) {
                     Haptics.selection()
                     withAnimation(SafeDesign.spring) { mode = m }
                 }
             }
         }
+        .frame(maxWidth: .infinity)
     }
 
     // MARK: - Stats
