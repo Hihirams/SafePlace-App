@@ -160,7 +160,7 @@ struct SettingsView: View {
                             SelectionPill(title: lang.label, icon: lang.icon, isSelected: language == lang) {
                                 Haptics.selection()
                                 withAnimation(SafeDesign.spring) { languageRaw = lang.rawValue }
-                                lang.apply()
+                                lang.persist()
                             }
                         }
                     }
@@ -169,7 +169,7 @@ struct SettingsView: View {
 
                 Text(language == .system
                      ? String(localized: "Follows your iPhone language.")
-                     : String(localized: "Close and reopen SafePlace to see the change."))
+                     : String(localized: "Changes apply immediately."))
                     .font(SafeDesign.caption)
                     .foregroundStyle(SafeDesign.inkSecondary)
 

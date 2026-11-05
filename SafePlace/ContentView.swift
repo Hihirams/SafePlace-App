@@ -1,4 +1,5 @@
 import SwiftUI
+import ObjectiveC
 
 enum Tab: Int, CaseIterable {
     case home, journal, mind, saved
@@ -76,7 +77,8 @@ enum ThemeMode: String, CaseIterable {
 // MARK: - Language
 
 /// Idioma de la app. `system` sigue el idioma del iPhone; las otras dos
-/// escriben el override de `AppleLanguages`, que iOS aplica al reabrir.
+/// fijan el `.lproj` que resuelve `LanguageBundle` y dejan `AppleLanguages`
+/// alineado para el próximo arranque.
 enum AppLanguage: String, CaseIterable, Identifiable {
     case system, spanish = "es", english = "en"
 
@@ -98,9 +100,9 @@ enum AppLanguage: String, CaseIterable, Identifiable {
         }
     }
 
-    /// Deja el override como lo pide la opción. `system` lo borra para que
-    /// vuelva a mandar el idioma del iPhone.
-    func apply() {
+    /// Deja `AppleLanguages` como lo pide la opción, para que el sistema
+    /// arranque ya en ese idioma. `system` lo borra.
+    func persist() {
         let defaults = UserDefaults.standard
         switch self {
         case .system:
@@ -110,6 +112,38 @@ enum AppLanguage: String, CaseIterable, Identifiable {
         case .english:
             defaults.set(["en"], forKey: "AppleLanguages")
         }
+    }
+}
+
+/// Bundle que resuelve las cadenas contra el idioma elegido en Ajustes en
+/// lugar del idioma del sistema. Se instala una sola vez sobre `Bundle.main`,
+/// así que tanto `String(localized:)` como `Text("literal")` cambian en vivo.
+final class LanguageBundle: Bundle {
+    /// Bundle ya cargado de cada idioma. `NSCache` es thread-safe, que es lo
+    /// único que necesitamos: la resolución puede venir de cualquier cola.
+    private static let cache = NSCache<NSString, Bundle>()
+
+    static func install() {
+        guard !(Bundle.main is LanguageBundle) else { return }
+        _ = object_setClass(Bundle.main, LanguageBundle.self)
+    }
+
+    override func localizedString(forKey key: String, value: String?, table tableName: String?) -> String {
+        guard let code = UserDefaults.standard.string(forKey: "appLanguage"),
+              code != AppLanguage.system.rawValue,
+              let bundle = Self.bundle(for: code) else {
+            return super.localizedString(forKey: key, value: value, table: tableName)
+        }
+        return bundle.localizedString(forKey: key, value: value, table: tableName)
+    }
+
+    private static func bundle(for code: String) -> Bundle? {
+        let key = code as NSString
+        if let hit = cache.object(forKey: key) { return hit }
+        guard let path = Bundle.main.path(forResource: code, ofType: "lproj"),
+              let bundle = Bundle(path: path) else { return nil }
+        cache.setObject(bundle, forKey: key)
+        return bundle
     }
 }
 
@@ -183,6 +217,9 @@ struct ContentView: View {
     @State private var showSettings = false
     @State private var showSearch = false
     @State private var showStreak = false
+    /// Reconstruye las pestañas cuando cambia el idioma: sus textos ya se
+    /// resuelven contra el bundle nuevo, pero necesitan un body nuevo.
+    @AppStorage("appLanguage") private var languageRaw = AppLanguage.system.rawValue
     @Environment(\.horizontalSizeClass) private var h
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -205,6 +242,7 @@ struct ContentView: View {
                 ResourcesView(store: store).tag(Tab.saved)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
+            .id(languageRaw)
             .accessibilityHidden(showStreak)
             .allowsHitTesting(!showStreak)
         }

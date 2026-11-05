@@ -2091,12 +2091,12 @@
         }
       }
     },
-    "Close and reopen SafePlace to see the change.": {
+    "Changes apply immediately.": {
       "localizations": {
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cierra y vuelve a abrir SafePlace para ver el cambio."
+            "value": "El cambio se aplica al instante."
           }
         }
       }
